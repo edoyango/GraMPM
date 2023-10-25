@@ -7,7 +7,7 @@ program mpm_main
     type(mpm):: mympm
     real(f), parameter:: mingrid(dims) = 0._f, maxgrid(dims) = [0.3_f, 0.1_f, 0.02_f], rho_ini=2650._f, mass_ini=rho_ini*dx*dx*dx
     integer, parameter:: ngrid(dims) = int((maxgrid-mingrid)/dcell)+1
-    integer:: i, j, k, n
+    ! integer:: i, j, k, n
 
     call mympm%p%init(maxn)
     call mympm%g%init(mingrid, maxgrid, dcell)
@@ -29,17 +29,17 @@ contains
         do i = 1, npx
             do j = 1, npy
                 do k = 1, npz
-                    p%append_position( &
-                        x=(i-0.5_f)*dx, &
-                        y=(j-0.5_f)*dy, &
-                        z=(k-0.5_f)*dz
+                    call p%append_position( &
+                        (i-0.5_f)*dx, &
+                        (j-0.5_f)*dx, &
+                        (k-0.5_f)*dx &
                     )
                 end do
             end do
         end do
 
-        p%rho(1:ntotal) = rho_ini
-        p%mass(1:ntotal) = mass_ini
+        p%rho(1:p%ntotal) = rho_ini
+        p%mass(1:p%ntotal) = mass_ini
 
     end subroutine init_particles
 
