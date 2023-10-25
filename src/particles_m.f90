@@ -8,6 +8,7 @@ module particles_m
         integer:: maxn, ntotal
         real(f), allocatable, dimension(:):: x, y, z, vx, vy, vz, sigxx, sigyy, sigzz, sigxy, sigxz, sigyz, mass, rho, &
             ax, ay, az, dx, dy, dz, epsxx, epsyy, epszz, epsxy, epsxz, epsyz, omegaxy, omegaxz, omegayz
+        integer, allocatable, dimension(:):: idx, idy, idz
     contains
         procedure:: init, append_position
     end type particles
@@ -28,6 +29,8 @@ contains
             self%dx(maxn), self%dy(maxn), self%dz(maxn), self%epsxx(maxn), self%epsyy(maxn), self%epszz(maxn), &
             self%epsxy(maxn), self%epsxz(maxn), self%epsyz(maxn), self%omegaxy(maxn), self%omegaxz(maxn), &
             self%omegayz(maxn), source=0._f)
+
+        allocate(self%idx(maxn), self%idy(maxn), self%idz(maxn), source=0)
 
     end subroutine init
 
