@@ -3,7 +3,7 @@ SRCDIR = src
 
 SRCFILENAMES = grid_m.f90 particles_m.f90 mpm_class_m.f90 main.f90
 
-SRCFILEPATHS = $(addprefix $(SRCDIR)/, $(FILENAMES))
+SRCFILEPATHS = $(addprefix $(SRCDIR)/, $(SRCFILENAMES))
 
-mpm.x: $(PARAMSPATH) $(FILEPATHS)
+mpm.x: $(PARAMSPATH) $(SRCFILEPATHS)
 	gfortran -o $@ $^ -fcheck=all -flto
