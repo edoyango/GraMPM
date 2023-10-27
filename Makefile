@@ -1,9 +1,9 @@
-PARAMSPATH = src/params.F90
 SRCDIR = src
+INCLUDEDIR = include
 
-SRCFILENAMES = grid_m.f90 particles_m.f90 mpm_class_m.f90 main.f90
+SRCFILENAMES = main.cpp
 
 SRCFILEPATHS = $(addprefix $(SRCDIR)/, $(SRCFILENAMES))
 
-mpm.x: $(PARAMSPATH) $(SRCFILEPATHS)
-	gfortran -o $@ $^ -fcheck=all -flto
+mpm.x: $(SRCFILEPATHS)
+	g++ -o $@ $^ -I$(INCLUDEDIR)
