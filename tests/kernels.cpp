@@ -3,7 +3,7 @@
 #include "grampm_kernels.hpp"
 #include <cmath>
 
-kernel_linear_bspline<double> knl(0.1);
+GraMPM::kernel_linear_bspline<double> knl(0.1);
 
 TEST_CASE("Testing linear bspline returns correct values", "[knl]") {
 
