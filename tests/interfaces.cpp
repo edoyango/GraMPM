@@ -11,15 +11,15 @@ const std::array<double, 3> mingridx_in {-0.1, 0.05, 0.15}, maxgridx_in {0.1, 0.
 const double dcell_in = 0.1;
 
 // test array set interface
-GraMPM::Grid<double> grid(mingridx_in, maxgridx_in, dcell_in);
+GraMPM::grid<double> grid(mingridx_in, maxgridx_in, dcell_in);
 
 GraMPM::kernel_linear_bspline<double> knl(dcell_in);
 
-GraMPM::ParticleSystem<double> particles(5, grid, knl);
+GraMPM::particle_system<double> particles(5, grid, knl);
 
-TEST_CASE("Grid intialized correctly", "[grid]") {
+TEST_CASE("grid intialized correctly", "[grid]") {
 
-    GraMPM::Grid<double> grid1 {grid};
+    GraMPM::grid<double> grid1 {grid};
 
     REQUIRE(grid1.cell_size()==dcell_in);
 
@@ -53,7 +53,7 @@ TEST_CASE("Grid intialized correctly", "[grid]") {
     REQUIRE(grid1.ngridz()==5);
 
     // test element-by-element set interface
-    GraMPM::Grid<double> grid2(mingridx_in[0], mingridx_in[1], mingridx_in[2], maxgridx_in[0], maxgridx_in[1], 
+    GraMPM::grid<double> grid2(mingridx_in[0], mingridx_in[1], mingridx_in[2], maxgridx_in[0], maxgridx_in[1], 
         maxgridx_in[2], dcell_in);
 
     REQUIRE(grid2.cell_size()==dcell_in);
@@ -126,7 +126,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
             GraMPM::particle<double>(i, 2.*i, 3.*i, 10.*i)
         );
     }
-    GraMPM::ParticleSystem<double> particles2(pv, grid, knl);
+    GraMPM::particle_system<double> particles2(pv, grid, knl);
 
     for (int i = 0; i < 5; ++i) {
         REQUIRE(particles2.x(i)==i);

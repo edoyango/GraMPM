@@ -9,10 +9,9 @@
 
 const double dcell = 0.1;
 const std::array<double, 3> mingrid {-0.1, 0.05, 0.15}, maxgrid {0.1, 0.3, 0.5};
-GraMPM::Grid<double> g(mingrid, maxgrid, dcell);
+GraMPM::grid<double> g(mingrid, maxgrid, dcell);
 GraMPM::kernel_linear_bspline<double> knl(dcell);
-GraMPM::ParticleSystem<double> p(g, knl);
-
+GraMPM::particle_system<double> p(g, knl);
 
 const double dx = (maxgrid[0]-mingrid[0])/4;
 const double dy = (maxgrid[1]-mingrid[1])/4;

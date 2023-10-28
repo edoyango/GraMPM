@@ -25,11 +25,11 @@ namespace GraMPM {
     };
 
     template<typename F>
-    class Grid {
+    class grid {
 
         public:
 
-            Grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc)
+            grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc)
                 : m_mingridx {minx}
                 , m_mingridy {miny}
                 , m_mingridz {minz}
@@ -43,7 +43,7 @@ namespace GraMPM {
                 , m_dcell {dc}
             {
             }
-            Grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc)
+            grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc)
                 : m_mingridx {minx[0]}
                 , m_mingridy {minx[1]}
                 , m_mingridz {minx[2]}
@@ -87,7 +87,7 @@ namespace GraMPM {
     };
 
     template<typename F>
-    class ParticleSystem {
+    class particle_system {
 
         private:
             long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
@@ -119,11 +119,11 @@ namespace GraMPM {
         public:
 
             // variables
-            Grid<F> &background_grid;
+            grid<F> &background_grid;
             const kernel_base<F> m_knl;
 
             // set size of vectors, for manual population later
-            ParticleSystem(const long unsigned int size, Grid<F> &ingrid, kernel_base<F> &knl)
+            particle_system(const long unsigned int size, grid<F> &ingrid, kernel_base<F> &knl)
                 : m_x(size, 0.)
                 , m_y(size, 0.)
                 , m_z(size, 0.)
@@ -138,7 +138,7 @@ namespace GraMPM {
             }
 
             // populate class using vector of particle
-            ParticleSystem(const std::vector<particle<F>> &pv, Grid<F> &ingrid, kernel_base<F> &knl)
+            particle_system(const std::vector<particle<F>> &pv, grid<F> &ingrid, kernel_base<F> &knl)
                 : background_grid(ingrid)
                 , m_capacity {pv.capacity()}
                 , m_size {0}
@@ -148,7 +148,7 @@ namespace GraMPM {
                 for (int i = 0; i < pv.size(); ++i) push_back(pv[i]);
             }
 
-            ParticleSystem(Grid<F> &ingrid, kernel_base<F> &knl)
+            particle_system(grid<F> &ingrid, kernel_base<F> &knl)
                 : background_grid(ingrid)
                 , m_capacity {0}
                 , m_size {0}
@@ -157,7 +157,7 @@ namespace GraMPM {
             {
             }
             
-            const Grid<F>* grid_address() { return &background_grid; }
+            const grid<F>* grid_address() { return &background_grid; }
 
             // "low level getterfunctions"
             const F& x(const int &i) const { return m_x[i]; }
