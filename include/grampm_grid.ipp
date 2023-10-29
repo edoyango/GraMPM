@@ -54,12 +54,13 @@ namespace GraMPM {
     template<typename F> const int& grid<F>::ngridx() const { return m_ngridx; }
     template<typename F> const int& grid<F>::ngridy() const { return m_ngridy; }
     template<typename F> const int& grid<F>::ngridz() const { return m_ngridz; }
+    template<typename F> const int& grid<F>::ncells() const { return m_ncells; }
     template<typename F> std::array<int, 3> grid<F>::ngrid() const { return {m_ngridx, m_ngridy, m_ngridz}; }
     template<typename F> const F& grid<F>::mass(const int &i) const { return m_mass[i]; }
     template<typename F> const F& grid<F>::mass(const int &i, const int &j, const int &k) const { 
         return m_mass[i*m_ngridy*m_ngridz+j*m_ngridz+k];
     }
-    template<typename F> const F* grid<F>::mass() const { return m_mass.data(); }
+    template<typename F> std::vector<F>* grid<F>::mass() { return &m_mass; }
 
     template<typename F>
     int grid<F>::calc_ngrid(const F &maxx, const F &minx, const F &dc) const {

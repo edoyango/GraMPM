@@ -42,10 +42,11 @@ namespace GraMPM {
             const int& ngridx() const;
             const int& ngridy() const;
             const int& ngridz() const;
+            const int& ncells() const;
             std::array<int, 3> ngrid() const;
             const F& mass(const int &i) const;
             const F& mass(const int &i, const int &j, const int &k) const;
-            const F* mass() const;
+            std::vector<F>* mass();
         private:
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
@@ -72,6 +73,8 @@ namespace GraMPM {
             std::array<int, 3> unravel_grid_idx(const int &idx) const;
 
             void unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const;
+
+            void map2grid(const std::vector<F> &p_property, std::vector<F> *g_property) ;
 
         public:
 
@@ -140,6 +143,8 @@ namespace GraMPM {
 
             // NTS this could be faster
             void map_particles_to_grid();
+
+            void map_mass_to_grid();
     };
 
 }

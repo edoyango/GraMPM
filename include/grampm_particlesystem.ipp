@@ -74,7 +74,7 @@ namespace GraMPM {
     template<typename F>const F& particle_system<F>::z(const int &i) const { return m_z[i]; }
     template<typename F>const F* particle_system<F>::z() const { return m_z.data(); }
     template<typename F>const F& particle_system<F>::mass(const int &i) const { return m_mass[i]; }
-    template<typename F>const F* particle_system<F>::mass() const { return m_mass.data(); }
+    template<typename F>const F* particle_system<F>::mass() const { return &m_mass; }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
     template<typename F>
     std::array<int, 3> particle_system<F>::grid_idx(const int &i) const { return unravel_grid_idx(ravelled_grid_idx(i)); }
@@ -298,6 +298,21 @@ namespace GraMPM {
         }
     }
 
+    template<typename F>
+    void particle_system<F>::map2grid(const std::vector<F> &p_property, std::vector<F> *g_property) {
+
+        // zero the grid
+        std::fill(g_property->begin(), g_property->end(), 0.);
+
+        for (int i = 0; i < m_size; ++i) {
+            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+                const int node_idx = p2g_neighbour_node(i, j);
+                (*g_property)[node_idx] += p2g_neighbour_node_w(i, j)*p_property[i];
+            }
+        }
+    }
+
+    template<typename F> void particle_system<F>::map_mass_to_grid() { map2grid(m_mass, background_grid.mass()); }
 }
 
 #endif
