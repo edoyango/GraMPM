@@ -88,7 +88,7 @@ const double correct_dy4[8] {0.05, 0.05, -0.05, -0.05, 0.05, 0.05, -0.05, -0.05}
 const double correct_dz4[8] {0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05};
 TEST_CASE("Correct determination of grid node neighbours", "[p]") {
 
-    p.get_neighbour_nodes();
+    p.map_particles_to_grid();
 
     // for (int i = 0; i < 5; ++i) {
     for (int j = 0; j < 8; ++j) {

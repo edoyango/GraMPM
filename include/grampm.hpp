@@ -293,7 +293,7 @@ namespace GraMPM {
                 }
             }
             // NTS this could be faster
-            void get_neighbour_nodes() {
+            void map_particles_to_grid() {
                 m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
                 m_p2g_neighbour_nodes_dx.resize(m_nneighbour_nodes_perp*m_size);
                 m_p2g_neighbour_nodes_dy.resize(m_nneighbour_nodes_perp*m_size);
