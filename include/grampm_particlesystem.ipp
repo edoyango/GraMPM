@@ -78,25 +78,53 @@ namespace GraMPM {
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
     template<typename F>
     std::array<int, 3> particle_system<F>::grid_idx(const int &i) const { return unravel_grid_idx(ravelled_grid_idx(i)); }
+
     template<typename F>
-    const int& particle_system<F>::p2g_neighbour_node(const int i, const int j) { 
+    const int& particle_system<F>::p2g_neighbour_node(const int i, const int j) const { 
         assert(j < m_nneighbour_nodes_perp); 
         return m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+j];
     }
+
     template<typename F>
-    const double& particle_system<F>::p2g_neighbour_node_dx(const int i, const int j) {
+    const F& particle_system<F>::p2g_neighbour_node_dx(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
         return m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j];
     }
+
     template<typename F>
-    const double& particle_system<F>::p2g_neighbour_node_dy(const int i, const int j) {
+    const F& particle_system<F>::p2g_neighbour_node_dy(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
         return m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j];
     }
+
     template<typename F>
-    const double& particle_system<F>::p2g_neighbour_node_dz(const int i, const int j) {
+    const F& particle_system<F>::p2g_neighbour_node_dz(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
         return m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j];
+    }
+    
+    template<typename F>
+    const F& particle_system<F>::p2g_neighbour_node_w(const int i, const int j) const {
+        assert(j < m_nneighbour_nodes_perp);
+        return m_p2g_neighbour_nodes_w[i*m_nneighbour_nodes_perp+j];
+    }
+    
+    template<typename F>
+    const F& particle_system<F>::p2g_neighbour_node_dwdx(const int i, const int j) const {
+        assert(j < m_nneighbour_nodes_perp);
+        return m_p2g_neighbour_nodes_dwdx[i*m_nneighbour_nodes_perp+j];
+    }
+    
+    template<typename F>
+    const F& particle_system<F>::p2g_neighbour_node_dwdy(const int i, const int j) const {
+        assert(j < m_nneighbour_nodes_perp);
+        return m_p2g_neighbour_nodes_dwdy[i*m_nneighbour_nodes_perp+j];
+    }
+
+    template<typename F>
+    const F& particle_system<F>::p2g_neighbour_node_dwdz(const int i, const int j) const {
+        assert(j < m_nneighbour_nodes_perp);
+        return m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j];
     }
     template<typename F> const long unsigned int& particle_system<F>::capacity() const { return m_capacity; }
     template<typename F> const long unsigned int& particle_system<F>::size() const { return m_size; }
@@ -152,12 +180,19 @@ namespace GraMPM {
         m_p2g_neighbour_nodes_dx.clear();
         m_p2g_neighbour_nodes_dy.clear();
         m_p2g_neighbour_nodes_dz.clear();
+        m_p2g_neighbour_nodes_w.clear();
+        m_p2g_neighbour_nodes_dwdx.clear();
+        m_p2g_neighbour_nodes_dwdy.clear();
+        m_p2g_neighbour_nodes_dwdz.clear();
         m_size = 0;
     }
 
     template<typename F>
     bool particle_system<F>::empty() {
-        return m_x.empty() && m_y.empty() && m_z.empty() && m_mass.empty() && m_grid_idx.empty() && m_size==0;
+        return m_x.empty() && m_y.empty() && m_z.empty() && m_mass.empty() && m_grid_idx.empty() &&
+            m_p2g_neighbour_nodes.empty() && m_p2g_neighbour_nodes_dx.empty() && m_p2g_neighbour_nodes_dy.empty() && 
+            m_p2g_neighbour_nodes_dz.empty() && m_p2g_neighbour_nodes_w.empty() && m_p2g_neighbour_nodes_dwdx.empty() &&
+            m_p2g_neighbour_nodes_dwdy.empty() && m_p2g_neighbour_nodes_dwdz.empty() && m_size==0;
     }
 
     template<typename F>
@@ -213,10 +248,18 @@ namespace GraMPM {
     // NTS this could be faster
     template<typename F>
     void particle_system<F>::map_particles_to_grid() {
+
+        // size output arrays
         m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
         m_p2g_neighbour_nodes_dx.resize(m_nneighbour_nodes_perp*m_size);
         m_p2g_neighbour_nodes_dy.resize(m_nneighbour_nodes_perp*m_size);
         m_p2g_neighbour_nodes_dz.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_w.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dwdx.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dwdy.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dwdz.resize(m_nneighbour_nodes_perp*m_size);
+
+        // update neighbour indices
         for (int i = 0; i < m_size; ++i) {
             const int idx = ravelled_grid_idx(i);
             int n = 0;
@@ -229,6 +272,8 @@ namespace GraMPM {
                 }
             }
         }
+
+        // update kernel and kernel gradient values
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 std::array<int, 3> idx;
@@ -236,6 +281,19 @@ namespace GraMPM {
                 m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j] = x(i) - (idx[0]*background_grid.cell_size() + background_grid.mingridx());
                 m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j] = y(i) - (idx[1]*background_grid.cell_size() + background_grid.mingridy());
                 m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j] = z(i) - (idx[2]*background_grid.cell_size() + background_grid.mingridz());
+                m_p2g_neighbour_nodes_w[i*m_nneighbour_nodes_perp+j] = m_knl.w(
+                    m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j],
+                    m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j],
+                    m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j]
+                );
+                m_knl.dwdx(
+                    m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j],
+                    m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j],
+                    m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j],
+                    m_p2g_neighbour_nodes_dwdx[i*m_nneighbour_nodes_perp+j],
+                    m_p2g_neighbour_nodes_dwdy[i*m_nneighbour_nodes_perp+j],
+                    m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j]
+                );
             }
         }
     }

@@ -58,7 +58,9 @@ namespace GraMPM {
         private:
             long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
             const int m_nneighbour_nodes_perp;
-            std::vector<F> m_x, m_y, m_z, m_mass, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz;
+            std::vector<F> m_x, m_y, m_z, m_mass, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, 
+                m_p2g_neighbour_nodes_dz,m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, 
+                m_p2g_neighbour_nodes_dwdy, m_p2g_neighbour_nodes_dwdz;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
 
             int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;
@@ -71,7 +73,7 @@ namespace GraMPM {
 
             // variables
             grid<F> &background_grid;
-            const kernel_base<F> m_knl;
+            const kernel_base<F> &m_knl;
 
             // set size of vectors, for manual population later
             particle_system(const long unsigned int size, grid<F> &ingrid, kernel_base<F> &knl);
@@ -94,12 +96,14 @@ namespace GraMPM {
             const F* mass() const;
             const int& ravelled_grid_idx(const int &i) const;
             std::array<int, 3> grid_idx(const int &i) const;
-            const int& p2g_neighbour_node(const int i, const int j);
-            const double& p2g_neighbour_node_dx(const int i, const int j);
-            
-            const double& p2g_neighbour_node_dy(const int i, const int j);
-            
-            const double& p2g_neighbour_node_dz(const int i, const int j);
+            const int& p2g_neighbour_node(const int i, const int j) const ;
+            const F& p2g_neighbour_node_dx(const int i, const int j) const ;
+            const F& p2g_neighbour_node_dy(const int i, const int j) const ;
+            const F& p2g_neighbour_node_dz(const int i, const int j) const ;
+            const F& p2g_neighbour_node_w(const int i, const int j) const ;
+            const F& p2g_neighbour_node_dwdx(const int i, const int j) const ;
+            const F& p2g_neighbour_node_dwdy(const int i, const int j) const ;
+            const F& p2g_neighbour_node_dwdz(const int i, const int j) const ;
             const long unsigned int& capacity() const;
             const long unsigned int& size() const;
 
@@ -129,7 +133,7 @@ namespace GraMPM {
 
             void update_particle_to_cell_map(const int &start, const int &end);
             void update_particle_to_cell_map();
-            
+
             // NTS this could be faster
             void map_particles_to_grid();
     };

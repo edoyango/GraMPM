@@ -36,6 +36,7 @@ namespace GraMPM {
         , m_dcell {dc}
     {
     }
+    
     template<typename F> int grid<F>::calc_idxx(const F &x) const { return static_cast<int>((x-m_mingridx)/m_dcell); }
     template<typename F> int grid<F>::calc_idxy(const F &y) const { return static_cast<int>((y-m_mingridy)/m_dcell); }
     template<typename F> int grid<F>::calc_idxz(const F &z) const { return static_cast<int>((z-m_mingridz)/m_dcell); }
