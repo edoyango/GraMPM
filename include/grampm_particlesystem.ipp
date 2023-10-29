@@ -1,0 +1,245 @@
+#ifndef GRAMPM_particlesystem_ipp
+#define GRAMPM_particlesystem_ipp
+
+namespace GraMPM {
+
+    template<typename F>
+    particle_system<F>::particle_system(const long unsigned int size, grid<F> &ingrid, kernel_base<F> &knl)
+        : m_x(size, 0.)
+        , m_y(size, 0.)
+        , m_z(size, 0.)
+        , m_mass(size, 0.)
+        , m_grid_idx(size, 0)
+        , background_grid(ingrid)
+        , m_capacity {size}
+        , m_size {size}
+        , m_knl {knl}
+        , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
+    {
+    }
+
+    template<typename F>
+    particle_system<F>::particle_system(const std::vector<particle<F>> &pv, grid<F> &ingrid, kernel_base<F> &knl)
+        : background_grid(ingrid)
+        , m_capacity {pv.capacity()}
+        , m_size {0}
+        , m_knl {knl}
+        , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
+    {
+        for (int i = 0; i < pv.size(); ++i) push_back(pv[i]);
+    }
+
+    template<typename F>
+    particle_system<F>::particle_system(grid<F> &ingrid, kernel_base<F> &knl)
+        : background_grid(ingrid)
+        , m_capacity {0}
+        , m_size {0}
+        , m_knl {knl}
+        , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
+    {
+    }
+
+    template<typename F>
+    int particle_system<F>::ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const {
+        return idxx*background_grid.ngridy()*background_grid.ngridz() + idxy*background_grid.ngridz() + idxz;
+    }
+    
+    template<typename F>
+    std::array<int, 3> particle_system<F>::unravel_grid_idx(const int &idx) const {
+        std::array<int, 3> unravelled_idx;
+        div_t tmp = std::div(idx, background_grid.ngridy()*background_grid.ngridz());
+        unravelled_idx[0] = tmp.quot;
+        tmp = std::div(tmp.rem, background_grid.ngridz());
+        unravelled_idx[1] = tmp.quot;
+        unravelled_idx[2] = tmp.rem;
+        return unravelled_idx;
+    }
+
+    template<typename F>
+    void particle_system<F>::unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const {
+        div_t tmp = std::div(idx, background_grid.ngridy()*background_grid.ngridz());
+        idxx = tmp.quot;
+        tmp = std::div(tmp.rem, background_grid.ngridz());
+        idxy = tmp.quot;
+        idxz = tmp.rem;
+    }
+
+    template<typename F>
+    const grid<F>* particle_system<F>::grid_address() { return &background_grid; }
+
+    template<typename F>const F& particle_system<F>::x(const int &i) const { return m_x[i]; }
+    template<typename F>const F* particle_system<F>::x() const { return m_x.data(); }
+    template<typename F>const F& particle_system<F>::y(const int &i) const { return m_y[i]; }
+    template<typename F>const F* particle_system<F>::y() const { return m_y.data(); }
+    template<typename F>const F& particle_system<F>::z(const int &i) const { return m_z[i]; }
+    template<typename F>const F* particle_system<F>::z() const { return m_z.data(); }
+    template<typename F>const F& particle_system<F>::mass(const int &i) const { return m_mass[i]; }
+    template<typename F>const F* particle_system<F>::mass() const { return m_mass.data(); }
+    template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
+    template<typename F>
+    std::array<int, 3> particle_system<F>::grid_idx(const int &i) const { return unravel_grid_idx(ravelled_grid_idx(i)); }
+    template<typename F>
+    const int& particle_system<F>::p2g_neighbour_node(const int i, const int j) { 
+        assert(j < m_nneighbour_nodes_perp); 
+        return m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+j];
+    }
+    template<typename F>
+    const double& particle_system<F>::p2g_neighbour_node_dx(const int i, const int j) {
+        assert(j < m_nneighbour_nodes_perp);
+        return m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j];
+    }
+    template<typename F>
+    const double& particle_system<F>::p2g_neighbour_node_dy(const int i, const int j) {
+        assert(j < m_nneighbour_nodes_perp);
+        return m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j];
+    }
+    template<typename F>
+    const double& particle_system<F>::p2g_neighbour_node_dz(const int i, const int j) {
+        assert(j < m_nneighbour_nodes_perp);
+        return m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j];
+    }
+    template<typename F> const long unsigned int& particle_system<F>::capacity() const { return m_capacity; }
+    template<typename F> const long unsigned int& particle_system<F>::size() const { return m_size; }
+
+    
+    template<typename F> void particle_system<F>::set_x(const int &i, const F &x) { m_x[i] = x;}
+    template<typename F> void particle_system<F>::set_y(const int &i, const F &y) { m_y[i] = y;}
+    template<typename F> void particle_system<F>::set_z(const int &i, const F &z) { m_z[i] = z;}
+    template<typename F> void particle_system<F>::set_mass(const int &i, const F &m) { m_mass[i] = m; }
+    template<typename F> void particle_system<F>::set_grid_index(const int &i, const int &idx) { m_grid_idx[i] = idx; }
+    template<typename F> void particle_system<F>::incrementNParticles() {m_size++;}
+
+    template<typename F>
+    particle<F> particle_system<F>::at(const int &i) { 
+        particle<F> p(x(i), y(i), z(i), mass(i));
+        return p; 
+    }
+
+    template<typename F>
+    void particle_system<F>::push_back(const particle<F> &p) {
+        m_x.push_back(p.x);
+        m_y.push_back(p.y);
+        m_z.push_back(p.z);
+        m_mass.push_back(p.mass);
+        m_grid_idx.push_back(
+            ravel_grid_idx(
+                background_grid.calc_idxx(p.x),
+                background_grid.calc_idxy(p.y),
+                background_grid.calc_idxz(p.z)
+            )
+        );
+        m_size++;
+    }
+
+    template<typename F>
+    void particle_system<F>::reserve(const long unsigned int &n) {
+        m_x.reserve(n);
+        m_y.reserve(n);
+        m_z.reserve(n);
+        m_mass.reserve(n);
+        m_grid_idx.reserve(n);
+        m_capacity = std::max(m_capacity, n);
+    }
+
+    template<typename F>
+    void particle_system<F>::clear() {
+        m_x.clear();
+        m_y.clear();
+        m_z.clear();
+        m_mass.clear();
+        m_grid_idx.clear();
+        m_p2g_neighbour_nodes.clear();
+        m_p2g_neighbour_nodes_dx.clear();
+        m_p2g_neighbour_nodes_dy.clear();
+        m_p2g_neighbour_nodes_dz.clear();
+        m_size = 0;
+    }
+
+    template<typename F>
+    bool particle_system<F>::empty() {
+        return m_x.empty() && m_y.empty() && m_z.empty() && m_mass.empty() && m_grid_idx.empty() && m_size==0;
+    }
+
+    template<typename F>
+    void particle_system<F>::resize(const int n) {
+        m_x.resize(n, 0.);
+        m_y.resize(n, 0.);
+        m_z.resize(n, 0.);
+        m_mass.resize(n, 0.);
+        m_grid_idx.resize(n, 0);
+        m_size = n;
+    }
+
+    template<typename F>
+    void particle_system<F>::resize(const int n, const particle<F> p) {
+        m_x.resize(n, p.x);
+        m_y.resize(n, p.y);
+        m_z.resize(n, p.z);
+        m_mass.resize(n, p.mass);
+        m_grid_idx.resize(n, ravel_grid_idx(
+            background_grid.calc_idxx(p.x),
+            background_grid.calc_idxy(p.y),
+            background_grid.calc_idxz(p.z)
+        ));
+        m_size = n;
+    }
+
+    template<typename F>
+    void particle_system<F>::update_particle_to_cell_map(const int &start, const int &end) {
+        for (int i = start; i < end; ++i) {
+            set_grid_index(i,
+                ravel_grid_idx(
+                    background_grid.calc_idxx(x(i)),
+                    background_grid.calc_idxy(y(i)),
+                    background_grid.calc_idxz(z(i))
+                )
+            );
+        }
+    }
+
+    template<typename F>
+    void particle_system<F>::update_particle_to_cell_map() {
+        for (int i = 0; i < m_size; ++i) {
+            set_grid_index( i,
+                ravel_grid_idx(
+                    background_grid.calc_idxx(x(i)),
+                    background_grid.calc_idxy(y(i)),
+                    background_grid.calc_idxz(z(i))
+                )
+            );
+        }
+    }
+    
+    // NTS this could be faster
+    template<typename F>
+    void particle_system<F>::map_particles_to_grid() {
+        m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dx.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dy.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dz.resize(m_nneighbour_nodes_perp*m_size);
+        for (int i = 0; i < m_size; ++i) {
+            const int idx = ravelled_grid_idx(i);
+            int n = 0;
+            for (int di=1-m_knl.radius; di <= m_knl.radius; ++di) {
+                for (int dj = 1-m_knl.radius; dj <= m_knl.radius; ++dj) {
+                    for (int dk = 1-m_knl.radius; dk <= m_knl.radius; ++dk) {
+                        m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+n] = idx + ravel_grid_idx(di, dj, dk);
+                        n++;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < m_size; ++i) {
+            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+                std::array<int, 3> idx;
+                idx = unravel_grid_idx(m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+j]);
+                m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j] = x(i) - (idx[0]*background_grid.cell_size() + background_grid.mingridx());
+                m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j] = y(i) - (idx[1]*background_grid.cell_size() + background_grid.mingridy());
+                m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j] = z(i) - (idx[2]*background_grid.cell_size() + background_grid.mingridz());
+            }
+        }
+    }
+
+}
+
+#endif
