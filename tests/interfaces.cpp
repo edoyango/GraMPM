@@ -52,6 +52,10 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(grid1.ngridy()==4);
     REQUIRE(grid1.ngridz()==5);
 
+    for (int i = 0; i < grid1.ngridx()*grid1.ngridy()*grid1.ngridz(); ++i) {
+        REQUIRE(grid1.mass(i)==0.);
+    }
+
     // test element-by-element set interface
     GraMPM::grid<double> grid2(mingridx_in[0], mingridx_in[1], mingridx_in[2], maxgridx_in[0], maxgridx_in[1], 
         maxgridx_in[2], dcell_in);

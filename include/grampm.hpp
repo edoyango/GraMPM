@@ -43,10 +43,14 @@ namespace GraMPM {
             const int& ngridy() const;
             const int& ngridz() const;
             std::array<int, 3> ngrid() const;
+            const F& mass(const int &i) const;
+            const F& mass(const int &i, const int &j, const int &k) const;
+            const F* mass() const;
         private:
             // access geometry of underlying grid
-            const int m_ncells, m_ngridx, m_ngridy, m_ngridz;
+            const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
             const F m_mingridx, m_mingridy, m_mingridz, m_maxgridx, m_maxgridy, m_maxgridz, m_dcell;
+            std::vector<F> m_mass;
 
             int calc_ngrid(const F &maxx, const F &minx, const F &dc) const;
         
