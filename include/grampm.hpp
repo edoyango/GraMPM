@@ -244,8 +244,7 @@ namespace GraMPM {
             }
 
             bool empty() {
-                return m_x.size()==0 && m_y.size()==0 && m_z.size()==0 && m_mass.size()==0 && m_grid_idx.size()==0 && 
-                    m_size==0;
+                return m_x.empty() && m_y.empty() && m_z.empty() && m_mass.empty() && m_grid_idx.empty() && m_size==0;
             }
 
             void resize(const int n) {
