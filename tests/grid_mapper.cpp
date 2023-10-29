@@ -11,6 +11,7 @@ const double dcell = 0.1;
 const std::array<double, 3> mingrid {-0.1, 0.05, 0.15}, maxgrid {0.1, 0.3, 0.5};
 GraMPM::grid<double> g(mingrid, maxgrid, dcell);
 GraMPM::kernel_linear_bspline<double> knl(dcell);
+GraMPM::kernel_cubic_bspline<double> knlc(dcell);
 GraMPM::particle_system<double> p(g, knl);
 
 const double dx = (maxgrid[0]-mingrid[0])/4;
@@ -61,47 +62,61 @@ TEST_CASE( "Correct dynamic assignment and unravelling of particle grid indices"
 
 }
 
-
-const int correct_neighbours0[8] {correct_ravelled_idx[0], 
-                                  correct_ravelled_idx[0]+1, 
-                                  correct_ravelled_idx[0]+5, 
-                                  correct_ravelled_idx[0]+6,
-                                  correct_ravelled_idx[0]+20,
-                                  correct_ravelled_idx[0]+21,
-                                  correct_ravelled_idx[0]+25, 
-                                  correct_ravelled_idx[0]+26
-                                 };
-const double correct_dx0[8] {0., 0., 0., 0., -0.1, -0.1, -0.1, -0.1};
-const double correct_dy0[8] {0., 0., -0.1, -0.1, 0., 0., -0.1, -0.1};
-const double correct_dz0[8] {0., -0.1, 0., -0.1, 0., 0.-0.1, 0., -0.1};
-const int correct_neighbours4[8] {correct_ravelled_idx[4], 
-                                  correct_ravelled_idx[4]+1, 
-                                  correct_ravelled_idx[4]+5, 
-                                  correct_ravelled_idx[4]+6,
-                                  correct_ravelled_idx[4]+20,
-                                  correct_ravelled_idx[4]+21,
-                                  correct_ravelled_idx[4]+25, 
-                                  correct_ravelled_idx[4]+26
-                                 };
-const double correct_dx4[8] {0., 0., 0., 0., -0.1, -0.1, -0.1, -0.1};
-const double correct_dy4[8] {0.05, 0.05, -0.05, -0.05, 0.05, 0.05, -0.05, -0.05};
-const double correct_dz4[8] {0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05};
-TEST_CASE("Correct determination of grid node neighbours", "[p]") {
+TEST_CASE("Correct determination of grid node neighbours (radius=1)", "[p]") {
 
     p.map_particles_to_grid();
 
-    // for (int i = 0; i < 5; ++i) {
-    for (int j = 0; j < 8; ++j) {
-        REQUIRE(p.p2g_neighbour_node(0, j)==correct_neighbours0[j]);
-        REQUIRE(std::abs(p.p2g_neighbour_node_dx(0, j)-correct_dx0[j])<1e-14);
-        REQUIRE(std::abs(p.p2g_neighbour_node_dy(0, j)-correct_dy0[j])<1e-14);
-        REQUIRE(std::abs(p.p2g_neighbour_node_dz(0, j)-correct_dz0[j])<1e-14);
-    }
-    for (int j = 0; j < 8; ++j) {
-        REQUIRE(p.p2g_neighbour_node(4, j)==correct_neighbours4[j]);
-        REQUIRE(std::abs(p.p2g_neighbour_node_dx(4, j)-correct_dx4[j])<1e-14);
-        REQUIRE(std::abs(p.p2g_neighbour_node_dy(4, j)-correct_dy4[j])<1e-14);
-        REQUIRE(std::abs(p.p2g_neighbour_node_dz(4, j)-correct_dz4[j])<1e-14);
-    }
-    // }
+    int n = 0;
+    for (int di = 0; di <= 1; ++di) 
+        for (int dj = 0; dj <= 1; ++dj)
+            for (int dk = 0; dk <=1; ++dk) {
+                for (int i = 0; i < 5; i+=4) {
+                    REQUIRE(p.p2g_neighbour_node(i, n)==correct_ravelled_idx[i] + di*5*4 + dj*5 + dk);
+                    std::array<int, 3> idx = p.grid_idx(i);
+                    REQUIRE(p.p2g_neighbour_node_dx(i, n)==p.x(i)-((idx[0]+di)*dcell+mingrid[0]));
+                    REQUIRE(p.p2g_neighbour_node_dy(i, n)==p.y(i)-((idx[1]+dj)*dcell+mingrid[1]));
+                    REQUIRE(p.p2g_neighbour_node_dz(i, n)==p.z(i)-((idx[2]+dk)*dcell+mingrid[2]));
+                }
+                    
+                n++;
+            }
+}
+
+TEST_CASE("Correct determination of grid node neighbours (radius=2)") {
+
+    // initialize particle system with cublic spline kernel
+    const std::array<double, 3> mingrid {-0.1, 0.05, 0.15}, maxgrid {0.19, 0.4, 0.6};
+    GraMPM::grid<double> g(mingrid, maxgrid, dcell);
+    GraMPM::kernel_cubic_bspline<double> knlc(dcell);
+    GraMPM::particle_system<double> p(g, knlc);
+
+    CHECK(p.background_grid.ngridx()==4);
+    CHECK(p.background_grid.ngridy()==5);
+    CHECK(p.background_grid.ngridz()==6);
+
+    p.push_back(GraMPM::particle<double>(0.01, 0.16, 0.26, 1.));
+    p.push_back(GraMPM::particle<double>(0.01, 0.3, 0.5, 1.));
+
+    int correct_ravelled_idx[2] {37, 45};
+
+    CHECK(p.ravelled_grid_idx(0)==correct_ravelled_idx[0]);
+    CHECK(p.ravelled_grid_idx(1)==correct_ravelled_idx[1]);
+
+    p.map_particles_to_grid();
+
+    int n = 0;
+    for (int di = -1; di <= 2; ++di) 
+        for (int dj = -1; dj <=2; ++dj)
+            for (int dk = -1; dk <=2; ++dk) {
+                for (int i = 0; i < 2; ++i) {
+                    REQUIRE(p.p2g_neighbour_node(i, n)==correct_ravelled_idx[i] + di*6*5 + dj*6 + dk);
+                    std::array<int, 3> idx = p.grid_idx(i);
+                    REQUIRE(p.p2g_neighbour_node_dx(i, n)==p.x(i)-((idx[0]+di)*dcell+mingrid[0]));
+                    REQUIRE(p.p2g_neighbour_node_dy(i, n)==p.y(i)-((idx[1]+dj)*dcell+mingrid[1]));
+                    REQUIRE(p.p2g_neighbour_node_dz(i, n)==p.z(i)-((idx[2]+dk)*dcell+mingrid[2]));
+                }
+                    
+                n++;
+            }
+
 }
