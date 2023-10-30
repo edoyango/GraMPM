@@ -1,2 +1,2 @@
 # GraMPM
-A Fortran MPM simulation package for granular materials.
+A C++ MPM simulation library for granular materials.
