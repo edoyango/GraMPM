@@ -356,6 +356,16 @@ namespace GraMPM {
     }
 
     template<typename F> void particle_system<F>::map_mass_to_grid() { map2grid(m_mass, background_grid.mass()); }
+
+    template<typename F> void particle_system<F>::map_momentum_to_grid() { 
+        std::vector<F> tmp_momentum(m_size);
+        for (int i = 0; i < m_size; ++i) tmp_momentum[i] = mass(i)*vx(i);
+        map2grid(tmp_momentum, background_grid.momentumx()); 
+        for (int i = 0; i < m_size; ++i) tmp_momentum[i] = mass(i)*vy(i);
+        map2grid(tmp_momentum, background_grid.momentumy()); 
+        for (int i = 0; i < m_size; ++i) tmp_momentum[i] = mass(i)*vz(i);
+        map2grid(tmp_momentum, background_grid.momentumz()); 
+    }
 }
 
 #endif

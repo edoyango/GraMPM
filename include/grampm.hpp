@@ -133,9 +133,9 @@ namespace GraMPM {
             void set_x(const int &i, const F &x);
             void set_y(const int &i, const F &y);
             void set_z(const int &i, const F &z);
-            void set_vx(const int &i, const F &x);
-            void set_vy(const int &i, const F &y);
-            void set_vz(const int &i, const F &z);
+            void set_vx(const int &i, const F &vx);
+            void set_vy(const int &i, const F &vy);
+            void set_vz(const int &i, const F &vz);
             void set_mass(const int &i, const F &m);
             void set_grid_index(const int &i, const int &idx);
             void incrementNParticles();
@@ -163,6 +163,7 @@ namespace GraMPM {
             void map_particles_to_grid();
 
             void map_mass_to_grid();
+            void map_momentum_to_grid();
     };
 
 }

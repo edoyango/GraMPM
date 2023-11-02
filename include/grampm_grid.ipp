@@ -66,7 +66,7 @@ namespace GraMPM {
     template<typename F> const F& grid<F>::mass(const int &i, const int &j, const int &k) const { 
         return m_mass[i*m_ngridy*m_ngridz+j*m_ngridz+k];
     }
-    template<typename F> std::vector<F>* grid<F>::mass() { return &m_momentumx; }
+    template<typename F> std::vector<F>* grid<F>::mass() { return &m_mass; }
     template<typename F> const F& grid<F>::momentumx(const int &i) const { return m_momentumx[i]; }
     template<typename F> const F& grid<F>::momentumx(const int &i, const int &j, const int &k) const { 
         return m_momentumx[i*m_ngridy*m_ngridz+j*m_ngridz+k];

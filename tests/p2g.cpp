@@ -9,7 +9,9 @@ void generate_particles(GraMPM::particle_system<double> &p) {
     for (int i = 0; i < 10; ++i) 
         for (int j = 0; j < 20; ++j) 
             for (int k = 0; k < 30; ++k) {
-                GraMPM::particle<double> p_i(0.1*(i+0.5), 0.1*(j+0.5), 0.1*(k+0.5), 10.*(i+j+k));
+                GraMPM::particle<double> p_i(0.1*(i+0.5), 0.1*(j+0.5), 0.1*(k+0.5), 
+                                             -i, -j, -k,
+                                             10.*(i+j+k));
                 p.push_back(p_i);
             }
 }
@@ -75,4 +77,56 @@ TEST_CASE("Map particles masses to grid (cubic bspline)") {
     REQUIRE(std::round(p.background_grid.mass(2, 2, 2)*1e10)==3426422542996);
     REQUIRE(std::round(p.background_grid.mass(4, 5, 6))==1800.);
     REQUIRE(std::round(p.background_grid.mass(6, 11, 16)*1e5)==55609375);
+}
+
+TEST_CASE("Map particles momentums to grid (linear bspline)") {
+    const double dcell = 0.2;
+    GraMPM::grid<double> g(0., 0., 0., 0.99, 1.99, 2.99, dcell);
+
+    CHECK(g.ngridx()==6);
+    CHECK(g.ngridy()==11);
+    CHECK(g.ngridz()==16);
+    GraMPM::kernel_linear_bspline<double> knl(dcell);
+
+    GraMPM::particle_system<double> p(g, knl);
+
+    generate_particles(p);
+
+    p.map_particles_to_grid();
+    p.map_momentum_to_grid();
+
+    double psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.mass(i)*p.vx(i);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.momentumx(i);
+
+    REQUIRE(psum==gsum);
+
+    psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.mass(i)*p.vy(i);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.momentumy(i);
+
+    REQUIRE(psum==gsum);
+
+    psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.mass(i)*p.vz(i);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.momentumz(i);
+
+    REQUIRE(psum==gsum);
+
+    // check a few nodal values
+    REQUIRE(std::round(p.background_grid.momentumx(1, 1, 1))==-600.);
+    REQUIRE(std::round(p.background_grid.momentumx(3, 4, 5))==-9960.);
+    REQUIRE(std::round(p.background_grid.momentumx(5, 10, 15)*100.)==-492375.);
+    REQUIRE(std::round(p.background_grid.momentumy(1, 1, 1))==-600.);
+    REQUIRE(std::round(p.background_grid.momentumy(3, 4, 5))==-13560.);
+    REQUIRE(std::round(p.background_grid.momentumy(5, 10, 15)*100.)==-1054875.);
+    REQUIRE(std::round(p.background_grid.momentumz(1, 1, 1))==-600.);
+    REQUIRE(std::round(p.background_grid.momentumz(3, 4, 5))==-17160);
+    REQUIRE(std::round(p.background_grid.momentumz(5, 10, 15)*100.)==-1617375.);
 }

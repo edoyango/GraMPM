@@ -26,7 +26,7 @@ const int correct_ravelled_idx[5] {0, 0, 1*4*5+1*5+1, 1*4*5+1*5+2, 2*4*5+2*5+3};
 TEST_CASE( "Correct ravelling of particles' grid indices upon initialization", "[p]") {
     // create the particlesystem instance
     for (int i = 0; i < 5; ++i) {
-        GraMPM::particle<double> pi(i*dx+mingrid[0], i*dy+mingrid[1], i*dz+mingrid[2], 1.);
+        GraMPM::particle<double> pi(i*dx+mingrid[0], i*dy+mingrid[1], i*dz+mingrid[2], 0., 0., 0., 1.);
         p.push_back(pi);
         // test that the assigned index is correct
         REQUIRE(p.ravelled_grid_idx(i)==correct_ravelled_idx[i]);
@@ -108,8 +108,8 @@ TEST_CASE("Correct determination of grid node neighbours (radius=2)") {
     CHECK(p.background_grid.ngridy()==5);
     CHECK(p.background_grid.ngridz()==6);
 
-    p.push_back(GraMPM::particle<double>(0.01, 0.16, 0.26, 1.));
-    p.push_back(GraMPM::particle<double>(0.01, 0.3, 0.5, 1.));
+    p.push_back(GraMPM::particle<double>(0.01, 0.16, 0.26, 0., 0., 0., 1.));
+    p.push_back(GraMPM::particle<double>(0.01, 0.3, 0.5, 0., 0., 0., 1.));
 
     int correct_ravelled_idx[2] {37, 45};
 
