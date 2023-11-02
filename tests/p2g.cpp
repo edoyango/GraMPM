@@ -38,3 +38,29 @@ TEST_CASE("Map particles masses to grid (linear bspline)") {
 
     REQUIRE(psum==gsum);
 }
+
+TEST_CASE("Map particles masses to grid (cubic bspline)") {
+    const double dcell = 0.2;
+    GraMPM::grid<double> g(-0.2, -0.2, -0.2, 1.19, 2.19, 3.19, dcell);
+
+    CHECK(g.ngridx()==8);
+    CHECK(g.ngridy()==13);
+    CHECK(g.ngridz()==18);
+    GraMPM::kernel_cubic_bspline<double> knl(dcell);
+
+    GraMPM::particle_system<double> p(g, knl);
+
+    generate_particles(p);
+
+    p.map_particles_to_grid();
+    p.map_mass_to_grid();
+
+    double psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.mass(i);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.mass(i);
+
+    // should be correct to 14 sigfigs
+    REQUIRE(psum*1e7==std::round(gsum*1e7));
+}
