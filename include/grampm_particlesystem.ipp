@@ -3,11 +3,15 @@
 
 namespace GraMPM {
 
+    // initialize a particle with size, but zerod properties
     template<typename F>
     particle_system<F>::particle_system(const long unsigned int size, grid<F> &ingrid, kernel_base<F> &knl)
         : m_x(size, 0.)
         , m_y(size, 0.)
         , m_z(size, 0.)
+        , m_vx(size, 0.)
+        , m_vy(size, 0.)
+        , m_vz(size, 0.)
         , m_mass(size, 0.)
         , m_grid_idx(size, 0)
         , background_grid(ingrid)
@@ -18,6 +22,7 @@ namespace GraMPM {
     {
     }
 
+    // initialize from std::vector of particle class
     template<typename F>
     particle_system<F>::particle_system(const std::vector<particle<F>> &pv, grid<F> &ingrid, kernel_base<F> &knl)
         : background_grid(ingrid)
@@ -29,6 +34,7 @@ namespace GraMPM {
         for (int i = 0; i < pv.size(); ++i) push_back(pv[i]);
     }
 
+    // initalize empty (no size)
     template<typename F>
     particle_system<F>::particle_system(grid<F> &ingrid, kernel_base<F> &knl)
         : background_grid(ingrid)
@@ -39,11 +45,13 @@ namespace GraMPM {
     {
     }
 
+    // helper function to ravel idx
     template<typename F>
     int particle_system<F>::ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const {
         return idxx*background_grid.ngridy()*background_grid.ngridz() + idxy*background_grid.ngridz() + idxz;
     }
     
+    // helper function to unravel index (return std::array)
     template<typename F>
     std::array<int, 3> particle_system<F>::unravel_grid_idx(const int &idx) const {
         std::array<int, 3> unravelled_idx;
@@ -55,6 +63,7 @@ namespace GraMPM {
         return unravelled_idx;
     }
 
+    // helper function to unravel index (modify args)
     template<typename F>
     void particle_system<F>::unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const {
         div_t tmp = std::div(idx, background_grid.ngridy()*background_grid.ngridz());
@@ -64,15 +73,23 @@ namespace GraMPM {
         idxz = tmp.rem;
     }
 
+    // grid getter
     template<typename F>
     const grid<F>* particle_system<F>::grid_address() { return &background_grid; }
 
+    // property getters
     template<typename F>const F& particle_system<F>::x(const int &i) const { return m_x[i]; }
     template<typename F>const F* particle_system<F>::x() const { return m_x.data(); }
     template<typename F>const F& particle_system<F>::y(const int &i) const { return m_y[i]; }
     template<typename F>const F* particle_system<F>::y() const { return m_y.data(); }
     template<typename F>const F& particle_system<F>::z(const int &i) const { return m_z[i]; }
     template<typename F>const F* particle_system<F>::z() const { return m_z.data(); }
+    template<typename F>const F& particle_system<F>::vx(const int &i) const { return m_vx[i]; }
+    template<typename F>const F* particle_system<F>::vx() const { return m_vx.data(); }
+    template<typename F>const F& particle_system<F>::vy(const int &i) const { return m_vy[i]; }
+    template<typename F>const F* particle_system<F>::vy() const { return m_vy.data(); }
+    template<typename F>const F& particle_system<F>::vz(const int &i) const { return m_vz[i]; }
+    template<typename F>const F* particle_system<F>::vz() const { return m_vz.data(); }
     template<typename F>const F& particle_system<F>::mass(const int &i) const { return m_mass[i]; }
     template<typename F>const F* particle_system<F>::mass() const { return &m_mass; }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
@@ -133,21 +150,29 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_x(const int &i, const F &x) { m_x[i] = x;}
     template<typename F> void particle_system<F>::set_y(const int &i, const F &y) { m_y[i] = y;}
     template<typename F> void particle_system<F>::set_z(const int &i, const F &z) { m_z[i] = z;}
+    template<typename F> void particle_system<F>::set_vx(const int &i, const F &vx) { m_vx[i] = vx;}
+    template<typename F> void particle_system<F>::set_vy(const int &i, const F &vy) { m_vy[i] = vy;}
+    template<typename F> void particle_system<F>::set_vz(const int &i, const F &vz) { m_vz[i] = vz;}
     template<typename F> void particle_system<F>::set_mass(const int &i, const F &m) { m_mass[i] = m; }
     template<typename F> void particle_system<F>::set_grid_index(const int &i, const int &idx) { m_grid_idx[i] = idx; }
     template<typename F> void particle_system<F>::incrementNParticles() {m_size++;}
 
+    // vector-like api: at. Returns particle class
     template<typename F>
     particle<F> particle_system<F>::at(const int &i) { 
-        particle<F> p(x(i), y(i), z(i), mass(i));
+        particle<F> p(x(i), y(i), z(i), vx(i), vy(i), vz(i), mass(i));
         return p; 
     }
 
+    // vector-like api: push_back. Takes particle class and appends its properties to particle_system member vectors
     template<typename F>
     void particle_system<F>::push_back(const particle<F> &p) {
         m_x.push_back(p.x);
         m_y.push_back(p.y);
         m_z.push_back(p.z);
+        m_vx.push_back(p.vx);
+        m_vy.push_back(p.vy);
+        m_vz.push_back(p.vz);
         m_mass.push_back(p.mass);
         m_grid_idx.push_back(
             ravel_grid_idx(
@@ -159,21 +184,29 @@ namespace GraMPM {
         m_size++;
     }
 
+    // vector-like api: reserve. Reserves space for each member vector
     template<typename F>
     void particle_system<F>::reserve(const long unsigned int &n) {
         m_x.reserve(n);
         m_y.reserve(n);
         m_z.reserve(n);
+        m_vx.reserve(n);
+        m_vy.reserve(n);
+        m_vz.reserve(n);
         m_mass.reserve(n);
         m_grid_idx.reserve(n);
         m_capacity = std::max(m_capacity, n);
     }
 
+    // vector-like api: clear. Makes size 0.
     template<typename F>
     void particle_system<F>::clear() {
         m_x.clear();
         m_y.clear();
         m_z.clear();
+        m_vx.clear();
+        m_vy.clear();
+        m_vz.clear();
         m_mass.clear();
         m_grid_idx.clear();
         m_p2g_neighbour_nodes.clear();
@@ -187,29 +220,39 @@ namespace GraMPM {
         m_size = 0;
     }
 
+    // vector-like api: empty. Checks whether all member vectors are empty. Also checks the m_size member
     template<typename F>
     bool particle_system<F>::empty() {
-        return m_x.empty() && m_y.empty() && m_z.empty() && m_mass.empty() && m_grid_idx.empty() &&
+        return m_x.empty() && m_y.empty() && m_z.empty() && m_vx.empty() && m_vy.empty() && m_vz.empty() && 
+            m_mass.empty() && m_grid_idx.empty() &&
             m_p2g_neighbour_nodes.empty() && m_p2g_neighbour_nodes_dx.empty() && m_p2g_neighbour_nodes_dy.empty() && 
             m_p2g_neighbour_nodes_dz.empty() && m_p2g_neighbour_nodes_w.empty() && m_p2g_neighbour_nodes_dwdx.empty() &&
             m_p2g_neighbour_nodes_dwdy.empty() && m_p2g_neighbour_nodes_dwdz.empty() && m_size==0;
     }
 
+    // vector-like api: resize. Shrinks/grows the member vectors. zeros the vectors.
     template<typename F>
     void particle_system<F>::resize(const int n) {
         m_x.resize(n, 0.);
         m_y.resize(n, 0.);
         m_z.resize(n, 0.);
+        m_vx.resize(n, 0.);
+        m_vy.resize(n, 0.);
+        m_vz.resize(n, 0.);
         m_mass.resize(n, 0.);
         m_grid_idx.resize(n, 0);
         m_size = n;
     }
 
+    // vector-like api: resize. Shrinks/grows the member vectors. Sets each vector value as per p properties
     template<typename F>
     void particle_system<F>::resize(const int n, const particle<F> p) {
         m_x.resize(n, p.x);
         m_y.resize(n, p.y);
         m_z.resize(n, p.z);
+        m_vx.resize(n, p.vx);
+        m_vy.resize(n, p.vy);
+        m_vz.resize(n, p.vz);
         m_mass.resize(n, p.mass);
         m_grid_idx.resize(n, ravel_grid_idx(
             background_grid.calc_idxx(p.x),

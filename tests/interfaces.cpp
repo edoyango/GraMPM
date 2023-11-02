@@ -108,6 +108,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.x(i)==0.);
         REQUIRE(particles.y(i)==0.);
         REQUIRE(particles.z(i)==0.);
+        REQUIRE(particles.vx(i)==0.);
+        REQUIRE(particles.vy(i)==0.);
+        REQUIRE(particles.vz(i)==0.);
         REQUIRE(particles.mass(i)==0.);
     }
 
@@ -122,6 +125,12 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.y(i)==-2.*i);
         particles.set_z(i, -3.*i);
         REQUIRE(particles.z(i)==-3.*i);
+        particles.set_vx(i, -4.*i);
+        REQUIRE(particles.vx(i)==-4.*i);
+        particles.set_vy(i, -5.*i);
+        REQUIRE(particles.vy(i)==-5.*i);
+        particles.set_vz(i, -6.*i);
+        REQUIRE(particles.vz(i)==-6.*i);
         particles.set_mass(i, 30.*i);
         REQUIRE(particles.mass(i)==30.*i);
     }
@@ -130,7 +139,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
     std::vector<GraMPM::particle<double>> pv;
     for (int i = 0; i < 5; ++i) {
         pv.push_back(
-            GraMPM::particle<double>(i, 2.*i, 3.*i, 10.*i)
+            GraMPM::particle<double>(i, 2.*i, 3.*i, 4.*i, 5.*i, 6.*i, 10.*i)
         );
     }
     GraMPM::particle_system<double> particles2(pv, grid, knl);
@@ -139,6 +148,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles2.x(i)==i);
         REQUIRE(particles2.y(i)==2.*i);
         REQUIRE(particles2.z(i)==3.*i);
+        REQUIRE(particles2.vx(i)==4.*i);
+        REQUIRE(particles2.vy(i)==5.*i);
+        REQUIRE(particles2.vz(i)==6.*i);
         REQUIRE(particles2.mass(i)==10.*i);
     }
 
@@ -148,6 +160,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(p.x==i);
         REQUIRE(p.y==2.*i);
         REQUIRE(p.z==3.*i);
+        REQUIRE(p.vx==4.*i);
+        REQUIRE(p.vy==5.*i);
+        REQUIRE(p.vz==6.*i);
         REQUIRE(p.mass==10.*i);
     }
 }
@@ -161,6 +176,9 @@ TEST_CASE("Check clearing and resizing", "[particles]") {
         REQUIRE(particles.x(i)==0.);
         REQUIRE(particles.y(i)==0.);
         REQUIRE(particles.z(i)==0.);
+        REQUIRE(particles.vx(i)==0.);
+        REQUIRE(particles.vy(i)==0.);
+        REQUIRE(particles.vz(i)==0.);
         REQUIRE(particles.mass(i)==0.);
         REQUIRE(particles.ravelled_grid_idx(i)==0);
     }

@@ -4,10 +4,14 @@
 namespace GraMPM {
 
     template<typename F>
-    particle<F>::particle(const F inx, const F iny, const F inz, const F inmass)
+    particle<F>::particle(const F inx, const F iny, const F inz, const F invx, const F invy, const F invz, 
+        const F inmass)
         : x {inx}
         , y {iny}
         , z {inz}
+        , vx {invx}
+        , vy {invy}
+        , vz {invz}
         , mass {inmass}
     {
     }

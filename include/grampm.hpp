@@ -14,8 +14,8 @@ namespace GraMPM {
     template<typename F>
     class particle {
         public:
-        F x, y, z, mass;
-        particle(const F inx, const F iny, const F inz, const F inmass);
+        F x, y, z, vx, vy, vz, mass;
+        particle(const F inx, const F iny, const F inz, const F invx, const F invy, const F invz, const F inmass);
     };
 
     template<typename F>
@@ -72,7 +72,7 @@ namespace GraMPM {
         private:
             long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
             const int m_nneighbour_nodes_perp;
-            std::vector<F> m_x, m_y, m_z, m_mass, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, 
+            std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_mass, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, 
                 m_p2g_neighbour_nodes_dz,m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, 
                 m_p2g_neighbour_nodes_dwdy, m_p2g_neighbour_nodes_dwdz;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
@@ -108,6 +108,12 @@ namespace GraMPM {
             const F* y() const;
             const F& z(const int &i) const;
             const F* z() const;
+            const F& vx(const int &i) const;
+            const F* vx() const;
+            const F& vy(const int &i) const;
+            const F* vy() const;
+            const F& vz(const int &i) const;
+            const F* vz() const;
             const F& mass(const int &i) const;
             const F* mass() const;
             const int& ravelled_grid_idx(const int &i) const;
@@ -127,6 +133,9 @@ namespace GraMPM {
             void set_x(const int &i, const F &x);
             void set_y(const int &i, const F &y);
             void set_z(const int &i, const F &z);
+            void set_vx(const int &i, const F &x);
+            void set_vy(const int &i, const F &y);
+            void set_vz(const int &i, const F &z);
             void set_mass(const int &i, const F &m);
             void set_grid_index(const int &i, const int &idx);
             void incrementNParticles();
