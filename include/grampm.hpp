@@ -85,6 +85,7 @@ namespace GraMPM {
                 m_p2g_neighbour_nodes_dz,m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, 
                 m_p2g_neighbour_nodes_dwdy, m_p2g_neighbour_nodes_dwdz;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
+            std::array<F, 3> m_body_force;
 
             int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;
 
@@ -101,10 +102,10 @@ namespace GraMPM {
             const kernel_base<F> &m_knl;
 
             // set size of vectors, for manual population later
-            particle_system(const long unsigned int size, grid<F> &ingrid, kernel_base<F> &knl);
+            particle_system(const long unsigned int size, std::array<F, 3> bf, grid<F> &ingrid, kernel_base<F> &knl);
 
             // populate class using vector of particle
-            particle_system(const std::vector<particle<F>> &pv, grid<F> &ingrid, kernel_base<F> &knl);
+            particle_system(const std::vector<particle<F>> &pv, std::array<F, 3> bf, grid<F> &ingrid, kernel_base<F> &knl);
 
             particle_system(grid<F> &ingrid, kernel_base<F> &knl);
             
@@ -125,6 +126,8 @@ namespace GraMPM {
             const F* vz() const;
             const F& mass(const int &i) const;
             const F* mass() const;
+            const std::array<F, 3>& body_force() const;
+            const F& body_force(const int &i) const;
             const int& ravelled_grid_idx(const int &i) const;
             std::array<int, 3> grid_idx(const int &i) const;
             const int& p2g_neighbour_node(const int i, const int j) const ;
@@ -146,6 +149,8 @@ namespace GraMPM {
             void set_vy(const int &i, const F &vy);
             void set_vz(const int &i, const F &vz);
             void set_mass(const int &i, const F &m);
+            void set_body_force(const std::array<F, 3> &bf);
+            void set_body_force(const F &bfx, const F &bfy, const F &bfz);
             void set_grid_index(const int &i, const int &idx);
             void incrementNParticles();
 
