@@ -22,6 +22,9 @@ namespace GraMPM {
         , m_momentumx(m_ncells, 0.)
         , m_momentumy(m_ncells, 0.)
         , m_momentumz(m_ncells, 0.)
+        , m_forcex(m_ncells, 0.)
+        , m_forcey(m_ncells, 0.)
+        , m_forcez(m_ncells, 0.)
     {
     }
 
@@ -42,6 +45,9 @@ namespace GraMPM {
         , m_momentumx(m_ncells, 0.)
         , m_momentumy(m_ncells, 0.)
         , m_momentumz(m_ncells, 0.)
+        , m_forcex(m_ncells, 0.)
+        , m_forcey(m_ncells, 0.)
+        , m_forcez(m_ncells, 0.)
     {
     }
     
@@ -82,6 +88,21 @@ namespace GraMPM {
         return m_momentumz[i*m_ngridy*m_ngridz+j*m_ngridz+k];
     }
     template<typename F> std::vector<F>* grid<F>::momentumz() { return &m_momentumz; }
+    template<typename F> const F& grid<F>::forcex(const int &i) const { return m_forcex[i]; }
+    template<typename F> const F& grid<F>::forcex(const int &i, const int &j, const int &k) const { 
+        return m_forcex[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    }
+    template<typename F> std::vector<F>* grid<F>::forcex() { return &m_forcex; }
+    template<typename F> const F& grid<F>::forcey(const int &i) const { return m_forcey[i]; }
+    template<typename F> const F& grid<F>::forcey(const int &i, const int &j, const int &k) const { 
+        return m_forcey[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    }
+    template<typename F> std::vector<F>* grid<F>::forcey() { return &m_forcey; }
+    template<typename F> const F& grid<F>::forcez(const int &i) const { return m_forcez[i]; }
+    template<typename F> const F& grid<F>::forcez(const int &i, const int &j, const int &k) const { 
+        return m_forcez[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    }
+    template<typename F> std::vector<F>* grid<F>::forcez() { return &m_forcez; }
 
 
     template<typename F>

@@ -57,6 +57,9 @@ TEST_CASE("grid intialized correctly", "[grid]") {
         REQUIRE(grid1.momentumx(i)==0.);
         REQUIRE(grid1.momentumy(i)==0.);
         REQUIRE(grid1.momentumz(i)==0.);
+        REQUIRE(grid1.forcex(i)==0.);
+        REQUIRE(grid1.forcey(i)==0.);
+        REQUIRE(grid1.forcez(i)==0.);
     }
 
     // test element-by-element set interface
