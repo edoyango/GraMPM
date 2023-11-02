@@ -30,6 +30,7 @@ TEST_CASE("Map particles masses to grid (linear bspline)") {
     p.map_particles_to_grid();
     p.map_mass_to_grid();
 
+    // check total mass conservation
     double psum = 0., gsum = 0.;
     for (int i = 0; i < p.size(); ++i)
         psum += p.mass(i);
@@ -37,6 +38,11 @@ TEST_CASE("Map particles masses to grid (linear bspline)") {
         gsum += p.background_grid.mass(i);
 
     REQUIRE(psum==gsum);
+
+    // check a few nodal values
+    REQUIRE(p.background_grid.mass(1, 1, 1)==360.);
+    REQUIRE(std::round(p.background_grid.mass(3, 4, 5))==1800.);
+    REQUIRE(std::round(p.background_grid.mass(5, 10, 15)*10.)==5625.);
 }
 
 TEST_CASE("Map particles masses to grid (cubic bspline)") {
@@ -55,6 +61,7 @@ TEST_CASE("Map particles masses to grid (cubic bspline)") {
     p.map_particles_to_grid();
     p.map_mass_to_grid();
 
+    // check total mass conservation
     double psum = 0., gsum = 0.;
     for (int i = 0; i < p.size(); ++i)
         psum += p.mass(i);
@@ -63,4 +70,9 @@ TEST_CASE("Map particles masses to grid (cubic bspline)") {
 
     // should be correct to 14 sigfigs
     REQUIRE(psum*1e7==std::round(gsum*1e7));
+
+    // check a few nodal values
+    REQUIRE(std::round(p.background_grid.mass(2, 2, 2)*1e10)==3426422542996);
+    REQUIRE(std::round(p.background_grid.mass(4, 5, 6))==1800.);
+    REQUIRE(std::round(p.background_grid.mass(6, 11, 16)*1e5)==55609375);
 }
