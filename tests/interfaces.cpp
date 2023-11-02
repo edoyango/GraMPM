@@ -54,6 +54,9 @@ TEST_CASE("grid intialized correctly", "[grid]") {
 
     for (int i = 0; i < grid1.ngridx()*grid1.ngridy()*grid1.ngridz(); ++i) {
         REQUIRE(grid1.mass(i)==0.);
+        REQUIRE(grid1.momentumx(i)==0.);
+        REQUIRE(grid1.momentumy(i)==0.);
+        REQUIRE(grid1.momentumz(i)==0.);
     }
 
     // test element-by-element set interface

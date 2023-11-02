@@ -19,6 +19,9 @@ namespace GraMPM {
         , m_ncells {m_ngridx*m_ngridy*m_ngridz}
         , m_dcell {dc}
         , m_mass(m_ncells, 0.)
+        , m_momentumx(m_ncells, 0.)
+        , m_momentumy(m_ncells, 0.)
+        , m_momentumz(m_ncells, 0.)
     {
     }
 
@@ -36,6 +39,9 @@ namespace GraMPM {
         , m_ncells {m_ngridx*m_ngridy*m_ngridz}
         , m_dcell {dc}
         , m_mass(m_ncells, 0.)
+        , m_momentumx(m_ncells, 0.)
+        , m_momentumy(m_ncells, 0.)
+        , m_momentumz(m_ncells, 0.)
     {
     }
     
@@ -60,7 +66,23 @@ namespace GraMPM {
     template<typename F> const F& grid<F>::mass(const int &i, const int &j, const int &k) const { 
         return m_mass[i*m_ngridy*m_ngridz+j*m_ngridz+k];
     }
-    template<typename F> std::vector<F>* grid<F>::mass() { return &m_mass; }
+    template<typename F> std::vector<F>* grid<F>::mass() { return &m_momentumx; }
+    template<typename F> const F& grid<F>::momentumx(const int &i) const { return m_momentumx[i]; }
+    template<typename F> const F& grid<F>::momentumx(const int &i, const int &j, const int &k) const { 
+        return m_momentumx[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    }
+    template<typename F> std::vector<F>* grid<F>::momentumx() { return &m_momentumx; }
+    template<typename F> const F& grid<F>::momentumy(const int &i) const { return m_momentumy[i]; }
+    template<typename F> const F& grid<F>::momentumy(const int &i, const int &j, const int &k) const { 
+        return m_momentumy[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    }
+    template<typename F> std::vector<F>* grid<F>::momentumy() { return &m_momentumy; }
+    template<typename F> const F& grid<F>::momentumz(const int &i) const { return m_momentumz[i]; }
+    template<typename F> const F& grid<F>::momentumz(const int &i, const int &j, const int &k) const { 
+        return m_momentumz[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    }
+    template<typename F> std::vector<F>* grid<F>::momentumz() { return &m_momentumz; }
+
 
     template<typename F>
     int grid<F>::calc_ngrid(const F &maxx, const F &minx, const F &dc) const {

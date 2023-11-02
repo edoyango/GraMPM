@@ -47,11 +47,20 @@ namespace GraMPM {
             const F& mass(const int &i) const;
             const F& mass(const int &i, const int &j, const int &k) const;
             std::vector<F>* mass();
+            const F& momentumx(const int &i) const;
+            const F& momentumx(const int &i, const int &j, const int &k) const;
+            std::vector<F>* momentumx();
+            const F& momentumy(const int &i) const;
+            const F& momentumy(const int &i, const int &j, const int &k) const;
+            std::vector<F>* momentumy();
+            const F& momentumz(const int &i) const;
+            const F& momentumz(const int &i, const int &j, const int &k) const;
+            std::vector<F>* momentumz();
         private:
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
             const F m_mingridx, m_mingridy, m_mingridz, m_maxgridx, m_maxgridy, m_maxgridz, m_dcell;
-            std::vector<F> m_mass;
+            std::vector<F> m_mass, m_momentumx, m_momentumy, m_momentumz;
 
             int calc_ngrid(const F &maxx, const F &minx, const F &dc) const;
         
