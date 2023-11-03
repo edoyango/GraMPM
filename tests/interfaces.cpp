@@ -170,6 +170,12 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
     REQUIRE(particles.body_force(1)==4.);
     REQUIRE(particles.body_force(2)==6.);
 
+    std::array<double, 3> bf2 {4., 6., 8.};
+    particles.set_body_force(bf2);
+    REQUIRE(particles.body_force(0)==4.);
+    REQUIRE(particles.body_force(1)==6.);
+    REQUIRE(particles.body_force(2)==8.);
+
     // check that aggregate interface works
     std::vector<GraMPM::particle<double>> pv;
     for (int i = 0; i < 5; ++i) {
