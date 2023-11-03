@@ -51,6 +51,7 @@ namespace GraMPM {
     {
     }
     
+    // getters
     template<typename F> int grid<F>::calc_idxx(const F &x) const { return static_cast<int>((x-m_mingridx)/m_dcell); }
     template<typename F> int grid<F>::calc_idxy(const F &y) const { return static_cast<int>((y-m_mingridy)/m_dcell); }
     template<typename F> int grid<F>::calc_idxz(const F &z) const { return static_cast<int>((z-m_mingridz)/m_dcell); }
@@ -104,7 +105,37 @@ namespace GraMPM {
     }
     template<typename F> std::vector<F>* grid<F>::forcez() { return &m_forcez; }
 
+    // setters
+    template<typename F> void grid<F>::set_mass(const int &i, const F &m) { m_mass[i] = m; }
+    template<typename F> void grid<F>::set_mass(const int &i, const int &j, const int &k, const F &m) { 
+        m_mass[i*m_ngridy*m_ngridz+j*m_ngridz+k] = m;
+    }
+    template<typename F> void grid<F>::set_momentumx(const int &i, const F &mx) { m_momentumx[i] = mx; }
+    template<typename F> void grid<F>::set_momentumx(const int &i, const int &j, const int &k, const F &mx) { 
+        m_momentumx[i*m_ngridy*m_ngridz+j*m_ngridz+k] = mx;
+    }
+    template<typename F> void grid<F>::set_momentumy(const int &i, const F &my) { m_momentumy[i] = my; }
+    template<typename F> void grid<F>::set_momentumy(const int &i, const int &j, const int &k, const F &my) { 
+        m_momentumy[i*m_ngridy*m_ngridz+j*m_ngridz+k] = my;
+    }
+    template<typename F> void grid<F>::set_momentumz(const int &i, const F &mz) { m_momentumz[i] = mz; }
+    template<typename F> void grid<F>::set_momentumz(const int &i, const int &j, const int &k, const F &mz) { 
+        m_momentumz[i*m_ngridy*m_ngridz+j*m_ngridz+k] = mz;
+    }
+    template<typename F> void grid<F>::set_forcex(const int &i, const F &fx) { m_forcex[i] = fx; }
+    template<typename F> void grid<F>::set_forcex(const int &i, const int &j, const int &k, const F &fx) { 
+        m_forcex[i*m_ngridy*m_ngridz+j*m_ngridz+k] = fx;
+    }
+    template<typename F> void grid<F>::set_forcey(const int &i, const F &fy) { m_forcey[i] = fy; }
+    template<typename F> void grid<F>::set_forcey(const int &i, const int &j, const int &k, const F &fy) { 
+        m_forcey[i*m_ngridy*m_ngridz+j*m_ngridz+k] = fy;
+    }
+    template<typename F> void grid<F>::set_forcez(const int &i, const F &fz) { m_forcez[i] = fz; }
+    template<typename F> void grid<F>::set_forcez(const int &i, const int &j, const int &k, const F &fz) { 
+        m_forcez[i*m_ngridy*m_ngridz+j*m_ngridz+k] = fz;
+    }
 
+    // helper function to calculate number of grid cells in each dimension
     template<typename F>
     int grid<F>::calc_ngrid(const F &maxx, const F &minx, const F &dc) const {
         return std::ceil((maxx-minx)/dc)+1;

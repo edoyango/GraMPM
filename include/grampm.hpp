@@ -70,6 +70,22 @@ namespace GraMPM {
             const F& forcez(const int &i) const;
             const F& forcez(const int &i, const int &j, const int &k) const;
             std::vector<F>* forcez();
+
+            // low level setters
+            void set_mass(const int &i, const F &m);
+            void set_mass(const int &i, const int &j, const int &k, const F &m);
+            void set_momentumx(const int &i, const F &mx);
+            void set_momentumx(const int &i, const int &j, const int &k, const F &mx);
+            void set_momentumy(const int &i, const F &my);
+            void set_momentumy(const int &i, const int &j, const int &k, const F &my);
+            void set_momentumz(const int &i, const F &mz);
+            void set_momentumz(const int &i, const int &j, const int &k, const F &mz);
+            void set_forcex(const int &i, const F &fx);
+            void set_forcex(const int &i, const int &j, const int &k, const F &fx);
+            void set_forcey(const int &i, const F &fy);
+            void set_forcey(const int &i, const int &j, const int &k, const F &fy);
+            void set_forcez(const int &i, const F &fz);
+            void set_forcez(const int &i, const int &j, const int &k, const F &fz);
         private:
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;

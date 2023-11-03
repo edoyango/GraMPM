@@ -52,8 +52,9 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(grid1.ngridx()==3);
     REQUIRE(grid1.ngridy()==4);
     REQUIRE(grid1.ngridz()==5);
+    REQUIRE(grid1.ncells()==60);
 
-    for (int i = 0; i < grid1.ngridx()*grid1.ngridy()*grid1.ngridz(); ++i) {
+    for (int i = 0; i < grid1.ncells(); ++i) {
         REQUIRE(grid1.mass(i)==0.);
         REQUIRE(grid1.momentumx(i)==0.);
         REQUIRE(grid1.momentumy(i)==0.);
@@ -62,6 +63,42 @@ TEST_CASE("grid intialized correctly", "[grid]") {
         REQUIRE(grid1.forcey(i)==0.);
         REQUIRE(grid1.forcez(i)==0.);
     }
+
+    // test setters
+    for (int i = 0; i < grid1.ncells(); ++i) {
+        grid1.set_mass(i, i*1.);
+        REQUIRE(grid1.mass(i)==i*1.);
+        grid1.set_momentumx(i, i*2.);
+        REQUIRE(grid1.momentumx(i)==i*2.);
+        grid1.set_momentumy(i, i*3.);
+        REQUIRE(grid1.momentumy(i)==i*3.);
+        grid1.set_momentumz(i, i*4.);
+        REQUIRE(grid1.momentumz(i)==i*4.);
+        grid1.set_forcex(i, i*5.);
+        REQUIRE(grid1.forcex(i)==i*5.);
+        grid1.set_forcey(i, i*6.);
+        REQUIRE(grid1.forcey(i)==i*6.);
+        grid1.set_forcez(i, i*7.);
+        REQUIRE(grid1.forcez(i)==i*7.);
+    }
+    for (int i = 0; i < grid1.ngridx(); ++i) 
+        for (int j = 0; j < grid1.ngridy(); ++j)
+            for (int k = 0; k < grid1.ngridz(); ++k) {
+                grid1.set_mass(i, j, k, (i+j+k)*1.);
+                REQUIRE(grid1.mass(i, j, k)==(i+j+k)*1.);
+                grid1.set_momentumx(i, j, k, (i+j+k)*2.);
+                REQUIRE(grid1.momentumx(i, j, k)==(i+j+k)*2.);
+                grid1.set_momentumy(i, j, k, (i+j+k)*3.);
+                REQUIRE(grid1.momentumy(i, j, k)==(i+j+k)*3.);
+                grid1.set_momentumz(i, j, k, (i+j+k)*4.);
+                REQUIRE(grid1.momentumz(i, j, k)==(i+j+k)*4.);
+                grid1.set_forcex(i, j, k, (i+j+k)*5.);
+                REQUIRE(grid1.forcex(i, j, k)==(i+j+k)*5.);
+                grid1.set_forcey(i, j, k, (i+j+k)*6.);
+                REQUIRE(grid1.forcey(i, j, k)==(i+j+k)*6.);
+                grid1.set_forcez(i, j, k, (i+j+k)*7.);
+                REQUIRE(grid1.forcez(i, j, k)==(i+j+k)*7.);
+            }
 
     // test element-by-element set interface
     GraMPM::grid<double> grid2(mingridx_in[0], mingridx_in[1], mingridx_in[2], maxgridx_in[0], maxgridx_in[1], 
