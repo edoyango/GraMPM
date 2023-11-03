@@ -12,11 +12,11 @@ const double dcell_in = 0.1;
 const std::array<double, 3> bf {1., 2., 3.};
 
 // test array set interface
-GraMPM::grid<double> grid(mingridx_in, maxgridx_in, dcell_in);
+GraMPM::grid<double> grid(mingridx_in, maxgridx_in, dcell_in, bf);
 
 GraMPM::kernel_linear_bspline<double> knl(dcell_in);
 
-GraMPM::particle_system<double> particles(5, bf, grid, knl);
+GraMPM::particle_system<double> particles(5, grid, knl);
 
 TEST_CASE("grid intialized correctly", "[grid]") {
 
@@ -63,9 +63,15 @@ TEST_CASE("grid intialized correctly", "[grid]") {
         REQUIRE(grid1.forcez(i)==0.);
     }
 
+    // test that body force vector is set to the correct values
+    std::array<double, 3> bf_out = grid1.body_force();
+    REQUIRE(bf_out[0] == 1.);
+    REQUIRE(bf_out[1] == 2.);
+    REQUIRE(bf_out[2] == 3.);
+
     // test element-by-element set interface
     GraMPM::grid<double> grid2(mingridx_in[0], mingridx_in[1], mingridx_in[2], maxgridx_in[0], maxgridx_in[1], 
-        maxgridx_in[2], dcell_in);
+        maxgridx_in[2], dcell_in, bf);
 
     REQUIRE(grid2.cell_size()==dcell_in);
 
@@ -97,6 +103,12 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(grid2.ngridx()==3);
     REQUIRE(grid2.ngridy()==4);
     REQUIRE(grid2.ngridz()==5);
+
+    // test body force set interface
+    grid2.set_body_force(2., 3., 4.);
+    REQUIRE(grid2.body_force(0)==2.);
+    REQUIRE(grid2.body_force(1)==3.);
+    REQUIRE(grid2.body_force(2)==4.);
 }
 
 TEST_CASE("Particle initialized correctly", "[grid]") {
@@ -106,12 +118,6 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
     REQUIRE(particles.background_grid.ngridx()==3);
     REQUIRE(particles.background_grid.ngridy()==4);
     REQUIRE(particles.background_grid.ngridz()==5);
-
-    // test that body force vector is set to the correct values
-    std::array<double, 3> bf_out = particles.body_force();
-    REQUIRE(bf_out[0] == 1.);
-    REQUIRE(bf_out[1] == 2.);
-    REQUIRE(bf_out[2] == 3.);
 
     // check that the particles instance has 5 particles, but all zeroed
     for (int i = 0; i < 5; ++i) {
@@ -165,11 +171,6 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.sigmayz(i)==-0.6*i);
     }
 
-    particles.set_body_force(2., 4., 6.);
-    REQUIRE(particles.body_force(0)==2.);
-    REQUIRE(particles.body_force(1)==4.);
-    REQUIRE(particles.body_force(2)==6.);
-
     // check that aggregate interface works
     std::vector<GraMPM::particle<double>> pv;
     for (int i = 0; i < 5; ++i) {
@@ -178,7 +179,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
                 -0.5*i, -0.6*i)
         );
     }
-    GraMPM::particle_system<double> particles2(pv, bf, grid, knl);
+    GraMPM::particle_system<double> particles2(pv, grid, knl);
 
     for (int i = 0; i < 5; ++i) {
         REQUIRE(particles2.x(i)==i);

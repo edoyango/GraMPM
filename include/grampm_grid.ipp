@@ -6,7 +6,8 @@
 namespace GraMPM {
     
     template<typename F>
-    grid<F>::grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc)
+    grid<F>::grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc, 
+        std::array<F, 3> body_force)
         : m_mingridx {minx}
         , m_mingridy {miny}
         , m_mingridz {minz}
@@ -25,11 +26,13 @@ namespace GraMPM {
         , m_forcex(m_ncells, 0.)
         , m_forcey(m_ncells, 0.)
         , m_forcez(m_ncells, 0.)
+        , m_body_force{body_force}
     {
     }
 
     template<typename F>
-    grid<F>::grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc)
+    grid<F>::grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc, 
+        const std::array<F, 3> body_force)
         : m_mingridx {minx[0]}
         , m_mingridy {minx[1]}
         , m_mingridz {minx[2]}
@@ -48,6 +51,7 @@ namespace GraMPM {
         , m_forcex(m_ncells, 0.)
         , m_forcey(m_ncells, 0.)
         , m_forcez(m_ncells, 0.)
+        , m_body_force {body_force}
     {
     }
     
@@ -68,6 +72,8 @@ namespace GraMPM {
     template<typename F> const int& grid<F>::ngridz() const { return m_ngridz; }
     template<typename F> const int& grid<F>::ncells() const { return m_ncells; }
     template<typename F> std::array<int, 3> grid<F>::ngrid() const { return {m_ngridx, m_ngridy, m_ngridz}; }
+    template<typename F> const std::array<F, 3>& grid<F>::body_force() const { return m_body_force; }
+    template<typename F> const F& grid<F>:: body_force(const int &i) const { return m_body_force[i]; }
     template<typename F> const F& grid<F>::mass(const int &i) const { return m_mass[i]; }
     template<typename F> const F& grid<F>::mass(const int &i, const int &j, const int &k) const { 
         return m_mass[i*m_ngridy*m_ngridz+j*m_ngridz+k];
@@ -104,6 +110,13 @@ namespace GraMPM {
     }
     template<typename F> std::vector<F>* grid<F>::forcez() { return &m_forcez; }
 
+    template<typename F> void grid<F>::set_body_force(std::array<F, 3> &bf) { m_body_force = bf; }
+    template<typename F> void grid<F>::set_body_force(const F& bfx, const F& bfy, const F& bfz) {
+        m_body_force[0] = bfx;
+        m_body_force[1] = bfy;
+        m_body_force[2] = bfz;
+    }
+    template<typename F> void grid<F>::set_body_force(const int &i, const F &bf) { m_body_force[i] = bf; }
 
     template<typename F>
     int grid<F>::calc_ngrid(const F &maxx, const F &minx, const F &dc) const {

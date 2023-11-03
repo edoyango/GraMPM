@@ -25,8 +25,9 @@ namespace GraMPM {
 
         public:
 
-            grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc);
-            grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc);
+            grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc,
+                std::array<F, 3> body_force);
+            grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc, std::array<F, 3> body_force);
 
             int calc_idxx(const F &x) const;
             int calc_idxy(const F &y) const;
@@ -46,6 +47,8 @@ namespace GraMPM {
             const int& ngridz() const;
             const int& ncells() const;
             std::array<int, 3> ngrid() const;
+            const std::array<F, 3>& body_force() const;
+            const F& body_force(const int &i) const;
             const F& mass(const int &i) const;
             const F& mass(const int &i, const int &j, const int &k) const;
             std::vector<F>* mass();
@@ -67,11 +70,16 @@ namespace GraMPM {
             const F& forcez(const int &i) const;
             const F& forcez(const int &i, const int &j, const int &k) const;
             std::vector<F>* forcez();
+
+            void set_body_force(std::array<F, 3> &bf);
+            void set_body_force(const F& bfx, const F& bfy, const F& bfz);
+            void set_body_force(const int &i, const F &bf);
         private:
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
             const F m_mingridx, m_mingridy, m_mingridz, m_maxgridx, m_maxgridy, m_maxgridz, m_dcell;
             std::vector<F> m_mass, m_momentumx, m_momentumy, m_momentumz, m_forcex, m_forcey, m_forcez;
+            std::array<F, 3> m_body_force;
 
             int calc_ngrid(const F &maxx, const F &minx, const F &dc) const;
         
@@ -88,7 +96,6 @@ namespace GraMPM {
                 m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
                 m_p2g_neighbour_nodes_dwdz;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
-            std::array<F, 3> m_body_force;
 
             int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;
 
@@ -105,10 +112,10 @@ namespace GraMPM {
             const kernel_base<F> &m_knl;
 
             // set size of vectors, for manual population later
-            particle_system(const long unsigned int size, std::array<F, 3> bf, grid<F> &ingrid, kernel_base<F> &knl);
+            particle_system(const long unsigned int size, grid<F> &ingrid, kernel_base<F> &knl);
 
             // populate class using vector of particle
-            particle_system(const std::vector<particle<F>> &pv, std::array<F, 3> bf, grid<F> &ingrid, kernel_base<F> &knl);
+            particle_system(const std::vector<particle<F>> &pv, grid<F> &ingrid, kernel_base<F> &knl);
 
             particle_system(grid<F> &ingrid, kernel_base<F> &knl);
             
@@ -143,8 +150,6 @@ namespace GraMPM {
             const F* sigmaxz() const;
             const F& sigmayz(const int &i) const;
             const F* sigmayz() const;
-            const std::array<F, 3>& body_force() const;
-            const F& body_force(const int &i) const;
             const int& ravelled_grid_idx(const int &i) const;
             std::array<int, 3> grid_idx(const int &i) const;
             const int& p2g_neighbour_node(const int i, const int j) const ;
@@ -173,8 +178,6 @@ namespace GraMPM {
             void set_sigmaxy(const int &i, const F &sigmaxy);
             void set_sigmaxz(const int &i, const F &sigmaxz);
             void set_sigmayz(const int &i, const F &sigmayz);
-            void set_body_force(const std::array<F, 3> &bf);
-            void set_body_force(const F &bfx, const F &bfy, const F &bfz);
             void set_grid_index(const int &i, const int &idx);
             void incrementNParticles();
 

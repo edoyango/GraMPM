@@ -5,7 +5,7 @@ namespace GraMPM {
 
     // initialize a particle with size, but zerod properties
     template<typename F>
-    particle_system<F>::particle_system(const long unsigned int size, std::array<F, 3> bf, grid<F> &ingrid, 
+    particle_system<F>::particle_system(const long unsigned int size, grid<F> &ingrid, 
         kernel_base<F> &knl)
         : m_x(size, 0.)
         , m_y(size, 0.)
@@ -25,7 +25,6 @@ namespace GraMPM {
         , background_grid(ingrid)
         , m_capacity {size}
         , m_size {size}
-        , m_body_force {bf}
         , m_knl {knl}
         , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
     {
@@ -33,11 +32,10 @@ namespace GraMPM {
 
     // initialize from std::vector of particle class
     template<typename F>
-    particle_system<F>::particle_system(const std::vector<particle<F>> &pv, std::array<F, 3> bf, grid<F> &ingrid, kernel_base<F> &knl)
+    particle_system<F>::particle_system(const std::vector<particle<F>> &pv, grid<F> &ingrid, kernel_base<F> &knl)
         : background_grid(ingrid)
         , m_capacity {pv.capacity()}
         , m_size {0}
-        , m_body_force {bf}
         , m_knl {knl}
         , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
     {
@@ -50,7 +48,6 @@ namespace GraMPM {
         : background_grid(ingrid)
         , m_capacity {0}
         , m_size {0}
-        , m_body_force {0., 0., 0.}
         , m_knl {knl}
         , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
     {
@@ -117,8 +114,6 @@ namespace GraMPM {
     template<typename F>const F* particle_system<F>::sigmaxz() const { return &m_sigmaxz; }
     template<typename F>const F& particle_system<F>::sigmayz(const int &i) const { return m_sigmayz[i]; }
     template<typename F>const F* particle_system<F>::sigmayz() const { return &m_sigmayz; }
-    template<typename F>const std::array<F, 3>& particle_system<F>::body_force() const { return m_body_force; }
-    template<typename F>const F& particle_system<F>::body_force(const int &i) const { return m_body_force[i]; }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
     template<typename F>
     std::array<int, 3> particle_system<F>::grid_idx(const int &i) const { return unravel_grid_idx(ravelled_grid_idx(i)); }
@@ -188,12 +183,6 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_sigmaxy(const int &i, const F &sigmaxy) { m_sigmaxy[i] = sigmaxy; }
     template<typename F> void particle_system<F>::set_sigmaxz(const int &i, const F &sigmaxz) { m_sigmaxz[i] = sigmaxz; }
     template<typename F> void particle_system<F>::set_sigmayz(const int &i, const F &sigmayz) { m_sigmayz[i] = sigmayz; }
-    template<typename F> void particle_system<F>::set_body_force(const std::array<F, 3> &bf) { m_body_force = bf; }
-    template<typename F> void particle_system<F>::set_body_force(const F &bfx, const F &bfy, const F &bfz) { 
-        m_body_force[0] = bfx;
-        m_body_force[1] = bfy;
-        m_body_force[2] = bfz;
-    }
     template<typename F> void particle_system<F>::set_grid_index(const int &i, const int &idx) { m_grid_idx[i] = idx; }
     template<typename F> void particle_system<F>::incrementNParticles() {m_size++;}
 
