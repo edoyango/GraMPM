@@ -177,13 +177,35 @@ TEST_CASE("Calculate force on grid (linear bspline)") {
     REQUIRE(psum==gsum);
 
     // check a few nodal values
-    // REQUIRE(std::round(p.background_grid.momentumx(1, 1, 1))==-600.);
-    // REQUIRE(std::round(p.background_grid.momentumx(3, 4, 5))==-9960.);
-    // REQUIRE(std::round(p.background_grid.momentumx(5, 10, 15)*100.)==-492375.);
-    // REQUIRE(std::round(p.background_grid.momentumy(1, 1, 1))==-600.);
-    // REQUIRE(std::round(p.background_grid.momentumy(3, 4, 5))==-13560.);
-    // REQUIRE(std::round(p.background_grid.momentumy(5, 10, 15)*100.)==-1054875.);
-    // REQUIRE(std::round(p.background_grid.momentumz(1, 1, 1))==-600.);
-    // REQUIRE(std::round(p.background_grid.momentumz(3, 4, 5))==-17160);
-    // REQUIRE(std::round(p.background_grid.momentumz(5, 10, 15)*100.)==-1617375.);
+    REQUIRE(std::round(p.background_grid.forcex(1, 1, 1))==360.);
+    REQUIRE(std::round(p.background_grid.forcex(3, 4, 5))==1800.);
+    REQUIRE(std::round(p.background_grid.forcex(5, 10, 15)*10.)==5625.);
+    REQUIRE(std::round(p.background_grid.forcey(1, 1, 1))==720.);
+    REQUIRE(std::round(p.background_grid.forcey(3, 4, 5))==3600.);
+    REQUIRE(std::round(p.background_grid.forcey(5, 10, 15)*10.)==11250.);
+    REQUIRE(std::round(p.background_grid.forcez(1, 1, 1))==1080.);
+    REQUIRE(std::round(p.background_grid.forcez(3, 4, 5))==5400.);
+    REQUIRE(std::round(p.background_grid.forcez(5, 10, 15)*10.)==16875.);
+
+    // try with non-zero stresses
+    for (int i = 0; i < p.size(); ++i) {
+        p.set_sigmaxx(i, p.x(i));
+        p.set_sigmayy(i, p.y(i));
+        p.set_sigmazz(i, p.z(i));
+        p.set_sigmaxy(i, p.x(i)-p.y(i));
+        p.set_sigmaxz(i, p.x(i)-p.z(i));
+        p.set_sigmayz(i, p.y(i)-p.z(i));
+    }
+
+    p.map_force_to_grid();
+    REQUIRE(std::round(p.background_grid.forcex(1, 1, 1)*1e10)==3596170004735.);
+    REQUIRE(std::round(p.background_grid.forcex(3, 4, 5)*1e10)==17992941517835.);
+    REQUIRE(std::round(p.background_grid.forcex(5, 10, 15)*1e10)==5644457328379.);
+    REQUIRE(std::round(p.background_grid.forcey(1, 1, 1)*1e10)==7205551538826.);
+    REQUIRE(std::round(p.background_grid.forcey(3, 4, 5)*1e10)==36007203137483.);
+    REQUIRE(std::round(p.background_grid.forcey(5, 10, 15)*1e10)==11250948927821.);
+    REQUIRE(std::round(p.background_grid.forcez(1, 1, 1)*1e10)==10814933072917.);
+    REQUIRE(std::round(p.background_grid.forcez(3, 4, 5)*1e10)==54021315681200.);
+    REQUIRE(std::round(p.background_grid.forcez(5, 10, 15)*1e10)==16876423394507.);
+
 }
