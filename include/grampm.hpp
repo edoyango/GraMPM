@@ -14,10 +14,13 @@ namespace GraMPM {
     template<typename F>
     class particle {
         public:
-        F x, y, z, vx, vy, vz, mass, rho, sigmaxx, sigmayy, sigmazz, sigmaxy, sigmaxz, sigmayz;
+        F x, y, z, vx, vy, vz, ax, ay, az, mass, rho, sigmaxx, sigmayy, sigmazz, sigmaxy, sigmaxz, sigmayz;
         particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, 
             const F &inmass, const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, 
             const F &insigmaxy, const F &insigmaxz, const F &insigmayz);
+        particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, const F &inmass,
+            const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, const F &insigmaxy, 
+            const F &insigmaxz, const F &insigmayz, const F &inax, const F &inay, const F &inaz);
     };
 
     template<typename F>
@@ -83,10 +86,10 @@ namespace GraMPM {
         private:
             long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
             const int m_nneighbour_nodes_perp;
-            std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_mass, m_rho, m_sigmaxx, m_sigmayy, m_sigmazz, m_sigmaxy, 
-                m_sigmaxz, m_sigmayz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
-                m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
-                m_p2g_neighbour_nodes_dwdz;
+            std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_ax, m_ay, m_az, m_mass, m_rho, m_sigmaxx, m_sigmayy, 
+                m_sigmazz, m_sigmaxy, m_sigmaxz, m_sigmayz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, 
+                m_p2g_neighbour_nodes_dz, m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, 
+                m_p2g_neighbour_nodes_dwdy, m_p2g_neighbour_nodes_dwdz;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
             std::array<F, 3> m_body_force;
 
@@ -127,6 +130,12 @@ namespace GraMPM {
             const F* vy() const;
             const F& vz(const int &i) const;
             const F* vz() const;
+            const F& ax(const int &i) const;
+            const F* ax() const;
+            const F& ay(const int &i) const;
+            const F* ay() const;
+            const F& az(const int &i) const;
+            const F* az() const;
             const F& mass(const int &i) const;
             const F* mass() const;
             const F& rho(const int &i) const;
@@ -165,6 +174,9 @@ namespace GraMPM {
             void set_vx(const int &i, const F &vx);
             void set_vy(const int &i, const F &vy);
             void set_vz(const int &i, const F &vz);
+            void set_ax(const int &i, const F &ax);
+            void set_ay(const int &i, const F &ay);
+            void set_az(const int &i, const F &az);
             void set_mass(const int &i, const F &m);
             void set_rho(const int &i, const F &rho);
             void set_sigmaxx(const int &i, const F &sigmaxx);
