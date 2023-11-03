@@ -71,4 +71,28 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
         gsum += p.background_grid.forcez(i);
 
     REQUIRE(std::round(psum)==std::round(gsum));
+
+    psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.dvx(i)*p.mass(i);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.momentumx(i);
+
+    REQUIRE(std::round(psum)==std::round(gsum));
+
+    psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.dvy(i)*p.mass(i);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.momentumy(i);
+
+    REQUIRE(std::round(psum)==std::round(gsum));
+
+    psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.dvz(i)*p.mass(i);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.momentumz(i);
+
+    REQUIRE(std::round(psum)==std::round(gsum));
 }

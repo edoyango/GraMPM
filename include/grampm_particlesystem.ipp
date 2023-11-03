@@ -562,6 +562,18 @@ namespace GraMPM {
             tmp[i] = background_grid.forcez(i)/background_grid.mass(i);
         }
         map2particles(tmp, az());
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            tmp[i] = background_grid.momentumx(i)/background_grid.mass(i);
+        }
+        map2particles(tmp, dvx());
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            tmp[i] = background_grid.momentumy(i)/background_grid.mass(i);
+        }
+        map2particles(tmp, dvy());
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            tmp[i] = background_grid.momentumz(i)/background_grid.mass(i);
+        }
+        map2particles(tmp, dvz());
     }
 }
 
