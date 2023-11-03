@@ -198,6 +198,8 @@ TEST_CASE("Calculate force on grid (linear bspline)") {
     }
 
     p.map_force_to_grid();
+
+    // check a few nodal values
     REQUIRE(std::round(p.background_grid.forcex(1, 1, 1)*1e10)==3596170004735.);
     REQUIRE(std::round(p.background_grid.forcex(3, 4, 5)*1e10)==17992941517835.);
     REQUIRE(std::round(p.background_grid.forcex(5, 10, 15)*1e10)==5644457328379.);
