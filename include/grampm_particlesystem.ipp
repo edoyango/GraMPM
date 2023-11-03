@@ -14,6 +14,7 @@ namespace GraMPM {
         , m_vy(size, 0.)
         , m_vz(size, 0.)
         , m_mass(size, 0.)
+        , m_rho(size, 0.)
         , m_grid_idx(size, 0)
         , background_grid(ingrid)
         , m_capacity {size}
@@ -96,6 +97,8 @@ namespace GraMPM {
     template<typename F>const F* particle_system<F>::vz() const { return m_vz.data(); }
     template<typename F>const F& particle_system<F>::mass(const int &i) const { return m_mass[i]; }
     template<typename F>const F* particle_system<F>::mass() const { return &m_mass; }
+    template<typename F>const F& particle_system<F>::rho(const int &i) const { return m_rho[i]; }
+    template<typename F>const F* particle_system<F>::rho() const { return &m_rho; }
     template<typename F>const std::array<F, 3>& particle_system<F>::body_force() const { return m_body_force; }
     template<typename F>const F& particle_system<F>::body_force(const int &i) const { return m_body_force[i]; }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
@@ -160,6 +163,7 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_vy(const int &i, const F &vy) { m_vy[i] = vy;}
     template<typename F> void particle_system<F>::set_vz(const int &i, const F &vz) { m_vz[i] = vz;}
     template<typename F> void particle_system<F>::set_mass(const int &i, const F &m) { m_mass[i] = m; }
+    template<typename F> void particle_system<F>::set_rho(const int &i, const F &rho) { m_rho[i] = rho; }
     template<typename F> void particle_system<F>::set_body_force(const std::array<F, 3> &bf) { m_body_force = bf; }
     template<typename F> void particle_system<F>::set_body_force(const F &bfx, const F &bfy, const F &bfz) { 
         m_body_force[0] = bfx;
@@ -172,7 +176,7 @@ namespace GraMPM {
     // vector-like api: at. Returns particle class
     template<typename F>
     particle<F> particle_system<F>::at(const int &i) { 
-        particle<F> p(x(i), y(i), z(i), vx(i), vy(i), vz(i), mass(i));
+        particle<F> p(x(i), y(i), z(i), vx(i), vy(i), vz(i), mass(i), rho(i));
         return p; 
     }
 
@@ -186,6 +190,7 @@ namespace GraMPM {
         m_vy.push_back(p.vy);
         m_vz.push_back(p.vz);
         m_mass.push_back(p.mass);
+        m_rho.push_back(p.rho);
         m_grid_idx.push_back(
             ravel_grid_idx(
                 background_grid.calc_idxx(p.x),
@@ -206,6 +211,7 @@ namespace GraMPM {
         m_vy.reserve(n);
         m_vz.reserve(n);
         m_mass.reserve(n);
+        m_rho.reserve(n);
         m_grid_idx.reserve(n);
         m_capacity = std::max(m_capacity, n);
     }
@@ -220,6 +226,7 @@ namespace GraMPM {
         m_vy.clear();
         m_vz.clear();
         m_mass.clear();
+        m_rho.clear();
         m_grid_idx.clear();
         m_p2g_neighbour_nodes.clear();
         m_p2g_neighbour_nodes_dx.clear();
@@ -252,6 +259,7 @@ namespace GraMPM {
         m_vy.resize(n, 0.);
         m_vz.resize(n, 0.);
         m_mass.resize(n, 0.);
+        m_rho.resize(n, 0.);
         m_grid_idx.resize(n, 0);
         m_size = n;
     }
@@ -266,6 +274,7 @@ namespace GraMPM {
         m_vy.resize(n, p.vy);
         m_vz.resize(n, p.vz);
         m_mass.resize(n, p.mass);
+        m_rho.resize(n, p.rho);
         m_grid_idx.resize(n, ravel_grid_idx(
             background_grid.calc_idxx(p.x),
             background_grid.calc_idxy(p.y),

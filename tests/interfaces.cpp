@@ -122,6 +122,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.vy(i)==0.);
         REQUIRE(particles.vz(i)==0.);
         REQUIRE(particles.mass(i)==0.);
+        REQUIRE(particles.rho(i)==0.);
     }
 
     REQUIRE(particles.size()==5);
@@ -143,6 +144,8 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.vz(i)==-6.*i);
         particles.set_mass(i, 30.*i);
         REQUIRE(particles.mass(i)==30.*i);
+        particles.set_rho(i, 40.*i);
+        REQUIRE(particles.rho(i)==40.*i);
     }
 
     particles.set_body_force(2., 4., 6.);
@@ -154,7 +157,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
     std::vector<GraMPM::particle<double>> pv;
     for (int i = 0; i < 5; ++i) {
         pv.push_back(
-            GraMPM::particle<double>(i, 2.*i, 3.*i, 4.*i, 5.*i, 6.*i, 10.*i)
+            GraMPM::particle<double>(i, 2.*i, 3.*i, 4.*i, 5.*i, 6.*i, 10.*i, 100.*i)
         );
     }
     GraMPM::particle_system<double> particles2(pv, bf, grid, knl);
@@ -167,6 +170,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles2.vy(i)==5.*i);
         REQUIRE(particles2.vz(i)==6.*i);
         REQUIRE(particles2.mass(i)==10.*i);
+        REQUIRE(particles2.rho(i)==100.*i);
     }
 
     // check aggregate getters
@@ -179,6 +183,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(p.vy==5.*i);
         REQUIRE(p.vz==6.*i);
         REQUIRE(p.mass==10.*i);
+        REQUIRE(p.rho==100.*i);
     }
 }
 
@@ -195,6 +200,7 @@ TEST_CASE("Check clearing and resizing", "[particles]") {
         REQUIRE(particles.vy(i)==0.);
         REQUIRE(particles.vz(i)==0.);
         REQUIRE(particles.mass(i)==0.);
+        REQUIRE(particles.rho(i)==0.);
         REQUIRE(particles.ravelled_grid_idx(i)==0);
     }
 }
