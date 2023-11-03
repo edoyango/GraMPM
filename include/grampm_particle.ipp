@@ -5,7 +5,8 @@ namespace GraMPM {
 
     template<typename F>
     particle<F>::particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, 
-        const F &inmass, const F &inrho)
+        const F &inmass, const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, const F &insigmaxy,
+        const F &insigmaxz, const F &insigmayz)
         : x {inx}
         , y {iny}
         , z {inz}
@@ -14,6 +15,12 @@ namespace GraMPM {
         , vz {invz}
         , mass {inmass}
         , rho {inrho}
+        , sigmaxx {insigmaxx}
+        , sigmayy {insigmayy}
+        , sigmazz {insigmazz}
+        , sigmaxy {insigmaxy}
+        , sigmaxz {insigmaxz}
+        , sigmayz {insigmayz}
     {
     }
 }

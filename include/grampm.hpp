@@ -14,9 +14,10 @@ namespace GraMPM {
     template<typename F>
     class particle {
         public:
-        F x, y, z, vx, vy, vz, mass, rho;
+        F x, y, z, vx, vy, vz, mass, rho, sigmaxx, sigmayy, sigmazz, sigmaxy, sigmaxz, sigmayz;
         particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, 
-            const F &inmass, const F &inrho);
+            const F &inmass, const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, 
+            const F &insigmaxy, const F &insigmaxz, const F &insigmayz);
     };
 
     template<typename F>
@@ -82,9 +83,10 @@ namespace GraMPM {
         private:
             long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
             const int m_nneighbour_nodes_perp;
-            std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_mass, m_rho, m_p2g_neighbour_nodes_dx, 
-                m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz,m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, 
-                m_p2g_neighbour_nodes_dwdy, m_p2g_neighbour_nodes_dwdz;
+            std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_mass, m_rho, m_sigmaxx, m_sigmayy, m_sigmazz, m_sigmaxy, 
+                m_sigmaxz, m_sigmayz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
+                m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
+                m_p2g_neighbour_nodes_dwdz;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
             std::array<F, 3> m_body_force;
 
@@ -129,6 +131,18 @@ namespace GraMPM {
             const F* mass() const;
             const F& rho(const int &i) const;
             const F* rho() const;
+            const F& sigmaxx(const int &i) const;
+            const F* sigmaxx() const;
+            const F& sigmayy(const int &i) const;
+            const F* sigmayy() const;
+            const F& sigmazz(const int &i) const;
+            const F* sigmazz() const;
+            const F& sigmaxy(const int &i) const;
+            const F* sigmaxy() const;
+            const F& sigmaxz(const int &i) const;
+            const F* sigmaxz() const;
+            const F& sigmayz(const int &i) const;
+            const F* sigmayz() const;
             const std::array<F, 3>& body_force() const;
             const F& body_force(const int &i) const;
             const int& ravelled_grid_idx(const int &i) const;
@@ -153,6 +167,12 @@ namespace GraMPM {
             void set_vz(const int &i, const F &vz);
             void set_mass(const int &i, const F &m);
             void set_rho(const int &i, const F &rho);
+            void set_sigmaxx(const int &i, const F &sigmaxx);
+            void set_sigmayy(const int &i, const F &sigmayy);
+            void set_sigmazz(const int &i, const F &sigmazz);
+            void set_sigmaxy(const int &i, const F &sigmaxy);
+            void set_sigmaxz(const int &i, const F &sigmaxz);
+            void set_sigmayz(const int &i, const F &sigmayz);
             void set_body_force(const std::array<F, 3> &bf);
             void set_body_force(const F &bfx, const F &bfy, const F &bfz);
             void set_grid_index(const int &i, const int &idx);

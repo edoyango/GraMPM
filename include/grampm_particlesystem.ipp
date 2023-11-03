@@ -15,6 +15,12 @@ namespace GraMPM {
         , m_vz(size, 0.)
         , m_mass(size, 0.)
         , m_rho(size, 0.)
+        , m_sigmaxx(size, 0.)
+        , m_sigmayy(size, 0.)
+        , m_sigmazz(size, 0.)
+        , m_sigmaxy(size, 0.)
+        , m_sigmaxz(size, 0.)
+        , m_sigmayz(size, 0.)
         , m_grid_idx(size, 0)
         , background_grid(ingrid)
         , m_capacity {size}
@@ -99,6 +105,18 @@ namespace GraMPM {
     template<typename F>const F* particle_system<F>::mass() const { return &m_mass; }
     template<typename F>const F& particle_system<F>::rho(const int &i) const { return m_rho[i]; }
     template<typename F>const F* particle_system<F>::rho() const { return &m_rho; }
+    template<typename F>const F& particle_system<F>::sigmaxx(const int &i) const { return m_sigmaxx[i]; }
+    template<typename F>const F* particle_system<F>::sigmaxx() const { return &m_sigmaxx; }
+    template<typename F>const F& particle_system<F>::sigmayy(const int &i) const { return m_sigmayy[i]; }
+    template<typename F>const F* particle_system<F>::sigmayy() const { return &m_sigmayy; }
+    template<typename F>const F& particle_system<F>::sigmazz(const int &i) const { return m_sigmazz[i]; }
+    template<typename F>const F* particle_system<F>::sigmazz() const { return &m_sigmazz; }
+    template<typename F>const F& particle_system<F>::sigmaxy(const int &i) const { return m_sigmaxy[i]; }
+    template<typename F>const F* particle_system<F>::sigmaxy() const { return &m_sigmaxy; }
+    template<typename F>const F& particle_system<F>::sigmaxz(const int &i) const { return m_sigmaxz[i]; }
+    template<typename F>const F* particle_system<F>::sigmaxz() const { return &m_sigmaxz; }
+    template<typename F>const F& particle_system<F>::sigmayz(const int &i) const { return m_sigmayz[i]; }
+    template<typename F>const F* particle_system<F>::sigmayz() const { return &m_sigmayz; }
     template<typename F>const std::array<F, 3>& particle_system<F>::body_force() const { return m_body_force; }
     template<typename F>const F& particle_system<F>::body_force(const int &i) const { return m_body_force[i]; }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
@@ -164,6 +182,12 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_vz(const int &i, const F &vz) { m_vz[i] = vz;}
     template<typename F> void particle_system<F>::set_mass(const int &i, const F &m) { m_mass[i] = m; }
     template<typename F> void particle_system<F>::set_rho(const int &i, const F &rho) { m_rho[i] = rho; }
+    template<typename F> void particle_system<F>::set_sigmaxx(const int &i, const F &sigmaxx) { m_sigmaxx[i] = sigmaxx; }
+    template<typename F> void particle_system<F>::set_sigmayy(const int &i, const F &sigmayy) { m_sigmayy[i] = sigmayy; }
+    template<typename F> void particle_system<F>::set_sigmazz(const int &i, const F &sigmazz) { m_sigmazz[i] = sigmazz; }
+    template<typename F> void particle_system<F>::set_sigmaxy(const int &i, const F &sigmaxy) { m_sigmaxy[i] = sigmaxy; }
+    template<typename F> void particle_system<F>::set_sigmaxz(const int &i, const F &sigmaxz) { m_sigmaxz[i] = sigmaxz; }
+    template<typename F> void particle_system<F>::set_sigmayz(const int &i, const F &sigmayz) { m_sigmayz[i] = sigmayz; }
     template<typename F> void particle_system<F>::set_body_force(const std::array<F, 3> &bf) { m_body_force = bf; }
     template<typename F> void particle_system<F>::set_body_force(const F &bfx, const F &bfy, const F &bfz) { 
         m_body_force[0] = bfx;
@@ -176,7 +200,8 @@ namespace GraMPM {
     // vector-like api: at. Returns particle class
     template<typename F>
     particle<F> particle_system<F>::at(const int &i) { 
-        particle<F> p(x(i), y(i), z(i), vx(i), vy(i), vz(i), mass(i), rho(i));
+        particle<F> p(x(i), y(i), z(i), vx(i), vy(i), vz(i), mass(i), rho(i), sigmaxx(i), sigmayy(i), sigmazz(i),
+            sigmaxy(i), sigmaxz(i), sigmayz(i));
         return p; 
     }
 
@@ -191,6 +216,12 @@ namespace GraMPM {
         m_vz.push_back(p.vz);
         m_mass.push_back(p.mass);
         m_rho.push_back(p.rho);
+        m_sigmaxx.push_back(p.sigmaxx);
+        m_sigmayy.push_back(p.sigmayy);
+        m_sigmazz.push_back(p.sigmazz);
+        m_sigmaxy.push_back(p.sigmaxy);
+        m_sigmaxz.push_back(p.sigmaxz);
+        m_sigmayz.push_back(p.sigmayz);
         m_grid_idx.push_back(
             ravel_grid_idx(
                 background_grid.calc_idxx(p.x),
@@ -212,6 +243,12 @@ namespace GraMPM {
         m_vz.reserve(n);
         m_mass.reserve(n);
         m_rho.reserve(n);
+        m_sigmaxx.reserve(n);
+        m_sigmayy.reserve(n);
+        m_sigmazz.reserve(n);
+        m_sigmaxy.reserve(n);
+        m_sigmaxz.reserve(n);
+        m_sigmayz.reserve(n);
         m_grid_idx.reserve(n);
         m_capacity = std::max(m_capacity, n);
     }
@@ -227,6 +264,12 @@ namespace GraMPM {
         m_vz.clear();
         m_mass.clear();
         m_rho.clear();
+        m_sigmaxx.clear();
+        m_sigmayy.clear();
+        m_sigmazz.clear();
+        m_sigmaxy.clear();
+        m_sigmaxz.clear();
+        m_sigmayz.clear();
         m_grid_idx.clear();
         m_p2g_neighbour_nodes.clear();
         m_p2g_neighbour_nodes_dx.clear();
@@ -260,6 +303,12 @@ namespace GraMPM {
         m_vz.resize(n, 0.);
         m_mass.resize(n, 0.);
         m_rho.resize(n, 0.);
+        m_sigmaxx.resize(n, 0.);
+        m_sigmayy.resize(n, 0.);
+        m_sigmazz.resize(n, 0.);
+        m_sigmaxy.resize(n, 0.);
+        m_sigmaxz.resize(n, 0.);
+        m_sigmayz.resize(n, 0.);
         m_grid_idx.resize(n, 0);
         m_size = n;
     }
@@ -275,6 +324,12 @@ namespace GraMPM {
         m_vz.resize(n, p.vz);
         m_mass.resize(n, p.mass);
         m_rho.resize(n, p.rho);
+        m_sigmaxx.resize(n, p.rho);
+        m_sigmayy.resize(n, p.rho);
+        m_sigmazz.resize(n, p.rho);
+        m_sigmaxy.resize(n, p.rho);
+        m_sigmaxz.resize(n, p.rho);
+        m_sigmayz.resize(n, p.rho);
         m_grid_idx.resize(n, ravel_grid_idx(
             background_grid.calc_idxx(p.x),
             background_grid.calc_idxy(p.y),
