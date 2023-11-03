@@ -96,45 +96,45 @@ namespace GraMPM {
 
     // property getters
     template<typename F>const F& particle_system<F>::x(const int &i) const { return m_x[i]; }
-    template<typename F>const F* particle_system<F>::x() const { return m_x.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::x() { return &m_x; }
     template<typename F>const F& particle_system<F>::y(const int &i) const { return m_y[i]; }
-    template<typename F>const F* particle_system<F>::y() const { return m_y.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::y() { return &m_y; }
     template<typename F>const F& particle_system<F>::z(const int &i) const { return m_z[i]; }
-    template<typename F>const F* particle_system<F>::z() const { return m_z.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::z() { return &m_z; }
     template<typename F>const F& particle_system<F>::vx(const int &i) const { return m_vx[i]; }
-    template<typename F>const F* particle_system<F>::vx() const { return m_vx.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::vx() { return &m_vx; }
     template<typename F>const F& particle_system<F>::vy(const int &i) const { return m_vy[i]; }
-    template<typename F>const F* particle_system<F>::vy() const { return m_vy.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::vy() { return &m_vy; }
     template<typename F>const F& particle_system<F>::vz(const int &i) const { return m_vz[i]; }
-    template<typename F>const F* particle_system<F>::vz() const { return m_vz.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::vz() { return &m_vz; }
     template<typename F>const F& particle_system<F>::ax(const int &i) const { return m_ax[i]; }
-    template<typename F>const F* particle_system<F>::ax() const { return m_ax.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::ax() { return &m_ax; }
     template<typename F>const F& particle_system<F>::ay(const int &i) const { return m_ay[i]; }
-    template<typename F>const F* particle_system<F>::ay() const { return m_ay.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::ay() { return &m_ay; }
     template<typename F>const F& particle_system<F>::az(const int &i) const { return m_az[i]; }
-    template<typename F>const F* particle_system<F>::az() const { return m_az.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::az() { return &m_az; }
     template<typename F>const F& particle_system<F>::dvx(const int &i) const { return m_dvx[i]; }
-    template<typename F>const F* particle_system<F>::dvx() const { return m_dvx.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::dvx() { return &m_dvx; }
     template<typename F>const F& particle_system<F>::dvy(const int &i) const { return m_dvy[i]; }
-    template<typename F>const F* particle_system<F>::dvy() const { return m_dvy.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::dvy() { return &m_dvy; }
     template<typename F>const F& particle_system<F>::dvz(const int &i) const { return m_dvz[i]; }
-    template<typename F>const F* particle_system<F>::dvz() const { return m_dvz.data(); }
+    template<typename F> std::vector<F>* particle_system<F>::dvz() { return &m_dvz; }
     template<typename F>const F& particle_system<F>::mass(const int &i) const { return m_mass[i]; }
-    template<typename F>const F* particle_system<F>::mass() const { return &m_mass; }
+    template<typename F> std::vector<F>* particle_system<F>::mass() { return &m_mass; }
     template<typename F>const F& particle_system<F>::rho(const int &i) const { return m_rho[i]; }
-    template<typename F>const F* particle_system<F>::rho() const { return &m_rho; }
+    template<typename F> std::vector<F>* particle_system<F>::rho() { return &m_rho; }
     template<typename F>const F& particle_system<F>::sigmaxx(const int &i) const { return m_sigmaxx[i]; }
-    template<typename F>const F* particle_system<F>::sigmaxx() const { return &m_sigmaxx; }
+    template<typename F> std::vector<F>* particle_system<F>::sigmaxx() { return &m_sigmaxx; }
     template<typename F>const F& particle_system<F>::sigmayy(const int &i) const { return m_sigmayy[i]; }
-    template<typename F>const F* particle_system<F>::sigmayy() const { return &m_sigmayy; }
+    template<typename F> std::vector<F>* particle_system<F>::sigmayy() { return &m_sigmayy; }
     template<typename F>const F& particle_system<F>::sigmazz(const int &i) const { return m_sigmazz[i]; }
-    template<typename F>const F* particle_system<F>::sigmazz() const { return &m_sigmazz; }
+    template<typename F> std::vector<F>* particle_system<F>::sigmazz() { return &m_sigmazz; }
     template<typename F>const F& particle_system<F>::sigmaxy(const int &i) const { return m_sigmaxy[i]; }
-    template<typename F>const F* particle_system<F>::sigmaxy() const { return &m_sigmaxy; }
+    template<typename F> std::vector<F>* particle_system<F>::sigmaxy() { return &m_sigmaxy; }
     template<typename F>const F& particle_system<F>::sigmaxz(const int &i) const { return m_sigmaxz[i]; }
-    template<typename F>const F* particle_system<F>::sigmaxz() const { return &m_sigmaxz; }
+    template<typename F> std::vector<F>* particle_system<F>::sigmaxz() { return &m_sigmaxz; }
     template<typename F>const F& particle_system<F>::sigmayz(const int &i) const { return m_sigmayz[i]; }
-    template<typename F>const F* particle_system<F>::sigmayz() const { return &m_sigmayz; }
+    template<typename F> std::vector<F>* particle_system<F>::sigmayz() { return &m_sigmayz; }
     template<typename F>const std::array<F, 3>& particle_system<F>::body_force() const { return m_body_force; }
     template<typename F>const F& particle_system<F>::body_force(const int &i) const { return m_body_force[i]; }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
@@ -241,9 +241,9 @@ namespace GraMPM {
         m_ax.push_back(p.ax);
         m_ay.push_back(p.ay);
         m_az.push_back(p.az);
-        m_ax.push_back(p.dvx);
-        m_ay.push_back(p.dvy);
-        m_az.push_back(p.dvz);
+        m_dvx.push_back(p.dvx);
+        m_dvy.push_back(p.dvy);
+        m_dvz.push_back(p.dvz);
         m_mass.push_back(p.mass);
         m_rho.push_back(p.rho);
         m_sigmaxx.push_back(p.sigmaxx);
@@ -478,12 +478,24 @@ namespace GraMPM {
         // zero the grid
         std::fill(g_property->begin(), g_property->end(), 0.);
 
-        for (int i = 0; i < m_size; ++i) {
+        for (int i = 0; i < m_size; ++i)
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 const int node_idx = p2g_neighbour_node(i, j);
                 (*g_property)[node_idx] += p2g_neighbour_node_w(i, j)*p_property[i];
             }
-        }
+    }
+
+    template<typename F>
+    void particle_system<F>::map2particles(const std::vector<F> &g_property, std::vector<F> *p_property) {
+
+        // zero the particles' array
+        std::fill(p_property->begin(), p_property->end(), 0.);
+
+        for (int i = 0; i < m_size; ++i)
+            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+                const int node_idx = p2g_neighbour_node(i, j);
+                (*p_property)[i] += p2g_neighbour_node_w(i, j)*g_property[node_idx];
+            }
     }
 
     template<typename F> void particle_system<F>::map_mass_to_grid() { map2grid(m_mass, background_grid.mass()); }
@@ -534,6 +546,22 @@ namespace GraMPM {
                 );
             }
 
+    }
+
+    template<typename F> void particle_system<F>::map_acceleration_to_particles() {
+        std::vector<F> tmp(background_grid.ncells());
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            tmp[i] = background_grid.forcex(i)/background_grid.mass(i);
+        }
+        map2particles(tmp, ax());
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            tmp[i] = background_grid.forcey(i)/background_grid.mass(i);
+        }
+        map2particles(tmp, ay());
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            tmp[i] = background_grid.forcez(i)/background_grid.mass(i);
+        }
+        map2particles(tmp, az());
     }
 }
 

@@ -117,7 +117,8 @@ namespace GraMPM {
 
             void unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const;
 
-            void map2grid(const std::vector<F> &p_property, std::vector<F> *g_property) ;
+            void map2grid(const std::vector<F> &p_property, std::vector<F> *g_property);
+            void map2particles(const std::vector<F> &g_property, std::vector<F> *p_property);
 
         public:
 
@@ -137,45 +138,45 @@ namespace GraMPM {
 
             // "low level getterfunctions"
             const F& x(const int &i) const;
-            const F* x() const;
+            std::vector<F>* x();
             const F& y(const int &i) const;
-            const F* y() const;
+            std::vector<F>* y();
             const F& z(const int &i) const;
-            const F* z() const;
+            std::vector<F>* z();
             const F& vx(const int &i) const;
-            const F* vx() const;
+            std::vector<F>* vx();
             const F& vy(const int &i) const;
-            const F* vy() const;
+            std::vector<F>* vy();
             const F& vz(const int &i) const;
-            const F* vz() const;
+            std::vector<F>* vz();
             const F& ax(const int &i) const;
-            const F* ax() const;
+            std::vector<F>* ax();
             const F& ay(const int &i) const;
-            const F* ay() const;
+            std::vector<F>* ay();
             const F& az(const int &i) const;
-            const F* az() const;
+            std::vector<F>* az();
             const F& dvx(const int &i) const;
-            const F* dvx() const;
+            std::vector<F>* dvx();
             const F& dvy(const int &i) const;
-            const F* dvy() const;
+            std::vector<F>* dvy();
             const F& dvz(const int &i) const;
-            const F* dvz() const;
+            std::vector<F>* dvz();
             const F& mass(const int &i) const;
-            const F* mass() const;
+            std::vector<F>* mass();
             const F& rho(const int &i) const;
-            const F* rho() const;
+            std::vector<F>* rho();
             const F& sigmaxx(const int &i) const;
-            const F* sigmaxx() const;
+            std::vector<F>* sigmaxx();
             const F& sigmayy(const int &i) const;
-            const F* sigmayy() const;
+            std::vector<F>* sigmayy();
             const F& sigmazz(const int &i) const;
-            const F* sigmazz() const;
+            std::vector<F>* sigmazz();
             const F& sigmaxy(const int &i) const;
-            const F* sigmaxy() const;
+            std::vector<F>* sigmaxy();
             const F& sigmaxz(const int &i) const;
-            const F* sigmaxz() const;
+            std::vector<F>* sigmaxz();
             const F& sigmayz(const int &i) const;
-            const F* sigmayz() const;
+            std::vector<F>* sigmayz();
             const std::array<F, 3>& body_force() const;
             const F& body_force(const int &i) const;
             const int& ravelled_grid_idx(const int &i) const;
@@ -201,9 +202,9 @@ namespace GraMPM {
             void set_ax(const int &i, const F &ax);
             void set_ay(const int &i, const F &ay);
             void set_az(const int &i, const F &az);
-            void set_dvx(const int &i, const F &ax);
-            void set_dvy(const int &i, const F &ay);
-            void set_dvz(const int &i, const F &az);
+            void set_dvx(const int &i, const F &dvx);
+            void set_dvy(const int &i, const F &dvy);
+            void set_dvz(const int &i, const F &dvz);
             void set_mass(const int &i, const F &m);
             void set_rho(const int &i, const F &rho);
             void set_sigmaxx(const int &i, const F &sigmaxx);
@@ -242,6 +243,7 @@ namespace GraMPM {
             void map_mass_to_grid();
             void map_momentum_to_grid();
             void map_force_to_grid();
+            void map_acceleration_to_particles();
     };
 
 }
