@@ -442,6 +442,44 @@ namespace GraMPM {
         for (int i = 0; i < m_size; ++i) tmp_momentum[i] = mass(i)*vz(i);
         map2grid(tmp_momentum, background_grid.momentumz()); 
     }
+
+    template<typename F> void particle_system<F>::map_force_to_grid() {
+
+        // initialize grid force with body force
+        std::vector<F> tmp_force(m_size);
+        for (int i = 0; i < m_size; ++i) tmp_force[i] = mass(i)*body_force(0);
+        map2grid(tmp_force, background_grid.forcex());
+        for (int i = 0; i < m_size; ++i) tmp_force[i] = mass(i)*body_force(1);
+        map2grid(tmp_force, background_grid.forcey());
+        for (int i = 0; i < m_size; ++i) tmp_force[i] = mass(i)*body_force(2);
+        map2grid(tmp_force, background_grid.forcez());
+
+        std::vector<F> *tmp_grid_forcex = background_grid.forcex(), 
+            *tmp_grid_forcey = background_grid.forcey(),
+            *tmp_grid_forcez = background_grid.forcez();
+
+        // div sigma
+        for (int i = 0; i < m_size; ++i)
+            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+                const int node_idx = p2g_neighbour_node(i, j);
+                (*tmp_grid_forcex)[node_idx] -= m_mass[i]/m_rho[i]*(
+                    sigmaxx(i)*p2g_neighbour_node_dwdx(i, j) +
+                    sigmaxy(i)*p2g_neighbour_node_dwdy(i, j) +
+                    sigmaxz(i)*p2g_neighbour_node_dwdz(i, j)
+                );
+                (*tmp_grid_forcey)[node_idx] -= m_mass[i]/m_rho[i]*(
+                    sigmaxy(i)*p2g_neighbour_node_dwdx(i, j) +
+                    sigmayy(i)*p2g_neighbour_node_dwdy(i, j) +
+                    sigmayz(i)*p2g_neighbour_node_dwdz(i, j)
+                );
+                (*tmp_grid_forcez)[node_idx] -= m_mass[i]/m_rho[i]*(
+                    sigmaxz(i)*p2g_neighbour_node_dwdx(i, j) +
+                    sigmayz(i)*p2g_neighbour_node_dwdy(i, j) +
+                    sigmazz(i)*p2g_neighbour_node_dwdz(i, j)
+                );
+            }
+
+    }
 }
 
 #endif

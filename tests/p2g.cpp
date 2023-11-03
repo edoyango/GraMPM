@@ -11,7 +11,8 @@ void generate_particles(GraMPM::particle_system<double> &p) {
             for (int k = 0; k < 30; ++k) {
                 GraMPM::particle<double> p_i(0.1*(i+0.5), 0.1*(j+0.5), 0.1*(k+0.5), 
                                              -i, -j, -k,
-                                             10.*(i+j+k));
+                                             10.*(i+j+k), 100.*(i+j+k+3.),
+                                             0., 0., 0., 0., 0., 0.);
                 p.push_back(p_i);
             }
 }
@@ -129,4 +130,60 @@ TEST_CASE("Map particles momentums to grid (linear bspline)") {
     REQUIRE(std::round(p.background_grid.momentumz(1, 1, 1))==-600.);
     REQUIRE(std::round(p.background_grid.momentumz(3, 4, 5))==-17160);
     REQUIRE(std::round(p.background_grid.momentumz(5, 10, 15)*100.)==-1617375.);
+}
+
+TEST_CASE("Calculate force on grid (linear bspline)") {
+    const double dcell = 0.2;
+    const std::array<double, 3> bf {1., 2., 3.};
+    GraMPM::grid<double> g(0., 0., 0., 0.99, 1.99, 2.99, dcell);
+
+    CHECK(g.ngridx()==6);
+    CHECK(g.ngridy()==11);
+    CHECK(g.ngridz()==16);
+    GraMPM::kernel_linear_bspline<double> knl(dcell);
+
+    GraMPM::particle_system<double> p(g, knl);
+
+    generate_particles(p);
+    
+    p.set_body_force(bf);
+
+    p.map_particles_to_grid();
+
+    p.map_force_to_grid();
+
+    double psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.mass(i)*p.body_force(0);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.forcex(i);
+
+    REQUIRE(psum==gsum);
+
+    psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.mass(i)*p.body_force(1);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.forcey(i);
+
+    REQUIRE(psum==gsum);
+
+    psum = 0., gsum = 0.;
+    for (int i = 0; i < p.size(); ++i)
+        psum += p.mass(i)*p.body_force(2);
+    for (int i = 0; i < p.background_grid.ncells(); ++i)
+        gsum += p.background_grid.forcez(i);
+
+    REQUIRE(psum==gsum);
+
+    // check a few nodal values
+    // REQUIRE(std::round(p.background_grid.momentumx(1, 1, 1))==-600.);
+    // REQUIRE(std::round(p.background_grid.momentumx(3, 4, 5))==-9960.);
+    // REQUIRE(std::round(p.background_grid.momentumx(5, 10, 15)*100.)==-492375.);
+    // REQUIRE(std::round(p.background_grid.momentumy(1, 1, 1))==-600.);
+    // REQUIRE(std::round(p.background_grid.momentumy(3, 4, 5))==-13560.);
+    // REQUIRE(std::round(p.background_grid.momentumy(5, 10, 15)*100.)==-1054875.);
+    // REQUIRE(std::round(p.background_grid.momentumz(1, 1, 1))==-600.);
+    // REQUIRE(std::round(p.background_grid.momentumz(3, 4, 5))==-17160);
+    // REQUIRE(std::round(p.background_grid.momentumz(5, 10, 15)*100.)==-1617375.);
 }

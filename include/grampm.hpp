@@ -202,6 +202,7 @@ namespace GraMPM {
 
             void map_mass_to_grid();
             void map_momentum_to_grid();
+            void map_force_to_grid();
     };
 
 }
