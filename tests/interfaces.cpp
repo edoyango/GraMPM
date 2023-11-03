@@ -161,6 +161,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.ax(i)==0.);
         REQUIRE(particles.ay(i)==0.);
         REQUIRE(particles.az(i)==0.);
+        REQUIRE(particles.dvx(i)==0.);
+        REQUIRE(particles.dvy(i)==0.);
+        REQUIRE(particles.dvz(i)==0.);
         REQUIRE(particles.mass(i)==0.);
         REQUIRE(particles.sigmaxx(i)==0.);
         REQUIRE(particles.sigmayy(i)==0.);
@@ -193,6 +196,12 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.ay(i)==-8.*i);
         particles.set_az(i, -9.*i);
         REQUIRE(particles.az(i)==-9.*i);
+        particles.set_dvx(i, -10.*i);
+        REQUIRE(particles.dvx(i)==-10.*i);
+        particles.set_dvy(i, -11.*i);
+        REQUIRE(particles.dvy(i)==-11.*i);
+        particles.set_dvz(i, -12.*i);
+        REQUIRE(particles.dvz(i)==-12.*i);
         particles.set_mass(i, 30.*i);
         REQUIRE(particles.mass(i)==30.*i);
         particles.set_rho(i, 40.*i);
@@ -227,7 +236,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
     for (int i = 0; i < 5; ++i) {
         pv.push_back(
             GraMPM::particle<double>(i, 2.*i, 3.*i, 4.*i, 5.*i, 6.*i, 10.*i, 100.*i, -0.1*i, -0.2*i, -0.3*i, -0.4*i, 
-                -0.5*i, -0.6*i, 7.*i, 8.*i, 9.*i)
+                -0.5*i, -0.6*i, 7.*i, 8.*i, 9.*i, 10.*i, 11.*i, 12.*i)
         );
     }
     GraMPM::particle_system<double> particles2(pv, bf, grid, knl);
@@ -242,6 +251,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles2.ax(i)==7.*i);
         REQUIRE(particles2.ay(i)==8.*i);
         REQUIRE(particles2.az(i)==9.*i);
+        REQUIRE(particles2.dvx(i)==10.*i);
+        REQUIRE(particles2.dvy(i)==11.*i);
+        REQUIRE(particles2.dvz(i)==12.*i);
         REQUIRE(particles2.mass(i)==10.*i);
         REQUIRE(particles2.rho(i)==100.*i);
         REQUIRE(particles2.sigmaxx(i)==-0.1*i);
@@ -264,6 +276,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(p.ax==7.*i);
         REQUIRE(p.ay==8.*i);
         REQUIRE(p.az==9.*i);
+        REQUIRE(p.dvx==10.*i);
+        REQUIRE(p.dvy==11.*i);
+        REQUIRE(p.dvz==12.*i);
         REQUIRE(p.mass==10.*i);
         REQUIRE(p.rho==100.*i);
         REQUIRE(p.sigmaxx==-0.1*i);
@@ -290,6 +305,9 @@ TEST_CASE("Check clearing and resizing", "[particles]") {
         REQUIRE(particles.ax(i)==0.);
         REQUIRE(particles.ay(i)==0.);
         REQUIRE(particles.az(i)==0.);
+        REQUIRE(particles.dvx(i)==0.);
+        REQUIRE(particles.dvy(i)==0.);
+        REQUIRE(particles.dvz(i)==0.);
         REQUIRE(particles.mass(i)==0.);
         REQUIRE(particles.rho(i)==0.);
         REQUIRE(particles.sigmaxx(i)==0.);

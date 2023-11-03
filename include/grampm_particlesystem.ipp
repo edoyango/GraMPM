@@ -16,6 +16,9 @@ namespace GraMPM {
         , m_ax(size, 0.)
         , m_ay(size, 0.)
         , m_az(size, 0.)
+        , m_dvx(size, 0.)
+        , m_dvy(size, 0.)
+        , m_dvz(size, 0.)
         , m_mass(size, 0.)
         , m_rho(size, 0.)
         , m_sigmaxx(size, 0.)
@@ -110,6 +113,12 @@ namespace GraMPM {
     template<typename F>const F* particle_system<F>::ay() const { return m_ay.data(); }
     template<typename F>const F& particle_system<F>::az(const int &i) const { return m_az[i]; }
     template<typename F>const F* particle_system<F>::az() const { return m_az.data(); }
+    template<typename F>const F& particle_system<F>::dvx(const int &i) const { return m_dvx[i]; }
+    template<typename F>const F* particle_system<F>::dvx() const { return m_dvx.data(); }
+    template<typename F>const F& particle_system<F>::dvy(const int &i) const { return m_dvy[i]; }
+    template<typename F>const F* particle_system<F>::dvy() const { return m_dvy.data(); }
+    template<typename F>const F& particle_system<F>::dvz(const int &i) const { return m_dvz[i]; }
+    template<typename F>const F* particle_system<F>::dvz() const { return m_dvz.data(); }
     template<typename F>const F& particle_system<F>::mass(const int &i) const { return m_mass[i]; }
     template<typename F>const F* particle_system<F>::mass() const { return &m_mass; }
     template<typename F>const F& particle_system<F>::rho(const int &i) const { return m_rho[i]; }
@@ -192,6 +201,9 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_ax(const int &i, const F &ax) { m_ax[i] = ax;}
     template<typename F> void particle_system<F>::set_ay(const int &i, const F &ay) { m_ay[i] = ay;}
     template<typename F> void particle_system<F>::set_az(const int &i, const F &az) { m_az[i] = az;}
+    template<typename F> void particle_system<F>::set_dvx(const int &i, const F &dvx) { m_dvx[i] = dvx;}
+    template<typename F> void particle_system<F>::set_dvy(const int &i, const F &dvy) { m_dvy[i] = dvy;}
+    template<typename F> void particle_system<F>::set_dvz(const int &i, const F &dvz) { m_dvz[i] = dvz;}
     template<typename F> void particle_system<F>::set_mass(const int &i, const F &m) { m_mass[i] = m; }
     template<typename F> void particle_system<F>::set_rho(const int &i, const F &rho) { m_rho[i] = rho; }
     template<typename F> void particle_system<F>::set_sigmaxx(const int &i, const F &sigmaxx) { m_sigmaxx[i] = sigmaxx; }
@@ -213,7 +225,7 @@ namespace GraMPM {
     template<typename F>
     particle<F> particle_system<F>::at(const int &i) { 
         particle<F> p(x(i), y(i), z(i), vx(i), vy(i), vz(i), mass(i), rho(i), sigmaxx(i), sigmayy(i), sigmazz(i), 
-            sigmaxy(i), sigmaxz(i), sigmayz(i), ax(i), ay(i), az(i));
+            sigmaxy(i), sigmaxz(i), sigmayz(i), ax(i), ay(i), az(i), dvx(i), dvy(i), dvz(i));
         return p; 
     }
 
@@ -229,6 +241,9 @@ namespace GraMPM {
         m_ax.push_back(p.ax);
         m_ay.push_back(p.ay);
         m_az.push_back(p.az);
+        m_ax.push_back(p.dvx);
+        m_ay.push_back(p.dvy);
+        m_az.push_back(p.dvz);
         m_mass.push_back(p.mass);
         m_rho.push_back(p.rho);
         m_sigmaxx.push_back(p.sigmaxx);
@@ -259,6 +274,9 @@ namespace GraMPM {
         m_ax.reserve(n);
         m_ay.reserve(n);
         m_az.reserve(n);
+        m_dvx.reserve(n);
+        m_dvy.reserve(n);
+        m_dvz.reserve(n);
         m_mass.reserve(n);
         m_rho.reserve(n);
         m_sigmaxx.reserve(n);
@@ -283,6 +301,9 @@ namespace GraMPM {
         m_ax.clear();
         m_ay.clear();
         m_az.clear();
+        m_dvx.clear();
+        m_dvy.clear();
+        m_dvz.clear();
         m_mass.clear();
         m_rho.clear();
         m_sigmaxx.clear();
@@ -306,7 +327,8 @@ namespace GraMPM {
     // vector-like api: empty. Checks whether all member vectors are empty. Also checks the m_size member
     template<typename F>
     bool particle_system<F>::empty() {
-        return m_x.empty() && m_y.empty() && m_z.empty() && m_vx.empty() && m_vy.empty() && m_vz.empty() && m_ax.empty() && m_ay.empty() && m_az.empty() && 
+        return m_x.empty() && m_y.empty() && m_z.empty() && m_vx.empty() && m_vy.empty() && m_vz.empty() && 
+            m_ax.empty() && m_ay.empty() && m_az.empty() && m_dvx.empty() && m_dvy.empty() && m_dvz.empty() &&
             m_mass.empty() && m_grid_idx.empty() &&
             m_p2g_neighbour_nodes.empty() && m_p2g_neighbour_nodes_dx.empty() && m_p2g_neighbour_nodes_dy.empty() && 
             m_p2g_neighbour_nodes_dz.empty() && m_p2g_neighbour_nodes_w.empty() && m_p2g_neighbour_nodes_dwdx.empty() &&
@@ -325,6 +347,9 @@ namespace GraMPM {
         m_ax.resize(n, 0.);
         m_ay.resize(n, 0.);
         m_az.resize(n, 0.);
+        m_dvx.resize(n, 0.);
+        m_dvy.resize(n, 0.);
+        m_dvz.resize(n, 0.);
         m_mass.resize(n, 0.);
         m_rho.resize(n, 0.);
         m_sigmaxx.resize(n, 0.);
@@ -349,6 +374,9 @@ namespace GraMPM {
         m_ax.resize(n, p.ax);
         m_ay.resize(n, p.ay);
         m_az.resize(n, p.az);
+        m_dvx.resize(n, p.ax);
+        m_dvy.resize(n, p.ay);
+        m_dvz.resize(n, p.az);
         m_mass.resize(n, p.mass);
         m_rho.resize(n, p.rho);
         m_sigmaxx.resize(n, p.rho);
