@@ -133,6 +133,9 @@ TEST_CASE("Calculate particles' strain/spin rates (linear bspline)") {
     REQUIRE(std::round(p.strainratexy(0)*100.)==-15.);
     REQUIRE(std::round(p.strainratexz(0)*100.)==-20.);
     REQUIRE(std::round(p.strainrateyz(0)*100.)==-25.);
+    REQUIRE(std::round(p.spinratexy(0)*100.)==5.);
+    REQUIRE(std::round(p.spinratexz(0)*100.)==10.);
+    REQUIRE(std::round(p.spinrateyz(0)*100.)==5.);
 
     REQUIRE(std::round(p.strainratexx(p.size()-1)*100.)==10.);
     REQUIRE(std::round(p.strainrateyy(p.size()-1)*100.)==20.);
@@ -140,4 +143,7 @@ TEST_CASE("Calculate particles' strain/spin rates (linear bspline)") {
     REQUIRE(std::round(p.strainratexy(p.size()-1)*100.)==-15.);
     REQUIRE(std::round(p.strainratexz(p.size()-1)*100.)==-20.);
     REQUIRE(std::round(p.strainrateyz(p.size()-1)*100.)==-25.);
+    REQUIRE(std::round(p.spinratexy(p.size()-1)*100.)==5.);
+    REQUIRE(std::round(p.spinratexz(p.size()-1)*100.)==10.);
+    REQUIRE(std::round(p.spinrateyz(p.size()-1)*100.)==5.);
 }
