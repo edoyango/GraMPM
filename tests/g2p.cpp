@@ -96,3 +96,48 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
 
     REQUIRE(std::round(psum)==std::round(gsum));
 }
+
+TEST_CASE("Calculate particles' strain/spin rates (linear bspline)") {
+    
+    const double dcell = 0.2;
+    GraMPM::grid<double> g(0., 0., 0., 0.99, 1.99, 2.99, dcell);
+
+    CHECK(g.ngridx()==6);
+    CHECK(g.ngridy()==11);
+    CHECK(g.ngridz()==16);
+    GraMPM::kernel_linear_bspline<double> knl(dcell);
+
+    GraMPM::particle_system<double> p(g, knl);
+
+    generate_particles(p);
+
+    // setup grid
+    for (int i = 0; i < p.background_grid.ngridx(); ++i)
+        for (int j = 0; j < p.background_grid.ngridy(); ++j) 
+            for (int k = 0; k < p.background_grid.ngridz(); ++k) {
+                const double x = i*0.2 + p.background_grid.mingridx();
+                const double y = j*0.2 + p.background_grid.mingridy();
+                const double z = k*0.2 + p.background_grid.mingridz();
+                p.background_grid.set_momentumx(i, j, k, 0.1*(x-y-z));
+                p.background_grid.set_momentumy(i, j, k, 0.2*(y-x-z));
+                p.background_grid.set_momentumz(i, j, k, 0.3*(z-x-y));
+                p.background_grid.set_mass(i, j, k, 1.);
+            }
+    
+    p.map_particles_to_grid();
+    p.map_strainrate_to_particles();
+
+    REQUIRE(std::round(p.strainratexx(0)*100.)==10.);
+    REQUIRE(std::round(p.strainrateyy(0)*100.)==20.);
+    REQUIRE(std::round(p.strainratezz(0)*100.)==30.);
+    REQUIRE(std::round(p.strainratexy(0)*100.)==-15.);
+    REQUIRE(std::round(p.strainratexz(0)*100.)==-20.);
+    REQUIRE(std::round(p.strainrateyz(0)*100.)==-25.);
+
+    REQUIRE(std::round(p.strainratexx(p.size()-1)*100.)==10.);
+    REQUIRE(std::round(p.strainrateyy(p.size()-1)*100.)==20.);
+    REQUIRE(std::round(p.strainratezz(p.size()-1)*100.)==30.);
+    REQUIRE(std::round(p.strainratexy(p.size()-1)*100.)==-15.);
+    REQUIRE(std::round(p.strainratexz(p.size()-1)*100.)==-20.);
+    REQUIRE(std::round(p.strainrateyz(p.size()-1)*100.)==-25.);
+}

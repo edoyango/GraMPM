@@ -671,6 +671,9 @@ namespace GraMPM {
         std::fill(m_strainratexy.begin(), m_strainratexy.end(), 0.);
         std::fill(m_strainratexz.begin(), m_strainratexz.end(), 0.);
         std::fill(m_strainrateyz.begin(), m_strainrateyz.end(), 0.);
+        std::fill(m_spinratexy.begin(), m_spinratexy.end(), 0.);
+        std::fill(m_spinratexz.begin(), m_spinratexz.end(), 0.);
+        std::fill(m_spinrateyz.begin(), m_spinrateyz.end(), 0.);
 
         // calculating velocities at grid
         std::vector<F> tmp_gvx(background_grid.ncells()), tmp_gvy(background_grid.ncells()), tmp_gvz(background_grid.ncells());
@@ -692,6 +695,12 @@ namespace GraMPM {
                     p2g_neighbour_node_dwdz(i, j)*tmp_gvx[node_idx]);
                 m_strainrateyz[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx] + 
                     p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx]);
+                m_spinratexy[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*tmp_gvx[node_idx] -
+                    p2g_neighbour_node_dwdx(i, j)*tmp_gvy[node_idx]);
+                m_spinratexz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*tmp_gvx[node_idx] - 
+                    p2g_neighbour_node_dwdx(i, j)*tmp_gvz[node_idx]);
+                m_spinrateyz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx] - 
+                    p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx]);
             }
     }
 }

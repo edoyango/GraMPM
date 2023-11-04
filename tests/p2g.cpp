@@ -210,34 +210,4 @@ TEST_CASE("Calculate force on grid (linear bspline)") {
     REQUIRE(std::round(p.background_grid.forcez(3, 4, 5)*1e10)==54021315681200.);
     REQUIRE(std::round(p.background_grid.forcez(5, 10, 15)*1e10)==16876423394507.);
 
-    // testing strainrate
-    // setting velocity on grid
-    for (int i = 0; i < p.background_grid.ngridx(); ++i)
-        for (int j = 0; j < p.background_grid.ngridy(); ++j) 
-            for (int k = 0; k < p.background_grid.ngridz(); ++k) {
-                const double x = i*0.2 + p.background_grid.mingridx();
-                const double y = j*0.2 + p.background_grid.mingridy();
-                const double z = k*0.2 + p.background_grid.mingridz();
-                p.background_grid.set_momentumx(i, j, k, 0.1*(x-y-z));
-                p.background_grid.set_momentumy(i, j, k, 0.2*(y-x-z));
-                p.background_grid.set_momentumz(i, j, k, 0.3*(z-x-y));
-                p.background_grid.set_mass(i, j, k, 1.);
-            }
-    
-    p.map_strainrate_to_particles();
-
-    REQUIRE(std::round(p.strainratexx(0)*100.)==10.);
-    REQUIRE(std::round(p.strainrateyy(0)*100.)==20.);
-    REQUIRE(std::round(p.strainratezz(0)*100.)==30.);
-    REQUIRE(std::round(p.strainratexy(0)*100.)==15.);
-    REQUIRE(std::round(p.strainratexz(0)*100.)==20.);
-    REQUIRE(std::round(p.strainrateyz(0)*100.)==25.);
-
-    REQUIRE(std::round(p.strainratexx(p.size())*100.)==-10.);
-    REQUIRE(std::round(p.strainrateyy(p.size())*100.)==-20.);
-    REQUIRE(std::round(p.strainratezz(p.size())*100.)==-30.);
-    REQUIRE(std::round(p.strainratexy(p.size())*100.)==15.);
-    REQUIRE(std::round(p.strainratexz(p.size())*100.)==20.);
-    REQUIRE(std::round(p.strainrateyz(p.size())*100.)==25.);
-
 }
