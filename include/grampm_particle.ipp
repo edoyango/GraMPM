@@ -33,6 +33,9 @@ namespace GraMPM {
         , strainratexy {0.}
         , strainratexz {0.}
         , strainrateyz {0.}
+        , spinratexy {0.}
+        , spinratexz {0.}
+        , spinrateyz {0.}
     {
     }
 
@@ -41,7 +44,8 @@ namespace GraMPM {
         const F &inmass, const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, const F &insigmaxy,
         const F &insigmaxz, const F &insigmayz, const F &inax, const F &inay, const F &inaz, const F &indvx, 
         const F &indvy, const F &indvz, const F &instrainratexx, const F &instrainrateyy, const F &instrainratezz, 
-        const F &instrainratexy, const F &instrainratexz, const F &instrainrateyz)
+        const F &instrainratexy, const F &instrainratexz, const F &instrainrateyz, const F &inspinratexy,
+        const F &inspinratexz, const F &inspinrateyz)
         : x {inx}
         , y {iny}
         , z {inz}
@@ -68,6 +72,9 @@ namespace GraMPM {
         , strainratexy {instrainratexy}
         , strainratexz {instrainratexz}
         , strainrateyz {instrainrateyz}
+        , spinratexy {inspinratexy}
+        , spinratexz {inspinratexz}
+        , spinrateyz {inspinrateyz}
     {
     }
 }

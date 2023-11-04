@@ -177,6 +177,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.strainratexy(i)==0.);
         REQUIRE(particles.strainratexz(i)==0.);
         REQUIRE(particles.strainrateyz(i)==0.);
+        REQUIRE(particles.spinratexy(i)==0.);
+        REQUIRE(particles.spinratexz(i)==0.);
+        REQUIRE(particles.spinrateyz(i)==0.);
     }
 
     REQUIRE(particles.size()==5);
@@ -236,6 +239,12 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.strainratexz(i)==-1.1*i);
         particles.set_strainrateyz(i, -1.2*i);
         REQUIRE(particles.strainrateyz(i)==-1.2*i);
+        particles.set_spinratexy(i, -1.3*i);
+        REQUIRE(particles.spinratexy(i)==-1.3*i);
+        particles.set_spinratexz(i, -1.4*i);
+        REQUIRE(particles.spinratexz(i)==-1.4*i);
+        particles.set_spinrateyz(i, -1.5*i);
+        REQUIRE(particles.spinrateyz(i)==-1.5*i);
     }
 
     particles.set_body_force(2., 4., 6.);
@@ -254,7 +263,8 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
     for (int i = 0; i < 5; ++i) {
         pv.push_back(
             GraMPM::particle<double>(i, 2.*i, 3.*i, 4.*i, 5.*i, 6.*i, 10.*i, 100.*i, -0.1*i, -0.2*i, -0.3*i, -0.4*i, 
-                -0.5*i, -0.6*i, 7.*i, 8.*i, 9.*i, 10.*i, 11.*i, 12.*i, -0.7*i, -0.8*i, -0.9*i, -1.0*i, -1.1*i, -1.2*i)
+                -0.5*i, -0.6*i, 7.*i, 8.*i, 9.*i, 10.*i, 11.*i, 12.*i, -0.7*i, -0.8*i, -0.9*i, -1.0*i, -1.1*i, -1.2*i,
+                -1.3*i, -1.4*i, -1.5*i)
         );
     }
     GraMPM::particle_system<double> particles2(pv, bf, grid, knl);
@@ -286,6 +296,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles2.strainratexy(i)==-1.0*i);
         REQUIRE(particles2.strainratexz(i)==-1.1*i);
         REQUIRE(particles2.strainrateyz(i)==-1.2*i);
+        REQUIRE(particles2.spinratexy(i)==-1.3*i);
+        REQUIRE(particles2.spinratexz(i)==-1.4*i);
+        REQUIRE(particles2.spinrateyz(i)==-1.5*i);
     }
 
     // check aggregate getters
@@ -317,6 +330,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(p.strainratexy==-1.0*i);
         REQUIRE(p.strainratexz==-1.1*i);
         REQUIRE(p.strainrateyz==-1.2*i);
+        REQUIRE(p.spinratexy==-1.3*i);
+        REQUIRE(p.spinratexz==-1.4*i);
+        REQUIRE(p.spinrateyz==-1.5*i);
     }
 }
 
@@ -352,6 +368,9 @@ TEST_CASE("Check clearing and resizing", "[particles]") {
         REQUIRE(particles.strainratexy(i)==0.);
         REQUIRE(particles.strainratexz(i)==0.);
         REQUIRE(particles.strainrateyz(i)==0.);
+        REQUIRE(particles.spinratexy(i)==0.);
+        REQUIRE(particles.spinratexz(i)==0.);
+        REQUIRE(particles.spinrateyz(i)==0.);
         REQUIRE(particles.ravelled_grid_idx(i)==0);
     }
 }

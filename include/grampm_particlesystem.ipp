@@ -33,6 +33,9 @@ namespace GraMPM {
         , m_strainratexy(size, 0.)
         , m_strainratexz(size, 0.)
         , m_strainrateyz(size, 0.)
+        , m_spinratexy(size, 0.)
+        , m_spinratexz(size, 0.)
+        , m_spinrateyz(size, 0.)
         , m_grid_idx(size, 0)
         , background_grid(ingrid)
         , m_capacity {size}
@@ -153,6 +156,12 @@ namespace GraMPM {
     template<typename F> std::vector<F>* particle_system<F>::strainratexz() { return &m_strainratexz; }
     template<typename F>const F& particle_system<F>::strainrateyz(const int &i) const { return m_strainrateyz[i]; }
     template<typename F> std::vector<F>* particle_system<F>::strainrateyz() { return &m_strainrateyz; }
+    template<typename F>const F& particle_system<F>::spinratexy(const int &i) const { return m_spinratexy[i]; }
+    template<typename F> std::vector<F>* particle_system<F>::spinratexy() { return &m_spinratexy; }
+    template<typename F>const F& particle_system<F>::spinratexz(const int &i) const { return m_spinratexz[i]; }
+    template<typename F> std::vector<F>* particle_system<F>::spinratexz() { return &m_spinratexz; }
+    template<typename F>const F& particle_system<F>::spinrateyz(const int &i) const { return m_spinrateyz[i]; }
+    template<typename F> std::vector<F>* particle_system<F>::spinrateyz() { return &m_spinrateyz; }
     template<typename F>const std::array<F, 3>& particle_system<F>::body_force() const { return m_body_force; }
     template<typename F>const F& particle_system<F>::body_force(const int &i) const { return m_body_force[i]; }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
@@ -236,6 +245,9 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_strainratexy(const int &i, const F &strainratexy) { m_strainratexy[i] = strainratexy; }
     template<typename F> void particle_system<F>::set_strainratexz(const int &i, const F &strainratexz) { m_strainratexz[i] = strainratexz; }
     template<typename F> void particle_system<F>::set_strainrateyz(const int &i, const F &strainrateyz) { m_strainrateyz[i] = strainrateyz; }
+    template<typename F> void particle_system<F>::set_spinratexy(const int &i, const F &spinratexy) { m_spinratexy[i] = spinratexy; }
+    template<typename F> void particle_system<F>::set_spinratexz(const int &i, const F &spinratexz) { m_spinratexz[i] = spinratexz; }
+    template<typename F> void particle_system<F>::set_spinrateyz(const int &i, const F &spinrateyz) { m_spinrateyz[i] = spinrateyz; }
     template<typename F> void particle_system<F>::set_body_force(const std::array<F, 3> &bf) { m_body_force = bf; }
     template<typename F> void particle_system<F>::set_body_force(const F &bfx, const F &bfy, const F &bfz) { 
         m_body_force[0] = bfx;
@@ -250,7 +262,8 @@ namespace GraMPM {
     particle<F> particle_system<F>::at(const int &i) { 
         particle<F> p(x(i), y(i), z(i), vx(i), vy(i), vz(i), mass(i), rho(i), sigmaxx(i), sigmayy(i), sigmazz(i), 
             sigmaxy(i), sigmaxz(i), sigmayz(i), ax(i), ay(i), az(i), dvx(i), dvy(i), dvz(i), strainratexx(i), 
-            strainrateyy(i), strainratezz(i), strainratexy(i), strainratexz(i), strainrateyz(i));
+            strainrateyy(i), strainratezz(i), strainratexy(i), strainratexz(i), strainrateyz(i), spinratexy(i), 
+            spinratexz(i), spinrateyz(i));
         return p; 
     }
 
@@ -283,6 +296,9 @@ namespace GraMPM {
         m_strainratexy.push_back(p.strainratexy);
         m_strainratexz.push_back(p.strainratexz);
         m_strainrateyz.push_back(p.strainrateyz);
+        m_spinratexy.push_back(p.spinratexy);
+        m_spinratexz.push_back(p.spinratexz);
+        m_spinrateyz.push_back(p.spinrateyz);
         m_grid_idx.push_back(
             ravel_grid_idx(
                 background_grid.calc_idxx(p.x),
@@ -322,6 +338,9 @@ namespace GraMPM {
         m_strainratexy.reserve(n);
         m_strainratexz.reserve(n);
         m_strainrateyz.reserve(n);
+        m_spinratexy.reserve(n);
+        m_spinratexz.reserve(n);
+        m_spinrateyz.reserve(n);
         m_grid_idx.reserve(n);
         m_capacity = std::max(m_capacity, n);
     }
@@ -355,6 +374,9 @@ namespace GraMPM {
         m_strainratexy.clear();
         m_strainratexz.clear();
         m_strainrateyz.clear();
+        m_spinratexy.clear();
+        m_spinratexz.clear();
+        m_spinrateyz.clear();
         m_grid_idx.clear();
         m_p2g_neighbour_nodes.clear();
         m_p2g_neighbour_nodes_dx.clear();
@@ -375,7 +397,8 @@ namespace GraMPM {
             m_mass.empty() && m_rho.empty() && m_sigmaxx.empty() && m_sigmayy.empty() && m_sigmazz.empty() && 
             m_sigmaxy.empty() && m_sigmaxz.empty() && m_sigmayz.empty() && m_strainratexx.empty() && 
             m_strainrateyy.empty() && m_strainratezz.empty() && m_strainratexy.empty() && m_strainratexz.empty() && 
-            m_strainrateyz.empty() && m_grid_idx.empty() && m_p2g_neighbour_nodes.empty() && 
+            m_strainrateyz.empty() && m_spinratexy.empty() && m_spinratexz.empty() && 
+            m_spinrateyz.empty() &&m_grid_idx.empty() && m_p2g_neighbour_nodes.empty() && 
             m_p2g_neighbour_nodes_dx.empty() && m_p2g_neighbour_nodes_dy.empty() && m_p2g_neighbour_nodes_dz.empty() && 
             m_p2g_neighbour_nodes_w.empty() && m_p2g_neighbour_nodes_dwdx.empty() &&
             m_p2g_neighbour_nodes_dwdy.empty() && m_p2g_neighbour_nodes_dwdz.empty() && m_size==0;
@@ -410,6 +433,9 @@ namespace GraMPM {
         m_strainratexy.resize(n, 0.);
         m_strainratexz.resize(n, 0.);
         m_strainrateyz.resize(n, 0.);
+        m_spinratexy.resize(n, 0.);
+        m_spinratexz.resize(n, 0.);
+        m_spinrateyz.resize(n, 0.);
         m_grid_idx.resize(n, 0);
         m_size = n;
     }
@@ -443,6 +469,9 @@ namespace GraMPM {
         m_strainratexy.resize(n, p.strainratexy);
         m_strainratexz.resize(n, p.strainratexz);
         m_strainrateyz.resize(n, p.strainrateyz);
+        m_spinratexy.resize(n, p.spinratexy);
+        m_spinratexz.resize(n, p.spinratexz);
+        m_spinrateyz.resize(n, p.spinrateyz);
         m_grid_idx.resize(n, ravel_grid_idx(
             background_grid.calc_idxx(p.x),
             background_grid.calc_idxy(p.y),

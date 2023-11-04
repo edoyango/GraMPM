@@ -15,7 +15,8 @@ namespace GraMPM {
     class particle {
         public:
         F x, y, z, vx, vy, vz, ax, ay, az, dvx, dvy, dvz, mass, rho, sigmaxx, sigmayy, sigmazz, sigmaxy, sigmaxz, 
-            sigmayz, strainratexx, strainrateyy, strainratezz, strainratexy, strainratexz, strainrateyz;
+            sigmayz, strainratexx, strainrateyy, strainratezz, strainratexy, strainratexz, strainrateyz, spinratexy,
+            spinratexz, spinrateyz;
         particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, 
             const F &inmass, const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, 
             const F &insigmaxy, const F &insigmaxz, const F &insigmayz);
@@ -23,7 +24,8 @@ namespace GraMPM {
             const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, const F &insigmaxy, 
             const F &insigmaxz, const F &insigmayz, const F &inax, const F &inay, const F &inaz, const F &indvx, 
             const F &indvy, const F &indvz, const F &instrainratexx, const F &instrainrateyy, const F &instrainratezz, 
-            const F &instrainratexy, const F &instrainratexz, const F &instrainrateyz);
+            const F &instrainratexy, const F &instrainratexz, const F &instrainrateyz, const F &inspinratexy,
+            const F &inspinratexz, const F &inspinrateyz);
     };
 
     template<typename F>
@@ -107,9 +109,10 @@ namespace GraMPM {
             const int m_nneighbour_nodes_perp;
             std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_ax, m_ay, m_az, m_dvx, m_dvy, m_dvz, m_mass, m_rho, 
                 m_sigmaxx, m_sigmayy, m_sigmazz, m_sigmaxy, m_sigmaxz, m_sigmayz, m_strainratexx, m_strainrateyy, 
-                m_strainratezz, m_strainratexy, m_strainratexz, m_strainrateyz, m_p2g_neighbour_nodes_dx, 
-                m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, 
-                m_p2g_neighbour_nodes_dwdy, m_p2g_neighbour_nodes_dwdz;
+                m_strainratezz, m_strainratexy, m_strainratexz, m_strainrateyz, m_spinratexy, m_spinratexz,
+                m_spinrateyz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
+                m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
+                m_p2g_neighbour_nodes_dwdz;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
             std::array<F, 3> m_body_force;
 
@@ -191,6 +194,12 @@ namespace GraMPM {
             std::vector<F>* strainratexz();
             const F& strainrateyz(const int &i) const;
             std::vector<F>* strainrateyz();
+            const F& spinratexy(const int &i) const;
+            std::vector<F>* spinratexy();
+            const F& spinratexz(const int &i) const;
+            std::vector<F>* spinratexz();
+            const F& spinrateyz(const int &i) const;
+            std::vector<F>* spinrateyz();
             const std::array<F, 3>& body_force() const;
             const F& body_force(const int &i) const;
             const int& ravelled_grid_idx(const int &i) const;
@@ -233,6 +242,9 @@ namespace GraMPM {
             void set_strainratexy(const int &i, const F &strainratexy);
             void set_strainratexz(const int &i, const F &strainratexz);
             void set_strainrateyz(const int &i, const F &strainrateyz);
+            void set_spinratexy(const int &i, const F &spinratexy);
+            void set_spinratexz(const int &i, const F &spinratexz);
+            void set_spinrateyz(const int &i, const F &spinrateyz);
             void set_body_force(const std::array<F, 3> &bf);
             void set_body_force(const F &bfx, const F &bfy, const F &bfz);
             void set_grid_index(const int &i, const int &idx);
