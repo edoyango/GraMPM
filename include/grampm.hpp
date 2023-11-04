@@ -264,6 +264,7 @@ namespace GraMPM {
             void map_momentum_to_grid();
             void map_force_to_grid();
             void map_acceleration_to_particles();
+            void map_strainrate_to_particles();
     };
 
 }

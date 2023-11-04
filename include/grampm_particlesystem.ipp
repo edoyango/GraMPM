@@ -633,6 +633,38 @@ namespace GraMPM {
         }
         map2particles(tmp, dvz());
     }
+
+    template<typename F> void particle_system<F>::map_strainrate_to_particles() {
+
+        std::fill(m_strainratexx.begin(), m_strainratexx.end(), 0.);
+        std::fill(m_strainrateyy.begin(), m_strainrateyy.end(), 0.);
+        std::fill(m_strainratezz.begin(), m_strainratezz.end(), 0.);
+        std::fill(m_strainratexy.begin(), m_strainratexy.end(), 0.);
+        std::fill(m_strainratexz.begin(), m_strainratexz.end(), 0.);
+        std::fill(m_strainrateyz.begin(), m_strainrateyz.end(), 0.);
+
+        // calculating velocities at grid
+        std::vector<F> tmp_gvx(background_grid.ncells()), tmp_gvy(background_grid.ncells()), tmp_gvz(background_grid.ncells());
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            tmp_gvx[i] = background_grid.momentumx(i)/background_grid.mass(i);
+            tmp_gvy[i] = background_grid.momentumy(i)/background_grid.mass(i);
+            tmp_gvz[i] = background_grid.momentumz(i)/background_grid.mass(i);
+        }
+
+        for (int i = 0; i < m_size; ++i)
+            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+                const int node_idx = p2g_neighbour_node(i, j);
+                m_strainratexx[i] += p2g_neighbour_node_dwdx(i, j)*tmp_gvx[node_idx];
+                m_strainrateyy[i] += p2g_neighbour_node_dwdy(i, j)*tmp_gvy[node_idx];
+                m_strainratezz[i] += p2g_neighbour_node_dwdz(i, j)*tmp_gvz[node_idx];
+                m_strainratexy[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*tmp_gvy[node_idx] + 
+                    p2g_neighbour_node_dwdy(i, j)*tmp_gvx[node_idx]);
+                m_strainratexz[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*tmp_gvz[node_idx] + 
+                    p2g_neighbour_node_dwdz(i, j)*tmp_gvx[node_idx]);
+                m_strainrateyz[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx] + 
+                    p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx]);
+            }
+    }
 }
 
 #endif
