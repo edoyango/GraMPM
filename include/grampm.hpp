@@ -113,6 +113,7 @@ namespace GraMPM {
                 m_spinrateyz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
                 m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
                 m_p2g_neighbour_nodes_dwdz;
+            F m_E, m_v;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
             std::array<F, 3> m_body_force;
 
@@ -202,6 +203,8 @@ namespace GraMPM {
             std::vector<F>* spinrateyz();
             const std::array<F, 3>& body_force() const;
             const F& body_force(const int &i) const;
+            const F& E() const;
+            const F& v() const;
             const int& ravelled_grid_idx(const int &i) const;
             std::array<int, 3> grid_idx(const int &i) const;
             const int& p2g_neighbour_node(const int i, const int j) const ;
@@ -248,6 +251,8 @@ namespace GraMPM {
             void set_body_force(const std::array<F, 3> &bf);
             void set_body_force(const F &bfx, const F &bfy, const F &bfz);
             void set_grid_index(const int &i, const int &idx);
+            void set_E(const F &E);
+            void set_v(const F &v);
             void incrementNParticles();
 
             // get particle i in "particle" aggregate class
@@ -277,6 +282,7 @@ namespace GraMPM {
             void map_force_to_grid();
             void map_acceleration_to_particles();
             void map_strainrate_to_particles();
+            void stress_update(const F &dt);
     };
 
 }

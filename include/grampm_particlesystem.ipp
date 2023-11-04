@@ -164,6 +164,8 @@ namespace GraMPM {
     template<typename F> std::vector<F>* particle_system<F>::spinrateyz() { return &m_spinrateyz; }
     template<typename F>const std::array<F, 3>& particle_system<F>::body_force() const { return m_body_force; }
     template<typename F>const F& particle_system<F>::body_force(const int &i) const { return m_body_force[i]; }
+    template<typename F>const F& particle_system<F>::E() const { return m_E; }
+    template<typename F>const F& particle_system<F>::v() const { return m_v; }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
     template<typename F>
     std::array<int, 3> particle_system<F>::grid_idx(const int &i) const { return unravel_grid_idx(ravelled_grid_idx(i)); }
@@ -255,6 +257,8 @@ namespace GraMPM {
         m_body_force[2] = bfz;
     }
     template<typename F> void particle_system<F>::set_grid_index(const int &i, const int &idx) { m_grid_idx[i] = idx; }
+    template<typename F> void particle_system<F>::set_E(const F &E) { m_E = E; }
+    template<typename F> void particle_system<F>::set_v(const F &v) { m_v = v; }
     template<typename F> void particle_system<F>::incrementNParticles() {m_size++;}
 
     // vector-like api: at. Returns particle class
@@ -702,6 +706,54 @@ namespace GraMPM {
                 m_spinrateyz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx] - 
                     p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx]);
             }
+    }
+
+    template<typename F> void particle_system<F>::stress_update(const F &dt) {
+
+        const F D0 {m_E/((1.+m_v)*(1.-2.*m_v))};
+
+        std::vector<F> dsigmaxx(m_size), dsigmayy(m_size), dsigmazz(m_size), dsigmaxy(m_size), dsigmaxz(m_size),
+            dsigmayz(m_size);
+
+        // DE*dstrain
+        for (int i = 0; i < m_size; ++i) {
+            dsigmaxx[i] = dt*D0*((1.-m_v)*m_strainratexx[i] + m_v*m_strainrateyy[i] + m_v*m_strainratezz[i]);
+            dsigmayy[i] = dt*D0*(m_v*m_strainratexx[i] + (1.-m_v)*m_strainrateyy[i] + m_v*m_strainratezz[i]);
+            dsigmazz[i] = dt*D0*(m_v*m_strainratexx[i] + m_v*m_strainrateyy[i] + (1.-m_v)*m_strainratezz[i]);
+            dsigmaxy[i] = dt*D0*m_strainratexy[i]*(1.-2.*m_v);
+            dsigmaxz[i] = dt*D0*m_strainratexz[i]*(1.-2.*m_v);
+            dsigmayz[i] = dt*D0*m_strainrateyz[i]*(1.-2.*m_v);
+        }
+        
+        // jaumann stress rate
+        for (int i = 0; i < m_size; ++i) {
+            dsigmaxx[i] -= dt*2.*(m_spinratexy[i]*m_sigmaxy[i] + m_spinratexz[i]*m_sigmaxz[i]);
+            dsigmayy[i] -= dt*2.*(-m_spinratexy[i]*m_sigmaxy[i] + m_spinrateyz[i]*m_sigmayz[i]);
+            dsigmazz[i] += dt*2.*(m_spinratexz[i]*m_sigmaxz[i] + m_spinrateyz[i]*m_sigmayz[i]);
+            dsigmaxy[i] += dt*(
+                m_sigmaxx[i]*m_spinratexy[i] - m_sigmaxz[i]*m_spinrateyz[i] -
+                m_spinratexy[i]*m_sigmayy[i] - m_spinratexz[i]*m_sigmayz[i]
+            );
+            dsigmaxz[i] += dt*(
+                m_sigmaxx[i]*m_spinratexz[i] + m_sigmaxy[i]*m_spinrateyz[i] -
+                m_spinratexy[i]*m_sigmayz[i] - m_spinratexz[i]*m_sigmazz[i]
+            );
+            dsigmayz[i] += dt*(
+                m_sigmaxy[i]*m_spinratexz[i] + m_sigmayy[i]*m_spinrateyz[i] +
+                m_spinratexy[i]*m_sigmaxz[i] - m_spinrateyz[i]*m_sigmazz[i]
+            );
+        }
+
+        // update original stress states
+        for (int i = 0; i < m_size; ++i) {
+            m_sigmaxx[i] += dsigmaxx[i];
+            m_sigmayy[i] += dsigmayy[i];
+            m_sigmazz[i] += dsigmazz[i];
+            m_sigmaxy[i] += dsigmaxy[i];
+            m_sigmaxz[i] += dsigmaxz[i];
+            m_sigmayz[i] += dsigmayz[i];
+        }
+
     }
 }
 
