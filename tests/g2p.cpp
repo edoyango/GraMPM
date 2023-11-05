@@ -74,7 +74,7 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
 
     psum = 0., gsum = 0.;
     for (int i = 0; i < p.size(); ++i)
-        psum += p.dvx(i)*p.mass(i);
+        psum += p.dxdt(i)*p.mass(i);
     for (int i = 0; i < p.background_grid.ncells(); ++i)
         gsum += p.background_grid.momentumx(i);
 
@@ -82,7 +82,7 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
 
     psum = 0., gsum = 0.;
     for (int i = 0; i < p.size(); ++i)
-        psum += p.dvy(i)*p.mass(i);
+        psum += p.dydt(i)*p.mass(i);
     for (int i = 0; i < p.background_grid.ncells(); ++i)
         gsum += p.background_grid.momentumy(i);
 
@@ -90,7 +90,7 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
 
     psum = 0., gsum = 0.;
     for (int i = 0; i < p.size(); ++i)
-        psum += p.dvz(i)*p.mass(i);
+        psum += p.dzdt(i)*p.mass(i);
     for (int i = 0; i < p.background_grid.ncells(); ++i)
         gsum += p.background_grid.momentumz(i);
 

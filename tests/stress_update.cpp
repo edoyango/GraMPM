@@ -14,24 +14,24 @@ TEST_CASE("Check correct Hooke's law") {
     std::array<double, 3> bf {0., 0., 0.};
     GraMPM::particle_system<double> p(1, bf, g, knl);
 
-    p.set_strainratexx(0, 0.1);
-    p.set_strainrateyy(0, 0.2);
-    p.set_strainratezz(0, 0.3);
-    p.set_strainratexy(0, 0.4);
-    p.set_strainratexz(0, 0.5);
-    p.set_strainrateyz(0, 0.6);
+    p.set_strainratexx(0, 1.);
+    p.set_strainrateyy(0, 2.);
+    p.set_strainratezz(0, 3.);
+    p.set_strainratexy(0, 4.);
+    p.set_strainratexz(0, 5.);
+    p.set_strainrateyz(0, 6.);
 
     p.set_E(100.);
     p.set_v(0.25);
 
-    p.stress_update(0.1);
+    p.update_stress(0.1);
 
-    REQUIRE(p.sigmaxx(0)==3.2);
-    REQUIRE(p.sigmayy(0)==4.);
-    REQUIRE(p.sigmazz(0)==4.8);
-    REQUIRE(p.sigmaxy(0)==3.2);
-    REQUIRE(p.sigmaxz(0)==4.);
-    REQUIRE(p.sigmayz(0)==4.8);
+    REQUIRE(p.sigmaxx(0)==32.);
+    REQUIRE(p.sigmayy(0)==40.);
+    REQUIRE(p.sigmazz(0)==48.);
+    REQUIRE(p.sigmaxy(0)==32.);
+    REQUIRE(p.sigmaxz(0)==40.);
+    REQUIRE(p.sigmayz(0)==48.);
 }
 
 TEST_CASE("Check correct spin rate") {
@@ -63,7 +63,7 @@ TEST_CASE("Check correct spin rate") {
     CHECK(p.sigmaxz(0)==500.);
     CHECK(p.sigmayz(0)==600.);
 
-    p.stress_update(0.1);
+    p.update_stress(0.1);
 
     REQUIRE(p.sigmaxx(0) == 254.);
     REQUIRE(p.sigmayy(0) == 256.);

@@ -16,9 +16,9 @@ namespace GraMPM {
         , ax {0.}
         , ay {0.}
         , az {0.}
-        , dvx {0.}
-        , dvy {0.}
-        , dvz {0.}
+        , dxdt {0.}
+        , dydt {0.}
+        , dzdt {0.}
         , mass {inmass}
         , rho {inrho}
         , sigmaxx {insigmaxx}
@@ -42,8 +42,8 @@ namespace GraMPM {
     template<typename F>
     particle<F>::particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, 
         const F &inmass, const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, const F &insigmaxy,
-        const F &insigmaxz, const F &insigmayz, const F &inax, const F &inay, const F &inaz, const F &indvx, 
-        const F &indvy, const F &indvz, const F &instrainratexx, const F &instrainrateyy, const F &instrainratezz, 
+        const F &insigmaxz, const F &insigmayz, const F &inax, const F &inay, const F &inaz, const F &indxdt, 
+        const F &indydt, const F &indzdt, const F &instrainratexx, const F &instrainrateyy, const F &instrainratezz, 
         const F &instrainratexy, const F &instrainratexz, const F &instrainrateyz, const F &inspinratexy,
         const F &inspinratexz, const F &inspinrateyz)
         : x {inx}
@@ -55,9 +55,9 @@ namespace GraMPM {
         , ax {inax}
         , ay {inay}
         , az {inaz}
-        , dvx {indvx}
-        , dvy {indvy}
-        , dvz {indvz}
+        , dxdt {indxdt}
+        , dydt {indydt}
+        , dzdt {indzdt}
         , mass {inmass}
         , rho {inrho}
         , sigmaxx {insigmaxx}
@@ -77,6 +77,8 @@ namespace GraMPM {
         , spinrateyz {inspinrateyz}
     {
     }
+
+    template<typename F> particle<F>::particle() {};
 }
 
 #endif

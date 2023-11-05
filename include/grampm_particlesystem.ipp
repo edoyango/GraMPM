@@ -1,6 +1,9 @@
 #ifndef GRAMPM_particlesystem_ipp
 #define GRAMPM_particlesystem_ipp
 
+#include <iostream>
+#include <fstream>
+
 namespace GraMPM {
 
     // initialize a particle with size, but zerod properties
@@ -16,9 +19,9 @@ namespace GraMPM {
         , m_ax(size, 0.)
         , m_ay(size, 0.)
         , m_az(size, 0.)
-        , m_dvx(size, 0.)
-        , m_dvy(size, 0.)
-        , m_dvz(size, 0.)
+        , m_dxdt(size, 0.)
+        , m_dydt(size, 0.)
+        , m_dzdt(size, 0.)
         , m_mass(size, 0.)
         , m_rho(size, 0.)
         , m_sigmaxx(size, 0.)
@@ -122,12 +125,12 @@ namespace GraMPM {
     template<typename F> std::vector<F>* particle_system<F>::ay() { return &m_ay; }
     template<typename F>const F& particle_system<F>::az(const int &i) const { return m_az[i]; }
     template<typename F> std::vector<F>* particle_system<F>::az() { return &m_az; }
-    template<typename F>const F& particle_system<F>::dvx(const int &i) const { return m_dvx[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::dvx() { return &m_dvx; }
-    template<typename F>const F& particle_system<F>::dvy(const int &i) const { return m_dvy[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::dvy() { return &m_dvy; }
-    template<typename F>const F& particle_system<F>::dvz(const int &i) const { return m_dvz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::dvz() { return &m_dvz; }
+    template<typename F>const F& particle_system<F>::dxdt(const int &i) const { return m_dxdt[i]; }
+    template<typename F> std::vector<F>* particle_system<F>::dxdt() { return &m_dxdt; }
+    template<typename F>const F& particle_system<F>::dydt(const int &i) const { return m_dydt[i]; }
+    template<typename F> std::vector<F>* particle_system<F>::dydt() { return &m_dydt; }
+    template<typename F>const F& particle_system<F>::dzdt(const int &i) const { return m_dzdt[i]; }
+    template<typename F> std::vector<F>* particle_system<F>::dzdt() { return &m_dzdt; }
     template<typename F>const F& particle_system<F>::mass(const int &i) const { return m_mass[i]; }
     template<typename F> std::vector<F>* particle_system<F>::mass() { return &m_mass; }
     template<typename F>const F& particle_system<F>::rho(const int &i) const { return m_rho[i]; }
@@ -230,9 +233,9 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_ax(const int &i, const F &ax) { m_ax[i] = ax;}
     template<typename F> void particle_system<F>::set_ay(const int &i, const F &ay) { m_ay[i] = ay;}
     template<typename F> void particle_system<F>::set_az(const int &i, const F &az) { m_az[i] = az;}
-    template<typename F> void particle_system<F>::set_dvx(const int &i, const F &dvx) { m_dvx[i] = dvx;}
-    template<typename F> void particle_system<F>::set_dvy(const int &i, const F &dvy) { m_dvy[i] = dvy;}
-    template<typename F> void particle_system<F>::set_dvz(const int &i, const F &dvz) { m_dvz[i] = dvz;}
+    template<typename F> void particle_system<F>::set_dxdt(const int &i, const F &dxdt) { m_dxdt[i] = dxdt;}
+    template<typename F> void particle_system<F>::set_dydt(const int &i, const F &dydt) { m_dydt[i] = dydt;}
+    template<typename F> void particle_system<F>::set_dzdt(const int &i, const F &dzdt) { m_dzdt[i] = dzdt;}
     template<typename F> void particle_system<F>::set_mass(const int &i, const F &m) { m_mass[i] = m; }
     template<typename F> void particle_system<F>::set_rho(const int &i, const F &rho) { m_rho[i] = rho; }
     template<typename F> void particle_system<F>::set_sigmaxx(const int &i, const F &sigmaxx) { m_sigmaxx[i] = sigmaxx; }
@@ -265,7 +268,7 @@ namespace GraMPM {
     template<typename F>
     particle<F> particle_system<F>::at(const int &i) { 
         particle<F> p(x(i), y(i), z(i), vx(i), vy(i), vz(i), mass(i), rho(i), sigmaxx(i), sigmayy(i), sigmazz(i), 
-            sigmaxy(i), sigmaxz(i), sigmayz(i), ax(i), ay(i), az(i), dvx(i), dvy(i), dvz(i), strainratexx(i), 
+            sigmaxy(i), sigmaxz(i), sigmayz(i), ax(i), ay(i), az(i), dxdt(i), dydt(i), dzdt(i), strainratexx(i), 
             strainrateyy(i), strainratezz(i), strainratexy(i), strainratexz(i), strainrateyz(i), spinratexy(i), 
             spinratexz(i), spinrateyz(i));
         return p; 
@@ -283,9 +286,9 @@ namespace GraMPM {
         m_ax.push_back(p.ax);
         m_ay.push_back(p.ay);
         m_az.push_back(p.az);
-        m_dvx.push_back(p.dvx);
-        m_dvy.push_back(p.dvy);
-        m_dvz.push_back(p.dvz);
+        m_dxdt.push_back(p.dxdt);
+        m_dydt.push_back(p.dydt);
+        m_dzdt.push_back(p.dzdt);
         m_mass.push_back(p.mass);
         m_rho.push_back(p.rho);
         m_sigmaxx.push_back(p.sigmaxx);
@@ -325,9 +328,9 @@ namespace GraMPM {
         m_ax.reserve(n);
         m_ay.reserve(n);
         m_az.reserve(n);
-        m_dvx.reserve(n);
-        m_dvy.reserve(n);
-        m_dvz.reserve(n);
+        m_dxdt.reserve(n);
+        m_dydt.reserve(n);
+        m_dzdt.reserve(n);
         m_mass.reserve(n);
         m_rho.reserve(n);
         m_sigmaxx.reserve(n);
@@ -361,9 +364,9 @@ namespace GraMPM {
         m_ax.clear();
         m_ay.clear();
         m_az.clear();
-        m_dvx.clear();
-        m_dvy.clear();
-        m_dvz.clear();
+        m_dxdt.clear();
+        m_dydt.clear();
+        m_dzdt.clear();
         m_mass.clear();
         m_rho.clear();
         m_sigmaxx.clear();
@@ -397,7 +400,7 @@ namespace GraMPM {
     template<typename F>
     bool particle_system<F>::empty() {
         return m_x.empty() && m_y.empty() && m_z.empty() && m_vx.empty() && m_vy.empty() && m_vz.empty() && 
-            m_ax.empty() && m_ay.empty() && m_az.empty() && m_dvx.empty() && m_dvy.empty() && m_dvz.empty() &&
+            m_ax.empty() && m_ay.empty() && m_az.empty() && m_dxdt.empty() && m_dydt.empty() && m_dzdt.empty() &&
             m_mass.empty() && m_rho.empty() && m_sigmaxx.empty() && m_sigmayy.empty() && m_sigmazz.empty() && 
             m_sigmaxy.empty() && m_sigmaxz.empty() && m_sigmayz.empty() && m_strainratexx.empty() && 
             m_strainrateyy.empty() && m_strainratezz.empty() && m_strainratexy.empty() && m_strainratexz.empty() && 
@@ -420,9 +423,9 @@ namespace GraMPM {
         m_ax.resize(n, 0.);
         m_ay.resize(n, 0.);
         m_az.resize(n, 0.);
-        m_dvx.resize(n, 0.);
-        m_dvy.resize(n, 0.);
-        m_dvz.resize(n, 0.);
+        m_dxdt.resize(n, 0.);
+        m_dydt.resize(n, 0.);
+        m_dzdt.resize(n, 0.);
         m_mass.resize(n, 0.);
         m_rho.resize(n, 0.);
         m_sigmaxx.resize(n, 0.);
@@ -456,9 +459,9 @@ namespace GraMPM {
         m_ax.resize(n, p.ax);
         m_ay.resize(n, p.ay);
         m_az.resize(n, p.az);
-        m_dvx.resize(n, p.ax);
-        m_dvy.resize(n, p.ay);
-        m_dvz.resize(n, p.az);
+        m_dxdt.resize(n, p.ax);
+        m_dydt.resize(n, p.ay);
+        m_dzdt.resize(n, p.az);
         m_mass.resize(n, p.mass);
         m_rho.resize(n, p.rho);
         m_sigmaxx.resize(n, p.sigmaxx);
@@ -656,15 +659,15 @@ namespace GraMPM {
         for (int i = 0; i < background_grid.ncells(); ++i) {
             tmp[i] = background_grid.momentumx(i)/background_grid.mass(i);
         }
-        map2particles(tmp, dvx());
+        map2particles(tmp, dxdt());
         for (int i = 0; i < background_grid.ncells(); ++i) {
             tmp[i] = background_grid.momentumy(i)/background_grid.mass(i);
         }
-        map2particles(tmp, dvy());
+        map2particles(tmp, dydt());
         for (int i = 0; i < background_grid.ncells(); ++i) {
             tmp[i] = background_grid.momentumz(i)/background_grid.mass(i);
         }
-        map2particles(tmp, dvz());
+        map2particles(tmp, dzdt());
     }
 
     template<typename F> void particle_system<F>::map_strainrate_to_particles() {
@@ -708,7 +711,7 @@ namespace GraMPM {
             }
     }
 
-    template<typename F> void particle_system<F>::stress_update(const F &dt) {
+    template<typename F> void particle_system<F>::update_stress(const F &dt) {
 
         const F D0 {m_E/((1.+m_v)*(1.-2.*m_v))};
 
@@ -717,43 +720,166 @@ namespace GraMPM {
 
         // DE*dstrain
         for (int i = 0; i < m_size; ++i) {
-            dsigmaxx[i] = dt*D0*((1.-m_v)*m_strainratexx[i] + m_v*m_strainrateyy[i] + m_v*m_strainratezz[i]);
-            dsigmayy[i] = dt*D0*(m_v*m_strainratexx[i] + (1.-m_v)*m_strainrateyy[i] + m_v*m_strainratezz[i]);
-            dsigmazz[i] = dt*D0*(m_v*m_strainratexx[i] + m_v*m_strainrateyy[i] + (1.-m_v)*m_strainratezz[i]);
-            dsigmaxy[i] = dt*D0*m_strainratexy[i]*(1.-2.*m_v);
-            dsigmaxz[i] = dt*D0*m_strainratexz[i]*(1.-2.*m_v);
-            dsigmayz[i] = dt*D0*m_strainrateyz[i]*(1.-2.*m_v);
+            dsigmaxx[i] = D0*((1.-m_v)*m_strainratexx[i] + m_v*m_strainrateyy[i] + m_v*m_strainratezz[i]);
+            dsigmayy[i] = D0*(m_v*m_strainratexx[i] + (1.-m_v)*m_strainrateyy[i] + m_v*m_strainratezz[i]);
+            dsigmazz[i] = D0*(m_v*m_strainratexx[i] + m_v*m_strainrateyy[i] + (1.-m_v)*m_strainratezz[i]);
+            dsigmaxy[i] = D0*m_strainratexy[i]*(1.-2.*m_v);
+            dsigmaxz[i] = D0*m_strainratexz[i]*(1.-2.*m_v);
+            dsigmayz[i] = D0*m_strainrateyz[i]*(1.-2.*m_v);
         }
         
         // jaumann stress rate
         for (int i = 0; i < m_size; ++i) {
-            dsigmaxx[i] -= dt*2.*(m_spinratexy[i]*m_sigmaxy[i] + m_spinratexz[i]*m_sigmaxz[i]);
-            dsigmayy[i] -= dt*2.*(-m_spinratexy[i]*m_sigmaxy[i] + m_spinrateyz[i]*m_sigmayz[i]);
-            dsigmazz[i] += dt*2.*(m_spinratexz[i]*m_sigmaxz[i] + m_spinrateyz[i]*m_sigmayz[i]);
-            dsigmaxy[i] += dt*(
-                m_sigmaxx[i]*m_spinratexy[i] - m_sigmaxz[i]*m_spinrateyz[i] -
-                m_spinratexy[i]*m_sigmayy[i] - m_spinratexz[i]*m_sigmayz[i]
-            );
-            dsigmaxz[i] += dt*(
-                m_sigmaxx[i]*m_spinratexz[i] + m_sigmaxy[i]*m_spinrateyz[i] -
-                m_spinratexy[i]*m_sigmayz[i] - m_spinratexz[i]*m_sigmazz[i]
-            );
-            dsigmayz[i] += dt*(
-                m_sigmaxy[i]*m_spinratexz[i] + m_sigmayy[i]*m_spinrateyz[i] +
-                m_spinratexy[i]*m_sigmaxz[i] - m_spinrateyz[i]*m_sigmazz[i]
-            );
+            dsigmaxx[i] -= 2.*(m_spinratexy[i]*m_sigmaxy[i] + m_spinratexz[i]*m_sigmaxz[i]);
+            dsigmayy[i] -= 2.*(-m_spinratexy[i]*m_sigmaxy[i] + m_spinrateyz[i]*m_sigmayz[i]);
+            dsigmazz[i] += 2.*(m_spinratexz[i]*m_sigmaxz[i] + m_spinrateyz[i]*m_sigmayz[i]);
+            dsigmaxy[i] += m_sigmaxx[i]*m_spinratexy[i] - m_sigmaxz[i]*m_spinrateyz[i] -
+                m_spinratexy[i]*m_sigmayy[i] - m_spinratexz[i]*m_sigmayz[i];
+            dsigmaxz[i] += m_sigmaxx[i]*m_spinratexz[i] + m_sigmaxy[i]*m_spinrateyz[i] -
+                m_spinratexy[i]*m_sigmayz[i] - m_spinratexz[i]*m_sigmazz[i];
+            dsigmayz[i] += m_sigmaxy[i]*m_spinratexz[i] + m_sigmayy[i]*m_spinrateyz[i] +
+                m_spinratexy[i]*m_sigmaxz[i] - m_spinrateyz[i]*m_sigmazz[i];
         }
 
         // update original stress states
         for (int i = 0; i < m_size; ++i) {
-            m_sigmaxx[i] += dsigmaxx[i];
-            m_sigmayy[i] += dsigmayy[i];
-            m_sigmazz[i] += dsigmazz[i];
-            m_sigmaxy[i] += dsigmaxy[i];
-            m_sigmaxz[i] += dsigmaxz[i];
-            m_sigmayz[i] += dsigmayz[i];
+            m_sigmaxx[i] += dt*dsigmaxx[i];
+            m_sigmayy[i] += dt*dsigmayy[i];
+            m_sigmazz[i] += dt*dsigmazz[i];
+            m_sigmaxy[i] += dt*dsigmaxy[i];
+            m_sigmaxz[i] += dt*dsigmaxz[i];
+            m_sigmayz[i] += dt*dsigmayz[i];
         }
 
+    }
+
+    template<typename F> void particle_system<F>::update_velocity(const F &dt) {
+        for (int i = 0; i < m_size; ++i) {
+            m_vx[i] += dt*m_ax[i];
+            m_vy[i] += dt*m_ay[i];
+            m_vz[i] += dt*m_az[i];
+        }
+    }
+    template<typename F> void particle_system<F>::update_position(const F &dt) {
+        for (int i = 0; i < m_size; ++i) {
+            m_x[i] += dt*m_dxdt[i];
+            m_y[i] += dt*m_dydt[i];
+            m_z[i] += dt*m_dzdt[i];
+        }
+    }
+    template<typename F> void particle_system<F>::update_density(const F &dt) {
+        // update density using volumentric strain increment
+        for (int i = 0; i < m_size; ++i) {
+            m_rho[i] /= 1. + dt*(m_strainratexx[i] + m_strainrateyy[i] + m_strainratezz[i]);
+        }
+    }
+
+    template<typename F> void particle_system<F>::save_to_file(const std::string &prefix, const int &timestep) const {
+
+        // convert timestep number to string (width of 7 chars, for up to 9,999,999,999 timesteps)
+        std::string str_timestep = std::to_string(timestep);
+        str_timestep = std::string(7-str_timestep.length(), '0') + str_timestep;
+
+        std::string fname {prefix + str_timestep};
+
+        std::ofstream outfile(fname);
+
+        const int i_width = 7, f_width = 12;
+
+        outfile << std::setw(i_width) << "id" << ' '
+                << std::setw(f_width) << "x" << ' '
+                << std::setw(f_width) << "y" << ' '
+                << std::setw(f_width) << "z" << ' '
+                << std::setw(f_width) << "vx" << ' '
+                << std::setw(f_width) << "vy" << ' '
+                << std::setw(f_width) << "vz" << ' '
+                << std::setw(f_width) << "mass" << ' '
+                << std::setw(f_width) << "rho" << ' '
+                << std::setw(f_width) << "sigmaxx" << ' '
+                << std::setw(f_width) << "sigmayy" << ' '
+                << std::setw(f_width) << "sigmazz" << ' '
+                << std::setw(f_width) << "sigmaxy" << ' '
+                << std::setw(f_width) << "sigmaxz" << ' '
+                << std::setw(f_width) << "sigmayz" << ' '
+                << std::setw(f_width) << "ax" << ' '
+                << std::setw(f_width) << "ay" << ' '
+                << std::setw(f_width) << "az" << ' '
+                << std::setw(f_width) << "dxdt" << ' '
+                << std::setw(f_width) << "dydt" << ' '
+                << std::setw(f_width) << "dzdt" << ' '
+                << std::setw(f_width) << "strainratexx" << ' '
+                << std::setw(f_width) << "strainrateyy" << ' '
+                << std::setw(f_width) << "strainratezz" << ' '
+                << std::setw(f_width) << "strainratexy" << ' '
+                << std::setw(f_width) << "strainratexz" << ' '
+                << std::setw(f_width) << "strainrateyz" << ' '
+                << std::setw(f_width) << "spinratexy" << ' '
+                << std::setw(f_width) << "spinratexz" << ' '
+                << std::setw(f_width) << "spinrateyz" << ' '
+                << '\n';
+
+        for (int i = 0; i < m_size; ++i) {
+            outfile << std::setw(i_width) << i << ' '
+                    << std::setw(f_width) << std::fixed << x(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << y(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << z(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << vx(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << vy(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << vz(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << mass(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << rho(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << sigmaxx(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << sigmayy(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << sigmazz(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << sigmaxy(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << sigmaxz(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << sigmayz(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << ax(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << ay(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << az(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << dxdt(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << dydt(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << dzdt(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << strainratexx(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << strainrateyy(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << strainratezz(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << strainratexy(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << strainratexz(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << strainrateyz(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << spinratexy(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << spinratexz(i) << std::setprecision(3) << ' '
+                    << std::setw(f_width) << std::fixed << spinrateyz(i) << std::setprecision(3) << ' '
+                    << '\n';
+        }
+    }
+
+    // initalize empty (no size)
+    template<typename F>
+    particle_system<F>::particle_system(std::string fname, grid<F> &ingrid, kernel_base<F> &knl)
+        : background_grid(ingrid)
+        , m_capacity {0}
+        , m_size {0}
+        , m_body_force {0., 0., 0.}
+        , m_knl {knl}
+        , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
+    {
+        std::ifstream file(fname);
+        std::string line, header;
+
+        // pull out header
+        std::getline(file, header);
+
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            GraMPM::particle<F> p;
+            iss >> p.x >> p.y >> p.z >> p.vx >> p.vy >> p.vz >> p.mass >> p.rho >> p.sigmaxx >> p.sigmayy >> 
+                p.sigmazz >> p.sigmaxy >> p.sigmaxz >> p.sigmayz >> p.ax >> p.ay >> p.az >> p.dxdt >> p.dydt >>
+                p.dzdt >> p.strainratexx >> p.strainrateyy >> p.strainratezz >> p.strainratexy >> p.strainratexz >>
+                p.strainrateyz >> p.spinratexy >> p.spinratexz >> p.spinrateyz;
+                
+            push_back(p);
+            
+        }
     }
 }
 

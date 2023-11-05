@@ -135,6 +135,14 @@ namespace GraMPM {
         m_forcez[i*m_ngridy*m_ngridz+j*m_ngridz+k] = fz;
     }
 
+    template<typename F> void grid<F>::update_momentum(const F &dt) {
+        for (int i = 0; i < ncells(); ++i) {
+            m_momentumx[i] += dt*m_forcex[i];
+            m_momentumy[i] += dt*m_forcey[i];
+            m_momentumz[i] += dt*m_forcez[i];
+        }
+    }
+
     // helper function to calculate number of grid cells in each dimension
     template<typename F>
     int grid<F>::calc_ngrid(const F &maxx, const F &minx, const F &dc) const {

@@ -161,9 +161,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.ax(i)==0.);
         REQUIRE(particles.ay(i)==0.);
         REQUIRE(particles.az(i)==0.);
-        REQUIRE(particles.dvx(i)==0.);
-        REQUIRE(particles.dvy(i)==0.);
-        REQUIRE(particles.dvz(i)==0.);
+        REQUIRE(particles.dxdt(i)==0.);
+        REQUIRE(particles.dydt(i)==0.);
+        REQUIRE(particles.dzdt(i)==0.);
         REQUIRE(particles.mass(i)==0.);
         REQUIRE(particles.sigmaxx(i)==0.);
         REQUIRE(particles.sigmayy(i)==0.);
@@ -205,12 +205,12 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles.ay(i)==-8.*i);
         particles.set_az(i, -9.*i);
         REQUIRE(particles.az(i)==-9.*i);
-        particles.set_dvx(i, -10.*i);
-        REQUIRE(particles.dvx(i)==-10.*i);
-        particles.set_dvy(i, -11.*i);
-        REQUIRE(particles.dvy(i)==-11.*i);
-        particles.set_dvz(i, -12.*i);
-        REQUIRE(particles.dvz(i)==-12.*i);
+        particles.set_dxdt(i, -10.*i);
+        REQUIRE(particles.dxdt(i)==-10.*i);
+        particles.set_dydt(i, -11.*i);
+        REQUIRE(particles.dydt(i)==-11.*i);
+        particles.set_dzdt(i, -12.*i);
+        REQUIRE(particles.dzdt(i)==-12.*i);
         particles.set_mass(i, 30.*i);
         REQUIRE(particles.mass(i)==30.*i);
         particles.set_rho(i, 40.*i);
@@ -279,9 +279,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(particles2.ax(i)==7.*i);
         REQUIRE(particles2.ay(i)==8.*i);
         REQUIRE(particles2.az(i)==9.*i);
-        REQUIRE(particles2.dvx(i)==10.*i);
-        REQUIRE(particles2.dvy(i)==11.*i);
-        REQUIRE(particles2.dvz(i)==12.*i);
+        REQUIRE(particles2.dxdt(i)==10.*i);
+        REQUIRE(particles2.dydt(i)==11.*i);
+        REQUIRE(particles2.dzdt(i)==12.*i);
         REQUIRE(particles2.mass(i)==10.*i);
         REQUIRE(particles2.rho(i)==100.*i);
         REQUIRE(particles2.sigmaxx(i)==-0.1*i);
@@ -313,9 +313,9 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(p.ax==7.*i);
         REQUIRE(p.ay==8.*i);
         REQUIRE(p.az==9.*i);
-        REQUIRE(p.dvx==10.*i);
-        REQUIRE(p.dvy==11.*i);
-        REQUIRE(p.dvz==12.*i);
+        REQUIRE(p.dxdt==10.*i);
+        REQUIRE(p.dydt==11.*i);
+        REQUIRE(p.dzdt==12.*i);
         REQUIRE(p.mass==10.*i);
         REQUIRE(p.rho==100.*i);
         REQUIRE(p.sigmaxx==-0.1*i);
@@ -336,6 +336,48 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
     }
 }
 
+TEST_CASE("IO", "[particles]") {
+
+    particles.save_to_file("testfile", 1);
+
+    GraMPM::particle_system<double> particles3("testfile0000001", grid, knl);
+
+    REQUIRE(particles3.size()==5);
+
+    // check that manual setter functions work
+    for (int i = 0; i < 1; ++i) {
+        REQUIRE(particles3.x(i)==-1.*i);
+        REQUIRE(particles3.y(i)==-2.*i);
+        REQUIRE(particles3.z(i)==-3.*i);
+        REQUIRE(particles3.vx(i)==-4.*i);
+        REQUIRE(particles3.vy(i)==-5.*i);
+        REQUIRE(particles3.vz(i)==-6.*i);
+        REQUIRE(particles3.ax(i)==-7.*i);
+        REQUIRE(particles3.ay(i)==-8.*i);
+        REQUIRE(particles3.az(i)==-9.*i);
+        REQUIRE(particles3.dxdt(i)==-10.*i);
+        REQUIRE(particles3.dydt(i)==-11.*i);
+        REQUIRE(particles3.dzdt(i)==-12.*i);
+        REQUIRE(particles3.mass(i)==30.*i);
+        REQUIRE(particles3.rho(i)==40.*i);
+        REQUIRE(particles3.sigmaxx(i)==-0.1*i);
+        REQUIRE(particles3.sigmayy(i)==-0.2*i);
+        REQUIRE(particles3.sigmazz(i)==-0.3*i);
+        REQUIRE(particles3.sigmaxy(i)==-0.4*i);
+        REQUIRE(particles3.sigmaxz(i)==-0.5*i);
+        REQUIRE(particles3.sigmayz(i)==-0.6*i);
+        REQUIRE(particles3.strainratexx(i)==-0.7*i);
+        REQUIRE(particles3.strainrateyy(i)==-0.8*i);
+        REQUIRE(particles3.strainratezz(i)==-0.9*i);
+        REQUIRE(particles3.strainratexy(i)==-1.0*i);
+        REQUIRE(particles3.strainratexz(i)==-1.1*i);
+        REQUIRE(particles3.strainrateyz(i)==-1.2*i);
+        REQUIRE(particles3.spinratexy(i)==-1.3*i);
+        REQUIRE(particles3.spinratexz(i)==-1.4*i);
+        REQUIRE(particles3.spinrateyz(i)==-1.5*i);
+    }
+}
+
 TEST_CASE("Check clearing and resizing", "[particles]") {
     particles.clear();
     REQUIRE(particles.empty());
@@ -351,9 +393,9 @@ TEST_CASE("Check clearing and resizing", "[particles]") {
         REQUIRE(particles.ax(i)==0.);
         REQUIRE(particles.ay(i)==0.);
         REQUIRE(particles.az(i)==0.);
-        REQUIRE(particles.dvx(i)==0.);
-        REQUIRE(particles.dvy(i)==0.);
-        REQUIRE(particles.dvz(i)==0.);
+        REQUIRE(particles.dxdt(i)==0.);
+        REQUIRE(particles.dydt(i)==0.);
+        REQUIRE(particles.dzdt(i)==0.);
         REQUIRE(particles.mass(i)==0.);
         REQUIRE(particles.rho(i)==0.);
         REQUIRE(particles.sigmaxx(i)==0.);

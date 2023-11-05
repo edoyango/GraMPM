@@ -9,12 +9,13 @@
 #include <cstdlib>
 #include <array>
 #include <cassert>
+#include <string>
 
 namespace GraMPM {
     template<typename F>
     class particle {
         public:
-        F x, y, z, vx, vy, vz, ax, ay, az, dvx, dvy, dvz, mass, rho, sigmaxx, sigmayy, sigmazz, sigmaxy, sigmaxz, 
+        F x, y, z, vx, vy, vz, ax, ay, az, dxdt, dydt, dzdt, mass, rho, sigmaxx, sigmayy, sigmazz, sigmaxy, sigmaxz, 
             sigmayz, strainratexx, strainrateyy, strainratezz, strainratexy, strainratexz, strainrateyz, spinratexy,
             spinratexz, spinrateyz;
         particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, 
@@ -22,10 +23,11 @@ namespace GraMPM {
             const F &insigmaxy, const F &insigmaxz, const F &insigmayz);
         particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, const F &inmass,
             const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, const F &insigmaxy, 
-            const F &insigmaxz, const F &insigmayz, const F &inax, const F &inay, const F &inaz, const F &indvx, 
-            const F &indvy, const F &indvz, const F &instrainratexx, const F &instrainrateyy, const F &instrainratezz, 
+            const F &insigmaxz, const F &insigmayz, const F &inax, const F &inay, const F &inaz, const F &indxdt, 
+            const F &indydt, const F &indzdt, const F &instrainratexx, const F &instrainrateyy, const F &instrainratezz, 
             const F &instrainratexy, const F &instrainratexz, const F &instrainrateyz, const F &inspinratexy,
             const F &inspinratexz, const F &inspinrateyz);
+        particle();
     };
 
     template<typename F>
@@ -91,6 +93,8 @@ namespace GraMPM {
             void set_forcey(const int &i, const int &j, const int &k, const F &fy);
             void set_forcez(const int &i, const F &fz);
             void set_forcez(const int &i, const int &j, const int &k, const F &fz);
+
+            void update_momentum(const F &dt); 
         private:
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
@@ -107,7 +111,7 @@ namespace GraMPM {
         private:
             long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
             const int m_nneighbour_nodes_perp;
-            std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_ax, m_ay, m_az, m_dvx, m_dvy, m_dvz, m_mass, m_rho, 
+            std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_ax, m_ay, m_az, m_dxdt, m_dydt, m_dzdt, m_mass, m_rho, 
                 m_sigmaxx, m_sigmayy, m_sigmazz, m_sigmaxy, m_sigmaxz, m_sigmayz, m_strainratexx, m_strainrateyy, 
                 m_strainratezz, m_strainratexy, m_strainratexz, m_strainrateyz, m_spinratexy, m_spinratexz,
                 m_spinrateyz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
@@ -139,6 +143,8 @@ namespace GraMPM {
             particle_system(const std::vector<particle<F>> &pv, std::array<F, 3> bf, grid<F> &ingrid, kernel_base<F> &knl);
 
             particle_system(grid<F> &ingrid, kernel_base<F> &knl);
+
+            particle_system(std::string fname, grid<F> &ingrid, kernel_base<F> &knl);
             
             const grid<F>* grid_address();
 
@@ -161,12 +167,12 @@ namespace GraMPM {
             std::vector<F>* ay();
             const F& az(const int &i) const;
             std::vector<F>* az();
-            const F& dvx(const int &i) const;
-            std::vector<F>* dvx();
-            const F& dvy(const int &i) const;
-            std::vector<F>* dvy();
-            const F& dvz(const int &i) const;
-            std::vector<F>* dvz();
+            const F& dxdt(const int &i) const;
+            std::vector<F>* dxdt();
+            const F& dydt(const int &i) const;
+            std::vector<F>* dydt();
+            const F& dzdt(const int &i) const;
+            std::vector<F>* dzdt();
             const F& mass(const int &i) const;
             std::vector<F>* mass();
             const F& rho(const int &i) const;
@@ -228,9 +234,9 @@ namespace GraMPM {
             void set_ax(const int &i, const F &ax);
             void set_ay(const int &i, const F &ay);
             void set_az(const int &i, const F &az);
-            void set_dvx(const int &i, const F &dvx);
-            void set_dvy(const int &i, const F &dvy);
-            void set_dvz(const int &i, const F &dvz);
+            void set_dxdt(const int &i, const F &dxdt);
+            void set_dydt(const int &i, const F &dydt);
+            void set_dzdt(const int &i, const F &dzdt);
             void set_mass(const int &i, const F &m);
             void set_rho(const int &i, const F &rho);
             void set_sigmaxx(const int &i, const F &sigmaxx);
@@ -282,7 +288,12 @@ namespace GraMPM {
             void map_force_to_grid();
             void map_acceleration_to_particles();
             void map_strainrate_to_particles();
-            void stress_update(const F &dt);
+            void update_stress(const F &dt);
+            void update_velocity(const F &dt);
+            void update_position(const F &dt);
+            void update_density(const F &dt);
+
+            void save_to_file(const std::string &prefix, const int &timestep) const;
     };
 
 }
