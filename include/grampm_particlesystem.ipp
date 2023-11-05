@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 namespace GraMPM {
 
@@ -784,7 +785,7 @@ namespace GraMPM {
 
         std::ofstream outfile(fname);
 
-        const int i_width = 7, f_width = 12;
+        const int i_width = 7, f_width = 12, f_precision=10;
 
         outfile << std::setw(i_width) << "id" << ' '
                 << std::setw(f_width) << "x" << ' '
@@ -819,36 +820,36 @@ namespace GraMPM {
                 << '\n';
 
         for (int i = 0; i < m_size; ++i) {
-            outfile << std::setw(i_width) << i << ' '
-                    << std::setw(f_width) << std::fixed << x(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << y(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << z(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << vx(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << vy(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << vz(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << mass(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << rho(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << sigmaxx(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << sigmayy(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << sigmazz(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << sigmaxy(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << sigmaxz(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << sigmayz(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << ax(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << ay(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << az(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << dxdt(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << dydt(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << dzdt(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << strainratexx(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << strainrateyy(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << strainratezz(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << strainratexy(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << strainratexz(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << strainrateyz(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << spinratexy(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << spinratexz(i) << std::setprecision(3) << ' '
-                    << std::setw(f_width) << std::fixed << spinrateyz(i) << std::setprecision(3) << ' '
+            outfile << std::setw(i_width) << i << ' ' << std::setprecision(f_precision)
+                    << std::setw(f_width) << std::fixed << x(i) << ' '
+                    << std::setw(f_width) << std::fixed << y(i) << ' '
+                    << std::setw(f_width) << std::fixed << z(i) << ' '
+                    << std::setw(f_width) << std::fixed << vx(i) << ' '
+                    << std::setw(f_width) << std::fixed << vy(i) << ' '
+                    << std::setw(f_width) << std::fixed << vz(i) << ' '
+                    << std::setw(f_width) << std::fixed << mass(i) << ' '
+                    << std::setw(f_width) << std::fixed << rho(i) << ' '
+                    << std::setw(f_width) << std::fixed << sigmaxx(i) << ' '
+                    << std::setw(f_width) << std::fixed << sigmayy(i) << ' '
+                    << std::setw(f_width) << std::fixed << sigmazz(i) << ' '
+                    << std::setw(f_width) << std::fixed << sigmaxy(i) << ' '
+                    << std::setw(f_width) << std::fixed << sigmaxz(i) << ' '
+                    << std::setw(f_width) << std::fixed << sigmayz(i) << ' '
+                    << std::setw(f_width) << std::fixed << ax(i) << ' '
+                    << std::setw(f_width) << std::fixed << ay(i) << ' '
+                    << std::setw(f_width) << std::fixed << az(i) << ' '
+                    << std::setw(f_width) << std::fixed << dxdt(i) << ' '
+                    << std::setw(f_width) << std::fixed << dydt(i) << ' '
+                    << std::setw(f_width) << std::fixed << dzdt(i) << ' '
+                    << std::setw(f_width) << std::fixed << strainratexx(i) << ' '
+                    << std::setw(f_width) << std::fixed << strainrateyy(i) << ' '
+                    << std::setw(f_width) << std::fixed << strainratezz(i) << ' '
+                    << std::setw(f_width) << std::fixed << strainratexy(i) << ' '
+                    << std::setw(f_width) << std::fixed << strainratexz(i) << ' '
+                    << std::setw(f_width) << std::fixed << strainrateyz(i) << ' '
+                    << std::setw(f_width) << std::fixed << spinratexy(i) << ' '
+                    << std::setw(f_width) << std::fixed << spinratexz(i) << ' '
+                    << std::setw(f_width) << std::fixed << spinrateyz(i) << ' '
                     << '\n';
         }
     }
