@@ -10,7 +10,7 @@ namespace GRAMPM {
         void MUSL(GraMPM::particle_system<F> &p, const F &dt, const int &max_timestep, 
             const int &print_timestep_interval, const int &save_timestep_interval) {
             
-            for (int itimestep = 1; i < maxtimestep+1; ++itimestep) {
+            for (int itimestep = 1; itimestep < max_timestep+1; ++itimestep) {
 
                 // print to terminal
                 if (itimestep % print_timestep_interval == 0) {
@@ -30,8 +30,14 @@ namespace GRAMPM {
                 // map particles' momentum to nodes
                 p.map_momentum_to_grid();
 
+                // apply user-defined momentum boundary conditions to grid
+                p.background_grid.apply_momentum_boundary_conditions(itimestep, dt);
+
                 // map particles' force to nodes
                 p.map_force_to_grid();
+
+                // apply user-defined force boundary conditions to grid
+                p.background_grid.apply_force_boundary_conditions(itimestep, dt);
 
                 // update nodal momentums
                 p.background_grid.update_momentum(dt);
@@ -46,6 +52,9 @@ namespace GRAMPM {
 
                 // map particles' momentum to nodes, in preparation for updating stress
                 p.map_momentum_to_grid();
+
+                // apply user-defined momentum boundary conditions to grid
+                p.background_grid.apply_momentum_boundary_conditions(itimestep, dt);
 
                 // map nodal velocities to particle strain/spin rates
                 p.map_strainrate_to_particles();
