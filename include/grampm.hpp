@@ -10,6 +10,7 @@
 #include <array>
 #include <cassert>
 #include <string>
+#include <functional>
 
 namespace GraMPM {
     template<typename F>
@@ -35,6 +36,12 @@ namespace GraMPM {
 
         public:
 
+            grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc, 
+                std::function<void(grid<F> &self, const int&, const F&)> momentum_boundary_func, 
+                std::function<void(grid<F> &self, const int&, const F&)> force_boundary_func);
+            grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc, 
+                std::function<void(grid<F> &self, const int&, const F&)> momentum_boundary_func, 
+                std::function<void(grid<F> &self, const int&, const F&)> force_boundary_func);
             grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc);
             grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc);
 
@@ -93,13 +100,26 @@ namespace GraMPM {
             void set_forcey(const int &i, const int &j, const int &k, const F &fy);
             void set_forcez(const int &i, const F &fz);
             void set_forcez(const int &i, const int &j, const int &k, const F &fz);
-
+            void set_momentum_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f)
+            { m_momentum_boundary_function = f; }
+            void set_force_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f)
+            { m_force_boundary_function = f; }
             void update_momentum(const F &dt); 
+
+            void apply_momentum_boundary_conditions(const int &timestep, const F dt) {
+                m_momentum_boundary_function(*this, timestep, dt);
+            }
+
+            void apply_force_boundary_conditions(const int &timestep, const F dt) {
+                m_force_boundary_function(*this, timestep, dt);
+            }
         private:
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
             const F m_mingridx, m_mingridy, m_mingridz, m_maxgridx, m_maxgridy, m_maxgridz, m_dcell;
             std::vector<F> m_mass, m_momentumx, m_momentumy, m_momentumz, m_forcex, m_forcey, m_forcez;
+            std::function<void(grid<F>&, const int&, const F&)> m_momentum_boundary_function, 
+                m_force_boundary_function;
 
             int calc_ngrid(const F &maxx, const F &minx, const F &dc) const;
         

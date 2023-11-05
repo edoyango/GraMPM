@@ -6,6 +6,59 @@
 namespace GraMPM {
     
     template<typename F>
+    grid<F>::grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc, 
+        std::function<void(grid<F>&, const int&, const F&)> momentum_boundary_func, 
+        std::function<void(grid<F>&, const int&, const F&)> force_boundary_func)
+        : m_mingridx {minx}
+        , m_mingridy {miny}
+        , m_mingridz {minz}
+        , m_maxgridx {maxx}
+        , m_maxgridy {maxy}
+        , m_maxgridz {maxz}
+        , m_ngridx {calc_ngrid(maxx, minx, dc)}
+        , m_ngridy {calc_ngrid(maxy, miny, dc)}
+        , m_ngridz {calc_ngrid(maxz, minz, dc)}
+        , m_ncells {m_ngridx*m_ngridy*m_ngridz}
+        , m_dcell {dc}
+        , m_mass(m_ncells, 0.)
+        , m_momentumx(m_ncells, 0.)
+        , m_momentumy(m_ncells, 0.)
+        , m_momentumz(m_ncells, 0.)
+        , m_forcex(m_ncells, 0.)
+        , m_forcey(m_ncells, 0.)
+        , m_forcez(m_ncells, 0.)
+        , m_momentum_boundary_function(momentum_boundary_func)
+        , m_force_boundary_function(force_boundary_func)
+    {
+    }
+
+    template<typename F>
+    grid<F>::grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc, 
+        std::function<void(grid<F>&, const int&, const F&)> momentum_boundary_func, 
+        std::function<void(grid<F>&, const int&, const F&)> force_boundary_func)
+        : m_mingridx {minx[0]}
+        , m_mingridy {minx[1]}
+        , m_mingridz {minx[2]}
+        , m_maxgridx {maxx[0]}
+        , m_maxgridy {maxx[1]}
+        , m_maxgridz {maxx[2]}
+        , m_ngridx {calc_ngrid(maxx[0], minx[0], dc)}
+        , m_ngridy {calc_ngrid(maxx[1], minx[1], dc)}
+        , m_ngridz {calc_ngrid(maxx[2], minx[2], dc)}
+        , m_ncells {m_ngridx*m_ngridy*m_ngridz}
+        , m_dcell {dc}
+        , m_mass(m_ncells, 0.)
+        , m_momentumx(m_ncells, 0.)
+        , m_momentumy(m_ncells, 0.)
+        , m_momentumz(m_ncells, 0.)
+        , m_forcex(m_ncells, 0.)
+        , m_forcey(m_ncells, 0.)
+        , m_forcez(m_ncells, 0.)
+        , m_momentum_boundary_function(momentum_boundary_func)
+        , m_force_boundary_function(force_boundary_func)
+    {
+    }
+    template<typename F>
     grid<F>::grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc)
         : m_mingridx {minx}
         , m_mingridy {miny}
