@@ -4,7 +4,7 @@
 #include <grampm.hpp>
 #include <iostream>
 
-namespace GRAMPM {
+namespace GraMPM {
     namespace integrators {
         template<typename F>
         void MUSL(GraMPM::particle_system<F> &p, const F &dt, const int &max_timestep, 
