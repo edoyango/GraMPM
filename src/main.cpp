@@ -5,6 +5,8 @@
 #include <cmath>
 
 static void momentum_boundary(GraMPM::grid<double> &self, const int &timestep, const double &dt) {
+
+    // floor
     for (int i = 0; i < self.ngridx(); ++i)
         for (int j = 0; j < self.ngridy(); ++j) {
             self.set_momentumx(i, j, 0, 0.);
@@ -12,15 +14,25 @@ static void momentum_boundary(GraMPM::grid<double> &self, const int &timestep, c
             self.set_momentumz(i, j, 0, 0.);
         }
 
+    // east/west wall
+    const int xup = self.ngridx()-1;
     for (int j = 0; j < self.ngridy(); ++j)
         for (int k = 0; k < self.ngridz(); ++k) {
             self.set_momentumx(0, j, k, 0.);
-            self.set_momentumy(0, j, k, 0.);
-            self.set_momentumz(0, j, k, 0.);
+            self.set_momentumx(xup, j, k, 0.);
+        }
+
+    // north/south wall
+    const int yup = self.ngridy()-1;
+    for (int i = 0; i < self.ngridx(); ++i) 
+        for (int k = 0; k < self.ngridz(); ++k) {
+            self.set_momentumy(i, 0, k, 0.);
+            self.set_momentumy(i, yup, k, 0.);
         }
 }
 
 static void force_boundary(GraMPM::grid<double> &self, const int &timestep, const double &dt) {
+    // floor
     for (int i = 0; i < self.ngridx(); ++i)
         for (int j = 0; j < self.ngridy(); ++j) {
             self.set_forcex(i, j, 0, 0.);
@@ -28,11 +40,20 @@ static void force_boundary(GraMPM::grid<double> &self, const int &timestep, cons
             self.set_forcez(i, j, 0, 0.);
         }
 
+    // east/west wall
+    const int xup = self.ngridx()-1;
     for (int j = 0; j < self.ngridy(); ++j)
         for (int k = 0; k < self.ngridz(); ++k) {
             self.set_forcex(0, j, k, 0.);
-            self.set_forcey(0, j, k, 0.);
-            self.set_forcez(0, j, k, 0.);
+            self.set_forcex(xup, j, k, 0.);
+        }
+
+    // north/south wall
+    const int yup = self.ngridy()-1;
+    for (int i = 0; i < self.ngridx(); ++i) 
+        for (int k = 0; k < self.ngridz(); ++k) {
+            self.set_forcey(i, 0, k, 0.);
+            self.set_forcey(i, yup, k, 0.);
         }
 }
 
