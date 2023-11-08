@@ -137,7 +137,7 @@ namespace GraMPM {
                 m_spinrateyz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
                 m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
                 m_p2g_neighbour_nodes_dwdz;
-            F m_E, m_v;
+            F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
             std::array<F, 3> m_body_force;
 
@@ -231,6 +231,8 @@ namespace GraMPM {
             const F& body_force(const int &i) const;
             const F& E() const;
             const F& v() const;
+            void DP_params(F& phi, F& psi, F& coh) const;
+            void DP_params(F& phi, F& psi, F& coh, F& alpha_phi, F& alpha_psi, F& k_c) const;
             const int& ravelled_grid_idx(const int &i) const;
             std::array<int, 3> grid_idx(const int &i) const;
             const int& p2g_neighbour_node(const int i, const int j) const ;
@@ -279,6 +281,7 @@ namespace GraMPM {
             void set_grid_index(const int &i, const int &idx);
             void set_E(const F &E);
             void set_v(const F &v);
+            void set_DP_params(const F &phi, const F &psi, const F &coh);
             void incrementNParticles();
 
             // get particle i in "particle" aggregate class

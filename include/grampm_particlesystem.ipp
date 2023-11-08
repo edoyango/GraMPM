@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iomanip>
 
+constexpr double pi {3.14159265358979311599796346854};
+
 namespace GraMPM {
 
     // initialize a particle with size, but zerod properties
@@ -170,6 +172,11 @@ namespace GraMPM {
     template<typename F>const F& particle_system<F>::body_force(const int &i) const { return m_body_force[i]; }
     template<typename F>const F& particle_system<F>::E() const { return m_E; }
     template<typename F>const F& particle_system<F>::v() const { return m_v; }
+    template<typename F> void particle_system<F>::DP_params(F& phi, F& psi, F& coh) const { phi = m_phi; psi = m_psi; coh = m_coh; }
+    template<typename F> void particle_system<F>::DP_params(F& phi, F& psi, F& coh, F& alpha_phi, F& alpha_psi, F& k_c) const {
+         phi = m_phi; psi = m_psi; coh = m_coh; 
+         alpha_phi = m_alphaphi; alpha_psi = m_alphapsi; k_c = m_kc;
+    }
     template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
     template<typename F>
     std::array<int, 3> particle_system<F>::grid_idx(const int &i) const { return unravel_grid_idx(ravelled_grid_idx(i)); }
@@ -263,6 +270,13 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_grid_index(const int &i, const int &idx) { m_grid_idx[i] = idx; }
     template<typename F> void particle_system<F>::set_E(const F &E) { m_E = E; }
     template<typename F> void particle_system<F>::set_v(const F &v) { m_v = v; }
+    template<typename F> void particle_system<F>::set_DP_params(const F &phi, const F &psi, const F &coh) {
+        m_phi = phi; m_psi = psi; m_coh = coh;
+        const denom = std::sqrt(9.+12.*std::tan(phi)*std::tan(phi));
+        m_alphaphi = 3.*std::tan(phi)/denom;
+        m_alphapsi = 3.*std::tan(psi)/denom;
+        m_kc = 3.*coh/denom;
+    }
     template<typename F> void particle_system<F>::incrementNParticles() {m_size++;}
 
     // vector-like api: at. Returns particle class
