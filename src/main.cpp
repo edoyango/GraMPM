@@ -66,7 +66,7 @@ int main() {
     GraMPM::kernel_linear_bspline<double> knl(dcell);
     GraMPM::grid<double> g(mingrid, maxgrid, dcell, momentum_boundary, force_boundary);
     GraMPM::particle_system<double> ps(g, knl);
-    ps.set_stress_update_function(GraMPM::stress_update::hookes_law<double>);
+    ps.set_stress_update_function(GraMPM::stress_update::drucker_prager_elastoplastic<double>);
 
     const double rho_ini = 1650.;
 
@@ -96,7 +96,7 @@ int main() {
 
     ps.save_to_file("outputdata/p_", 0);
 
-    GraMPM::integrators::MUSL<double>(ps, dt, 100, 1, 1);
+    GraMPM::integrators::MUSL<double>(ps, dt, 1000, 10, 10);
 
     return 0;
 }
