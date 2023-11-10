@@ -132,6 +132,51 @@ TEST_CASE("Map particles momentums to grid (linear bspline)") {
     REQUIRE(std::round(p.background_grid.momentumz(5, 10, 15)*100.)==-1617375.);
 }
 
+TEST_CASE("Map particles momentums to grid (cubic bspline)") {
+    const double dcell = 0.2;
+    GraMPM::grid<double> g(-0.2, -0.2, -0.2, 1.19, 2.19, 3.19, dcell);
+
+    CHECK(g.ngridx()==8);
+    CHECK(g.ngridy()==13);
+    CHECK(g.ngridz()==18);
+    GraMPM::kernel_cubic_bspline<double> knl(dcell);
+
+    GraMPM::particle_system<double> p(g, knl);
+
+    generate_particles(p);
+
+    p.map_particles_to_grid();
+    p.map_momentum_to_grid();
+
+    // check conservation
+    double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
+    for (int i = 0; i < p.size(); ++i) {
+        psum[0] += p.mass(i)*p.vx(i);
+        psum[1] += p.mass(i)*p.vy(i);
+        psum[2] += p.mass(i)*p.vz(i);
+    }
+    for (int i = 0; i < p.background_grid.ncells(); ++i) {
+        gsum[0] += p.background_grid.momentumx(i);
+        gsum[1] += p.background_grid.momentumy(i);
+        gsum[2] += p.background_grid.momentumz(i);
+    }
+
+    REQUIRE(psum[0]*1e6==std::round(gsum[0]*1e6));
+    REQUIRE(psum[1]*1e6==std::round(gsum[1]*1e6));
+    REQUIRE(psum[2]*1e6==std::round(gsum[2]*1e6));
+
+    // check a few nodal values
+    REQUIRE(std::round(p.background_grid.momentumx(2, 2, 2)*1e6)==-627705941.);
+    REQUIRE(std::round(p.background_grid.momentumx(4, 5, 6)*1e6)==-10006666667.);
+    REQUIRE(std::round(p.background_grid.momentumx(6, 11, 16)*1e6)==-4751120334.);
+    REQUIRE(std::round(p.background_grid.momentumy(2, 2, 2)*1e6)==-627705941.);
+    REQUIRE(std::round(p.background_grid.momentumy(4, 5, 6)*1e6)==-13606666667.);
+    REQUIRE(std::round(p.background_grid.momentumy(6, 11, 16)*1e6)==-10312057834.);
+    REQUIRE(std::round(p.background_grid.momentumz(2, 2, 2)*1e6)==-627705941.);
+    REQUIRE(std::round(p.background_grid.momentumz(4, 5, 6)*1e6)==-17206666667.);
+    REQUIRE(std::round(p.background_grid.momentumz(6, 11, 16)*1e6)==-15872995334.);
+}
+
 TEST_CASE("Calculate force on grid (linear bspline)") {
     const double dcell = 0.2;
     const std::array<double, 3> bf {1., 2., 3.};
