@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <grampm_kernels.hpp>
 #include <array>
+#include <cmath>
 
 TEST_CASE("Check correct Hooke's law") {
     
@@ -34,7 +35,7 @@ TEST_CASE("Check correct Hooke's law") {
     REQUIRE(p.sigmayz(0)==48.);
 }
 
-TEST_CASE("Check correct spin rate") {
+TEST_CASE("Check correct Jaumann stress rate") {
     
     const double dcell = 0.2;
     GraMPM::grid<double> g(0., 0., 0., 0.99, 1.99, 2.99, dcell);
@@ -72,4 +73,24 @@ TEST_CASE("Check correct spin rate") {
     REQUIRE(p.sigmaxz(0) == 526.);
     REQUIRE(p.sigmayz(0) == 534.);
 
+}
+
+TEST_CASE("Check DP elasto-plasticity") {
+    const double dcell = 0.2;
+    GraMPM::grid<double> g(0., 0., 0., 0.99, 1.99, 2.99, dcell);
+    GraMPM::kernel_linear_bspline<double> knl(dcell);
+
+    std::array<double, 3> bf {0., 0., 0.};
+    GraMPM::particle_system<double> p(1, bf, g, knl);
+    const double pi = std::acos(-1.);
+    p.set_DP_params(pi/4., pi/36., 0.);
+
+    double phi, psi, cohesion, alpha_phi, alpha_psi, k_c;
+    p.DP_params(phi, psi, cohesion, alpha_phi, alpha_psi, k_c);
+    REQUIRE(phi==pi/4.);
+    REQUIRE(alpha_phi==3.*std::tan(phi)/std::sqrt(9.+12.*std::tan(phi)*std::tan(phi)));
+    REQUIRE(psi==pi/36.);
+    REQUIRE(alpha_psi==3.*std::tan(psi)/std::sqrt(9.+12.*std::tan(phi)*std::tan(phi)));
+    REQUIRE(cohesion==0.);
+    REQUIRE(k_c==0.);
 }

@@ -272,7 +272,7 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::set_v(const F &v) { m_v = v; }
     template<typename F> void particle_system<F>::set_DP_params(const F &phi, const F &psi, const F &coh) {
         m_phi = phi; m_psi = psi; m_coh = coh;
-        const denom = std::sqrt(9.+12.*std::tan(phi)*std::tan(phi));
+        const F denom = std::sqrt(9.+12.*std::tan(phi)*std::tan(phi));
         m_alphaphi = 3.*std::tan(phi)/denom;
         m_alphapsi = 3.*std::tan(psi)/denom;
         m_kc = 3.*coh/denom;
