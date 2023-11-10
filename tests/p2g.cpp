@@ -5,6 +5,7 @@
 #include <grampm_kernels.hpp>
 #include <array>
 
+// helper function to generate particles
 void generate_particles(GraMPM::particle_system<double> &p) {
     for (int i = 0; i < 10; ++i) 
         for (int j = 0; j < 20; ++j) 
@@ -34,9 +35,11 @@ TEST_CASE("Map particles masses to grid (linear bspline)") {
     p.map_mass_to_grid();
 
     // check total mass conservation
+    // sum particles' mass
     double psum = 0., gsum = 0.;
     for (int i = 0; i < p.size(); ++i)
         psum += p.mass(i);
+    // sum grid's mass
     for (int i = 0; i < p.background_grid.ncells(); ++i)
         gsum += p.background_grid.mass(i);
 
@@ -65,9 +68,11 @@ TEST_CASE("Map particles masses to grid (cubic bspline)") {
     p.map_mass_to_grid();
 
     // check total mass conservation
+    // sum particles' mass
     double psum = 0., gsum = 0.;
     for (int i = 0; i < p.size(); ++i)
         psum += p.mass(i);
+    // sum grid's mass
     for (int i = 0; i < p.background_grid.ncells(); ++i)
         gsum += p.background_grid.mass(i);
 
@@ -96,29 +101,26 @@ TEST_CASE("Map particles momentums to grid (linear bspline)") {
     p.map_particles_to_grid();
     p.map_momentum_to_grid();
 
-    double psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.mass(i)*p.vx(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.momentumx(i);
+    // check momentum conservation
+    // sum particles' momentum
+    double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
+    for (int i = 0; i < p.size(); ++i) {
+        psum[0] += p.mass(i)*p.vx(i);
+        psum[1] += p.mass(i)*p.vy(i);
+        psum[2] += p.mass(i)*p.vz(i);
+    }
 
-    REQUIRE(psum==gsum);
+    // sum grid's momentum
+    for (int i = 0; i < p.background_grid.ncells(); ++i) {
+        gsum[0] += p.background_grid.momentumx(i);
+        gsum[1] += p.background_grid.momentumy(i);
+        gsum[2] += p.background_grid.momentumz(i);
+    }
 
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.mass(i)*p.vy(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.momentumy(i);
-
-    REQUIRE(psum==gsum);
-
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.mass(i)*p.vz(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.momentumz(i);
-
-    REQUIRE(psum==gsum);
+    // test
+    REQUIRE(psum[0]==gsum[0]);
+    REQUIRE(psum[1]==gsum[1]);
+    REQUIRE(psum[2]==gsum[2]);
 
     // check a few nodal values
     REQUIRE(std::round(p.background_grid.momentumx(1, 1, 1))==-600.);
@@ -197,29 +199,22 @@ TEST_CASE("Calculate force on grid (linear bspline)") {
 
     p.map_force_to_grid();
 
-    double psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.mass(i)*p.body_force(0);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.forcex(i);
+    // check conservation
+    double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
+    for (int i = 0; i < p.size(); ++i) {
+        psum[0] += p.mass(i)*p.body_force(0);
+        psum[1] += p.mass(i)*p.body_force(1);
+        psum[2] += p.mass(i)*p.body_force(2);
+    }
+    for (int i = 0; i < p.background_grid.ncells(); ++i) {
+        gsum[0] += p.background_grid.forcex(i);
+        gsum[1] += p.background_grid.forcey(i);
+        gsum[2] += p.background_grid.forcez(i);
+    }
 
-    REQUIRE(psum==gsum);
-
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.mass(i)*p.body_force(1);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.forcey(i);
-
-    REQUIRE(psum==gsum);
-
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.mass(i)*p.body_force(2);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.forcez(i);
-
-    REQUIRE(psum==gsum);
+    REQUIRE(psum[0]==gsum[0]);
+    REQUIRE(psum[1]==gsum[1]);
+    REQUIRE(psum[2]==gsum[2]);
 
     // check a few nodal values
     REQUIRE(std::round(p.background_grid.forcex(1, 1, 1))==360.);
