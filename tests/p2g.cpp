@@ -251,3 +251,76 @@ TEST_CASE("Calculate force on grid (linear bspline)") {
     REQUIRE(std::round(p.background_grid.forcez(5, 10, 15)*1e10)==16876423394507.);
 
 }
+
+TEST_CASE("Calculate force on grid (cubic bspline)") {
+    const double dcell = 0.2;
+    const std::array<double, 3> bf {1., 2., 3.};
+    GraMPM::grid<double> g(-0.2, -0.2, -0.2, 1.19, 2.19, 3.19, dcell);
+
+    CHECK(g.ngridx()==8);
+    CHECK(g.ngridy()==13);
+    CHECK(g.ngridz()==18);
+    GraMPM::kernel_cubic_bspline<double> knl(dcell);
+
+    GraMPM::particle_system<double> p(g, knl);
+
+    generate_particles(p);
+    
+    p.set_body_force(bf);
+
+    p.map_particles_to_grid();
+
+    p.map_force_to_grid();
+
+    // check conservation
+    double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
+    for (int i = 0; i < p.size(); ++i) {
+        psum[0] += p.mass(i)*p.body_force(0);
+        psum[1] += p.mass(i)*p.body_force(1);
+        psum[2] += p.mass(i)*p.body_force(2);
+    }
+    for (int i = 0; i < p.background_grid.ncells(); ++i) {
+        gsum[0] += p.background_grid.forcex(i);
+        gsum[1] += p.background_grid.forcey(i);
+        gsum[2] += p.background_grid.forcez(i);
+    }
+
+    REQUIRE(std::round(psum[0]*1e6)==std::round(gsum[0]*1e6));
+    REQUIRE(std::round(psum[1]*1e6)==std::round(gsum[1]*1e6));
+    REQUIRE(std::round(psum[2]*1e6)==std::round(gsum[2]*1e6));
+
+    // check a few nodal values
+    REQUIRE(std::round(p.background_grid.forcex(2, 2, 2)*1e6)==342642254.);
+    REQUIRE(std::round(p.background_grid.forcex(4, 5, 6)*1e6)==1800000000.);
+    REQUIRE(std::round(p.background_grid.forcex(6, 11, 16)*1e6)==556093750.);
+    REQUIRE(std::round(p.background_grid.forcey(2, 2, 2)*1e6)==685284509.);
+    REQUIRE(std::round(p.background_grid.forcey(4, 5, 6)*1e6)==3600000000.);
+    REQUIRE(std::round(p.background_grid.forcey(6, 11, 16)*1e6)==1112187500.);
+    REQUIRE(std::round(p.background_grid.forcez(2, 2, 2)*1e6)==1027926763.);
+    REQUIRE(std::round(p.background_grid.forcez(4, 5, 6)*1e6)==5400000000.);
+    REQUIRE(std::round(p.background_grid.forcez(6, 11, 16)*1e6)==1668281250.);
+
+    // try with non-zero stresses
+    for (int i = 0; i < p.size(); ++i) {
+        p.set_sigmaxx(i, p.x(i));
+        p.set_sigmayy(i, p.y(i));
+        p.set_sigmazz(i, p.z(i));
+        p.set_sigmaxy(i, p.x(i)-p.y(i));
+        p.set_sigmaxz(i, p.x(i)-p.z(i));
+        p.set_sigmayz(i, p.y(i)-p.z(i));
+    }
+
+    p.map_force_to_grid();
+
+    // check a few nodal values
+    REQUIRE(std::round(p.background_grid.forcex(2, 2, 2)*1e6)==342415998.);
+    REQUIRE(std::round(p.background_grid.forcex(4, 5, 6)*1e6)==1799294307.);
+    REQUIRE(std::round(p.background_grid.forcex(6, 11, 16)*1e6)==557428540.);
+    REQUIRE(std::round(p.background_grid.forcey(2, 2, 2)*1e6)==685779305.);
+    REQUIRE(std::round(p.background_grid.forcey(4, 5, 6)*1e6)==3600719937.);
+    REQUIRE(std::round(p.background_grid.forcey(6, 11, 16)*1e6)==1112282300.);
+    REQUIRE(std::round(p.background_grid.forcez(2, 2, 2)*1e6)==1029142612.);
+    REQUIRE(std::round(p.background_grid.forcez(4, 5, 6)*1e6)==5402130522.);
+    REQUIRE(std::round(p.background_grid.forcez(6, 11, 16)*1e6)==1668440054.);
+
+}
