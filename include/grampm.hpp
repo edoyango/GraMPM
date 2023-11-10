@@ -100,19 +100,12 @@ namespace GraMPM {
             void set_forcey(const int &i, const int &j, const int &k, const F &fy);
             void set_forcez(const int &i, const F &fz);
             void set_forcez(const int &i, const int &j, const int &k, const F &fz);
-            void set_momentum_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f)
-            { m_momentum_boundary_function = f; }
-            void set_force_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f)
-            { m_force_boundary_function = f; }
+            void set_momentum_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f);
+            void set_force_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f);
+
             void update_momentum(const F &dt); 
-
-            void apply_momentum_boundary_conditions(const int &timestep, const F dt) {
-                m_momentum_boundary_function(*this, timestep, dt);
-            }
-
-            void apply_force_boundary_conditions(const int &timestep, const F dt) {
-                m_force_boundary_function(*this, timestep, dt);
-            }
+            void apply_momentum_boundary_conditions(const int &timestep, const F dt);
+            void apply_force_boundary_conditions(const int &timestep, const F dt);
         private:
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
@@ -140,6 +133,7 @@ namespace GraMPM {
             F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
             std::array<F, 3> m_body_force;
+            std::function<void(particle_system<F>&, const F&)> m_stress_update_function;
 
             int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;
 
@@ -279,6 +273,7 @@ namespace GraMPM {
             void set_body_force(const std::array<F, 3> &bf);
             void set_body_force(const F &bfx, const F &bfy, const F &bfz);
             void set_grid_index(const int &i, const int &idx);
+            void set_stress_update_function(std::function<void(particle_system<F>&, const F&)>);
             void set_E(const F &E);
             void set_v(const F &v);
             void set_DP_params(const F &phi, const F &psi, const F &coh);

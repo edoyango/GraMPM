@@ -3,6 +3,7 @@
 #include <array>
 #include <grampm_integrators.hpp>
 #include <cmath>
+#include <grampm_stress_update_functions.hpp>
 
 static void momentum_boundary(GraMPM::grid<double> &self, const int &timestep, const double &dt) {
 
@@ -65,6 +66,7 @@ int main() {
     GraMPM::kernel_linear_bspline<double> knl(dcell);
     GraMPM::grid<double> g(mingrid, maxgrid, dcell, momentum_boundary, force_boundary);
     GraMPM::particle_system<double> ps(g, knl);
+    ps.set_stress_update_function(GraMPM::stress_update::hookes_law<double>);
 
     const double rho_ini = 1650.;
 

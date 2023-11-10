@@ -5,6 +5,7 @@
 #include <grampm_kernels.hpp>
 #include <array>
 #include <cmath>
+#include <grampm_stress_update_functions.hpp>
 
 TEST_CASE("Check correct Hooke's law") {
     
@@ -14,6 +15,9 @@ TEST_CASE("Check correct Hooke's law") {
 
     std::array<double, 3> bf {0., 0., 0.};
     GraMPM::particle_system<double> p(1, bf, g, knl);
+    p.set_stress_update_function(
+        GraMPM::stress_update::hookes_law<double>
+    );
 
     p.set_strainratexx(0, 1.);
     p.set_strainrateyy(0, 2.);
@@ -43,6 +47,9 @@ TEST_CASE("Check correct Jaumann stress rate") {
 
     std::array<double, 3> bf {0., 0., 0.};
     GraMPM::particle_system<double> p(1, bf, g, knl);
+    p.set_stress_update_function(
+        GraMPM::stress_update::hookes_law<double>
+    );
 
     p.set_spinratexy(0, -0.8);
     p.set_spinratexz(0, -0.9);

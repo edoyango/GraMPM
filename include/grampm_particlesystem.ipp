@@ -268,6 +268,7 @@ namespace GraMPM {
         m_body_force[2] = bfz;
     }
     template<typename F> void particle_system<F>::set_grid_index(const int &i, const int &idx) { m_grid_idx[i] = idx; }
+    template<typename F> void particle_system<F>::set_stress_update_function(std::function<void(particle_system<F>&, const F&)> f) { m_stress_update_function = f; }
     template<typename F> void particle_system<F>::set_E(const F &E) { m_E = E; }
     template<typename F> void particle_system<F>::set_v(const F &v) { m_v = v; }
     template<typename F> void particle_system<F>::set_DP_params(const F &phi, const F &psi, const F &coh) {
@@ -727,45 +728,7 @@ namespace GraMPM {
     }
 
     template<typename F> void particle_system<F>::update_stress(const F &dt) {
-
-        const F D0 {m_E/((1.+m_v)*(1.-2.*m_v))};
-
-        std::vector<F> dsigmaxx(m_size), dsigmayy(m_size), dsigmazz(m_size), dsigmaxy(m_size), dsigmaxz(m_size),
-            dsigmayz(m_size);
-
-        // DE*dstrain
-        for (int i = 0; i < m_size; ++i) {
-            dsigmaxx[i] = D0*((1.-m_v)*m_strainratexx[i] + m_v*m_strainrateyy[i] + m_v*m_strainratezz[i]);
-            dsigmayy[i] = D0*(m_v*m_strainratexx[i] + (1.-m_v)*m_strainrateyy[i] + m_v*m_strainratezz[i]);
-            dsigmazz[i] = D0*(m_v*m_strainratexx[i] + m_v*m_strainrateyy[i] + (1.-m_v)*m_strainratezz[i]);
-            dsigmaxy[i] = D0*m_strainratexy[i]*(1.-2.*m_v);
-            dsigmaxz[i] = D0*m_strainratexz[i]*(1.-2.*m_v);
-            dsigmayz[i] = D0*m_strainrateyz[i]*(1.-2.*m_v);
-        }
-        
-        // jaumann stress rate
-        for (int i = 0; i < m_size; ++i) {
-            dsigmaxx[i] -= 2.*(m_spinratexy[i]*m_sigmaxy[i] + m_spinratexz[i]*m_sigmaxz[i]);
-            dsigmayy[i] -= 2.*(-m_spinratexy[i]*m_sigmaxy[i] + m_spinrateyz[i]*m_sigmayz[i]);
-            dsigmazz[i] += 2.*(m_spinratexz[i]*m_sigmaxz[i] + m_spinrateyz[i]*m_sigmayz[i]);
-            dsigmaxy[i] += m_sigmaxx[i]*m_spinratexy[i] - m_sigmaxz[i]*m_spinrateyz[i] -
-                m_spinratexy[i]*m_sigmayy[i] - m_spinratexz[i]*m_sigmayz[i];
-            dsigmaxz[i] += m_sigmaxx[i]*m_spinratexz[i] + m_sigmaxy[i]*m_spinrateyz[i] -
-                m_spinratexy[i]*m_sigmayz[i] - m_spinratexz[i]*m_sigmazz[i];
-            dsigmayz[i] += m_sigmaxy[i]*m_spinratexz[i] + m_sigmayy[i]*m_spinrateyz[i] +
-                m_spinratexy[i]*m_sigmaxz[i] - m_spinrateyz[i]*m_sigmazz[i];
-        }
-
-        // update original stress states
-        for (int i = 0; i < m_size; ++i) {
-            m_sigmaxx[i] += dt*dsigmaxx[i];
-            m_sigmayy[i] += dt*dsigmayy[i];
-            m_sigmazz[i] += dt*dsigmazz[i];
-            m_sigmaxy[i] += dt*dsigmaxy[i];
-            m_sigmaxz[i] += dt*dsigmaxz[i];
-            m_sigmayz[i] += dt*dsigmayz[i];
-        }
-
+        m_stress_update_function(*this, dt);
     }
 
     template<typename F> void particle_system<F>::update_velocity(const F &dt) {

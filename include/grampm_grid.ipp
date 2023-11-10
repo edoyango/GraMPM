@@ -187,13 +187,25 @@ namespace GraMPM {
     template<typename F> void grid<F>::set_forcez(const int &i, const int &j, const int &k, const F &fz) { 
         m_forcez[i*m_ngridy*m_ngridz+j*m_ngridz+k] = fz;
     }
-
+    template<typename F> void grid<F>::set_momentum_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f)
+            { m_momentum_boundary_function = f; }
+    template<typename F> void grid<F>::set_force_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f)
+            { m_force_boundary_function = f; }
+    
     template<typename F> void grid<F>::update_momentum(const F &dt) {
         for (int i = 0; i < ncells(); ++i) {
             m_momentumx[i] += dt*m_forcex[i];
             m_momentumy[i] += dt*m_forcey[i];
             m_momentumz[i] += dt*m_forcez[i];
         }
+    }
+
+    template<typename F> void grid<F>::apply_momentum_boundary_conditions(const int &timestep, const F dt) {
+        m_momentum_boundary_function(*this, timestep, dt);
+    }
+
+    template<typename F> void grid<F>::apply_force_boundary_conditions(const int &timestep, const F dt) {
+        m_force_boundary_function(*this, timestep, dt);
     }
 
     // helper function to calculate number of grid cells in each dimension
