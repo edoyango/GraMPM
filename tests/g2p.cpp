@@ -48,53 +48,28 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
     p.map_acceleration_to_particles();
 
     // check conservation
-    double psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.ax(i)*p.mass(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.forcex(i);
+    // sum particles' force (m*a) and momentum (dxdt*m)
+    double psum[6] {0., 0., 0., 0., 0., 0.}, gsum[6] {0., 0., 0., 0., 0., 0.};
+    for (int i = 0; i < p.size(); ++i) {
+        psum[0] += p.ax(i)*p.mass(i);
+        psum[1] += p.ay(i)*p.mass(i);
+        psum[2] += p.az(i)*p.mass(i);
+        psum[3] += p.dxdt(i)*p.mass(i);
+        psum[4] += p.dydt(i)*p.mass(i);
+        psum[5] += p.dzdt(i)*p.mass(i);
+    }
+    for (int i = 0; i < p.background_grid.ncells(); ++i) {
+        gsum[0] += p.background_grid.forcex(i);
+        gsum[1] += p.background_grid.forcey(i);
+        gsum[2] += p.background_grid.forcez(i);
+        gsum[3] += p.background_grid.momentumx(i);
+        gsum[4] += p.background_grid.momentumy(i);
+        gsum[5] += p.background_grid.momentumz(i);
+    }
 
-    REQUIRE(std::round(psum)==std::round(gsum));
-
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.az(i)*p.mass(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.forcez(i);
-
-    REQUIRE(std::round(psum)==std::round(gsum));
-
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.az(i)*p.mass(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.forcez(i);
-
-    REQUIRE(std::round(psum)==std::round(gsum));
-
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.dxdt(i)*p.mass(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.momentumx(i);
-
-    REQUIRE(std::round(psum)==std::round(gsum));
-
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.dydt(i)*p.mass(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.momentumy(i);
-
-    REQUIRE(std::round(psum)==std::round(gsum));
-
-    psum = 0., gsum = 0.;
-    for (int i = 0; i < p.size(); ++i)
-        psum += p.dzdt(i)*p.mass(i);
-    for (int i = 0; i < p.background_grid.ncells(); ++i)
-        gsum += p.background_grid.momentumz(i);
-
-    REQUIRE(std::round(psum)==std::round(gsum));
+    // test
+    for (int i = 0; i < 6; ++i)
+        REQUIRE(std::round(psum[i]) == std::round(gsum[i]));
 }
 
 TEST_CASE("Calculate particles' strain/spin rates (linear bspline)") {
