@@ -21,12 +21,10 @@ namespace GraMPM {
                     }
 
                     // get which cell each particle is located within
-                    #pragma omp master
                     p.update_particle_to_cell_map();
 
                     /* get all neighbour nodes of each particle, calculate dx between particles and adjacent nodes, and
                     update kernel and kernel gradient values. */ 
-                    #pragma omp master
                     p.map_particles_to_grid();
 
                     // map particles' mass to nodes
