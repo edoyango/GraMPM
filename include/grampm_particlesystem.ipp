@@ -25,6 +25,12 @@ namespace GraMPM {
         , m_dxdt(size, 0.)
         , m_dydt(size, 0.)
         , m_dzdt(size, 0.)
+        , m_momentumx(size, 0.)
+        , m_momentumy(size, 0.)
+        , m_momentumz(size, 0.)
+        , m_forcex(size, 0.)
+        , m_forcey(size, 0.)
+        , m_forcez(size, 0.)
         , m_mass(size, 0.)
         , m_rho(size, 0.)
         , m_sigmaxx(size, 0.)
@@ -309,6 +315,12 @@ namespace GraMPM {
         m_dxdt.push_back(p.dxdt);
         m_dydt.push_back(p.dydt);
         m_dzdt.push_back(p.dzdt);
+        m_momentumx.push_back(0.);
+        m_momentumy.push_back(0.);
+        m_momentumz.push_back(0.);
+        m_forcex.push_back(0.);
+        m_forcey.push_back(0.);
+        m_forcez.push_back(0.);
         m_mass.push_back(p.mass);
         m_rho.push_back(p.rho);
         m_sigmaxx.push_back(p.sigmaxx);
@@ -351,6 +363,12 @@ namespace GraMPM {
         m_dxdt.reserve(n);
         m_dydt.reserve(n);
         m_dzdt.reserve(n);
+        m_momentumx.reserve(n);
+        m_momentumy.reserve(n);
+        m_momentumz.reserve(n);
+        m_forcex.reserve(n);
+        m_forcey.reserve(n);
+        m_forcez.reserve(n);
         m_mass.reserve(n);
         m_rho.reserve(n);
         m_sigmaxx.reserve(n);
@@ -387,6 +405,12 @@ namespace GraMPM {
         m_dxdt.clear();
         m_dydt.clear();
         m_dzdt.clear();
+        m_momentumx.clear();
+        m_momentumy.clear();
+        m_momentumz.clear();
+        m_forcex.clear();
+        m_forcey.clear();
+        m_forcez.clear();
         m_mass.clear();
         m_rho.clear();
         m_sigmaxx.clear();
@@ -421,6 +445,8 @@ namespace GraMPM {
     bool particle_system<F>::empty() {
         return m_x.empty() && m_y.empty() && m_z.empty() && m_vx.empty() && m_vy.empty() && m_vz.empty() && 
             m_ax.empty() && m_ay.empty() && m_az.empty() && m_dxdt.empty() && m_dydt.empty() && m_dzdt.empty() &&
+            m_momentumx.empty() && m_momentumy.empty() && m_momentumz.empty() && m_forcex.empty() && m_forcey.empty() &&
+            m_forcez.empty() &&
             m_mass.empty() && m_rho.empty() && m_sigmaxx.empty() && m_sigmayy.empty() && m_sigmazz.empty() && 
             m_sigmaxy.empty() && m_sigmaxz.empty() && m_sigmayz.empty() && m_strainratexx.empty() && 
             m_strainrateyy.empty() && m_strainratezz.empty() && m_strainratexy.empty() && m_strainratexz.empty() && 
@@ -446,6 +472,12 @@ namespace GraMPM {
         m_dxdt.resize(n, 0.);
         m_dydt.resize(n, 0.);
         m_dzdt.resize(n, 0.);
+        m_momentumx.reize(n, 0.);
+        m_momentumy.reize(n, 0.);
+        m_momentumz.reize(n, 0.);
+        m_forcex.resize(n, 0.);
+        m_forcey.resize(n, 0.);
+        m_forcez.resize(n, 0.);
         m_mass.resize(n, 0.);
         m_rho.resize(n, 0.);
         m_sigmaxx.resize(n, 0.);
@@ -482,6 +514,12 @@ namespace GraMPM {
         m_dxdt.resize(n, p.ax);
         m_dydt.resize(n, p.ay);
         m_dzdt.resize(n, p.az);
+        m_momentumx.reize(n, 0.);
+        m_momentumy.reize(n, 0.);
+        m_momentumz.reize(n, 0.);
+        m_forcex.resize(n, 0.);
+        m_forcey.resize(n, 0.);
+        m_forcez.resize(n, 0.);
         m_mass.resize(n, p.mass);
         m_rho.resize(n, p.rho);
         m_sigmaxx.resize(n, p.sigmaxx);
@@ -615,25 +653,23 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::map_mass_to_grid() { map2grid(m_mass, background_grid.mass()); }
 
     template<typename F> void particle_system<F>::map_momentum_to_grid() { 
-        std::vector<F> tmp_momentum(m_size);
-        for (int i = 0; i < m_size; ++i) tmp_momentum[i] = mass(i)*vx(i);
-        map2grid(tmp_momentum, background_grid.momentumx()); 
-        for (int i = 0; i < m_size; ++i) tmp_momentum[i] = mass(i)*vy(i);
-        map2grid(tmp_momentum, background_grid.momentumy()); 
-        for (int i = 0; i < m_size; ++i) tmp_momentum[i] = mass(i)*vz(i);
-        map2grid(tmp_momentum, background_grid.momentumz()); 
+        for (int i = 0; i < m_size; ++i) m_momentumx[i] = mass(i)*vx(i);
+        map2grid(m_momentumx, background_grid.momentumx()); 
+        for (int i = 0; i < m_size; ++i) m_momentumy[i] = mass(i)*vy(i);
+        map2grid(m_momentumy, background_grid.momentumy()); 
+        for (int i = 0; i < m_size; ++i) m_momentumz[i] = mass(i)*vz(i);
+        map2grid(m_momentumz, background_grid.momentumz()); 
     }
 
     template<typename F> void particle_system<F>::map_force_to_grid() {
 
         // initialize grid force with body force
-        std::vector<F> tmp_force(m_size);
-        for (int i = 0; i < m_size; ++i) tmp_force[i] = mass(i)*body_force(0);
-        map2grid(tmp_force, background_grid.forcex());
-        for (int i = 0; i < m_size; ++i) tmp_force[i] = mass(i)*body_force(1);
-        map2grid(tmp_force, background_grid.forcey());
-        for (int i = 0; i < m_size; ++i) tmp_force[i] = mass(i)*body_force(2);
-        map2grid(tmp_force, background_grid.forcez());
+        for (int i = 0; i < m_size; ++i) m_forcex[i] = mass(i)*body_force(0);
+        map2grid(m_forcex, background_grid.forcex());
+        for (int i = 0; i < m_size; ++i) m_forcey[i] = mass(i)*body_force(1);
+        map2grid(m_forcey, background_grid.forcey());
+        for (int i = 0; i < m_size; ++i) m_forcez[i] = mass(i)*body_force(2);
+        map2grid(m_forcez, background_grid.forcez());
 
         std::vector<F> *tmp_grid_forcex = background_grid.forcex(), 
             *tmp_grid_forcey = background_grid.forcey(),
