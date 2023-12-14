@@ -246,6 +246,30 @@ namespace GraMPM {
         assert(j < m_nneighbour_nodes_perp);
         return m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j];
     }
+    template<typename F>
+    const int particle_system<F>::g2p_nparticles_in_cell(const int i, const int j, const int k) const {
+        return m_g2p_particles_in_cell[ravel_grid_idx(i, j, k)];
+    };
+    template<typename F>
+    const int particle_system<F>::g2p_nparticles_in_cell(const std::array<int, 3> idx) const {
+        return m_g2p_particles_in_cell[ravel_grid_idx(idx[0], idx[1], idx[2])];
+    };
+    template<typename F>
+    const int particle_system<F>::g2p_nparticles_in_cell(const int ravelled_idx) const {
+        return m_g2p_particles_in_cell[ravelled_idx];
+    };
+    template<typename F>
+    const int particle_system<F>::g2p_particle_in_cell(const int i, const int j, const int k, const int n) const {
+        return m_g2p_neighbour_particles[16*ravel_grid_idx(i, j, k)+n];
+    };
+    template<typename F>
+    const int particle_system<F>::g2p_particle_in_cell(const std::array<int, 3> idx, const int n) const {
+        return m_g2p_neighbour_particles[16*ravel_grid_idx[idx[0], idx[1], idx[2]]+n];
+    };
+    template<typename F>
+    const int particle_system<F>::g2p_particle_in_cell(const int ravelled_idx, const int n) const {
+        return m_g2p_neighbour_particles[16*ravelled_idx+n];
+    };
     template<typename F> const long unsigned int& particle_system<F>::capacity() const { return m_capacity; }
     template<typename F> const long unsigned int& particle_system<F>::size() const { return m_size; }
 
@@ -609,6 +633,25 @@ namespace GraMPM {
             m_p2g_neighbour_nodes_dwdx.resize(m_nneighbour_nodes_perp*m_size);
             m_p2g_neighbour_nodes_dwdy.resize(m_nneighbour_nodes_perp*m_size);
             m_p2g_neighbour_nodes_dwdz.resize(m_nneighbour_nodes_perp*m_size);
+            m_g2p_neighbour_particles.resize(background_grid.ncells()*16);
+            m_g2p_particles_in_cell.resize(background_grid.ncells());
+        }
+
+        // update particles in each cell
+        #pragma omp single
+        {
+        for (int i = 0; i < background_grid.ncells(); ++i) 
+            m_g2p_particles_in_cell[i] = 0;
+        for (int i = 0; i < m_size; ++i) {
+            const std::array<int, 3> idx {
+                static_cast<int>((m_x[i] - background_grid.mingridx())/background_grid.cell_size()),
+                static_cast<int>((m_y[i] - background_grid.mingridy())/background_grid.cell_size()),
+                static_cast<int>((m_z[i] - background_grid.mingridz())/background_grid.cell_size())
+            };
+            const int idx_ravelled = ravel_grid_idx(idx[0], idx[1], idx[2]);
+            m_g2p_neighbour_particles[16*idx_ravelled + m_g2p_particles_in_cell[idx_ravelled]] = i;
+            m_g2p_particles_in_cell[idx_ravelled]++;
+        }
         }
 
         // update neighbour indices

@@ -21,7 +21,7 @@ const double dz = (maxgrid[2]-mingrid[2])/4;
 const int correct_idxx[5] {0, 0, 1, 1, 2};
 const int correct_idxy[5] {0, 0, 1, 1, 2};
 const int correct_idxz[5] {0, 0, 1, 2, 3};
-const int correct_ravelled_idx[5] {0, 0, 1*4*5+1*5+1, 1*4*5+1*5+2, 2*4*5+2*5+3};
+const int correct_ravelled_idx[5] {0, 0, 1*4*5+1*5+1, 1*4*5+1*5 +2, 2*4*5+2*5+3};
 
 TEST_CASE( "Correct ravelling of particles' grid indices upon initialization", "[p]") {
     // create the particlesystem instance
@@ -95,6 +95,31 @@ TEST_CASE("Correct determination of grid node neighbours (radius=1)", "[p]") {
                 }
                 n++;
             }
+
+    // checking particles in cell lists are correct
+    for (int i = 0; i < p.background_grid.ncells(); ++i) {
+        switch (i) {
+            case 0:
+                REQUIRE(p.g2p_nparticles_in_cell(i)==2);
+                REQUIRE(p.g2p_particle_in_cell(i, 0)==0);
+                REQUIRE(p.g2p_particle_in_cell(i, 1)==1);
+                break;
+            case 26:
+                REQUIRE(p.g2p_nparticles_in_cell(i)==1);
+                REQUIRE(p.g2p_particle_in_cell(i, 0)==2);
+                break;
+            case 27:
+                REQUIRE(p.g2p_nparticles_in_cell(i)==1);
+                REQUIRE(p.g2p_particle_in_cell(i, 0)==3);
+                break;
+            case 53:
+                REQUIRE(p.g2p_nparticles_in_cell(i)==1);
+                REQUIRE(p.g2p_particle_in_cell(i, 0)==4);
+                break;
+            default:
+                REQUIRE(p.g2p_nparticles_in_cell(i)==0);
+        }
+    }
 }
 
 TEST_CASE("Correct determination of grid node neighbours (radius=2)") {
@@ -147,5 +172,21 @@ TEST_CASE("Correct determination of grid node neighbours (radius=2)") {
                 }
                 n++;
             }
+
+    // checking particles in cell lists are correct
+    for (int i = 0; i < p.background_grid.ncells(); ++i) {
+        switch (i) {
+            case 37:
+                REQUIRE(p.g2p_nparticles_in_cell(i)==1);
+                REQUIRE(p.g2p_particle_in_cell(i, 0)==0);
+                break;
+            case 45:
+                REQUIRE(p.g2p_nparticles_in_cell(i)==1);
+                REQUIRE(p.g2p_particle_in_cell(i, 0)==1);
+                break;
+            default:
+                REQUIRE(p.g2p_nparticles_in_cell(i)==0);
+        }
+    }
 
 }

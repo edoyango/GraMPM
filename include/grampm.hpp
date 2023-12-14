@@ -132,7 +132,7 @@ namespace GraMPM {
                 m_p2g_neighbour_nodes_dwdz, m_momentumx, m_momentumy, m_momentumz, m_forcex, m_forcey, m_forcez, m_gax,
                 m_gay, m_gaz, m_gdxdt, m_gdydt, m_gdzdt;
             F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
-            std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
+            std::vector<int> m_grid_idx, m_p2g_neighbour_nodes, m_g2p_neighbour_particles, m_g2p_particles_in_cell;
             std::array<F, 3> m_body_force;
             std::function<void(particle_system<F>&, const F&)> m_stress_update_function;
 
@@ -238,6 +238,12 @@ namespace GraMPM {
             const F& p2g_neighbour_node_dwdx(const int i, const int j) const ;
             const F& p2g_neighbour_node_dwdy(const int i, const int j) const ;
             const F& p2g_neighbour_node_dwdz(const int i, const int j) const ;
+            const int g2p_nparticles_in_cell(const int i, const int j, const int k) const;
+            const int g2p_nparticles_in_cell(const std::array<int, 3> idx) const;
+            const int g2p_nparticles_in_cell(const int ravelled_idx) const;
+            const int g2p_particle_in_cell(const int i, const int j, const int k, const int n) const;
+            const int g2p_particle_in_cell(const std::array<int, 3> idx, const int n) const;
+            const int g2p_particle_in_cell(const int ravelled_idx, const int n) const;
             const long unsigned int& capacity() const;
             const long unsigned int& size() const;
 
