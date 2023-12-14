@@ -108,15 +108,15 @@ namespace GraMPM {
                 // max used to reduce branching
                 const F f {alpha_phi*I1 + std::sqrt(J2) - k_c};
                 
-                if (f > 0.) {
-                    const F J2norm = 2.*std::sqrt(J2);
+                if (f > 1.e-13) {
+                    const F snorm = 2.*std::sqrt(J2);
                     const F shat[6] {
-                        s[0]/J2norm,
-                        s[1]/J2norm,
-                        s[2]/J2norm,
-                        s[3]/J2norm,
-                        s[4]/J2norm,
-                        s[5]/J2norm,
+                        s[0]/snorm,
+                        s[1]/snorm,
+                        s[2]/snorm,
+                        s[3]/snorm,
+                        s[4]/snorm,
+                        s[5]/snorm,
                     };
                     const F dfdsig[6] {
                         alpha_phi + shat[0],
@@ -134,14 +134,14 @@ namespace GraMPM {
                         shat[4],
                         shat[5],
                     };
-                    const F dlambda = f/(
+                    const F dlambda {f/(
                         dfdsig[0]*D0*((1.-v)*dgdsig[0] + v*dgdsig[1] + v*dgdsig[2]) +
                         dfdsig[1]*D0*(v*dgdsig[0] + (1.-v)*dgdsig[1] + v*dgdsig[2]) +
                         dfdsig[2]*D0*(v*dgdsig[0] + v*dgdsig[1] + (1.-v)*dgdsig[2]) +
                         2.*dfdsig[3]*D0*dgdsig[3]*(1.-2.*v) +
                         2.*dfdsig[4]*D0*dgdsig[4]*(1.-2.*v) +
                         2.*dfdsig[5]*D0*dgdsig[5]*(1.-2.*v)
-                    );
+                    )};
                     
                     sigmaxx[i] -= dlambda*D0*((1.-v)*dgdsig[0] + v*dgdsig[1] + v*dgdsig[2]);
                     sigmayy[i] -= dlambda*D0*(v*dgdsig[0] + (1.-v)*dgdsig[1] + v*dgdsig[2]);
@@ -150,6 +150,7 @@ namespace GraMPM {
                     sigmaxz[i] -= dlambda*D0*dgdsig[4]*(1.-2.*v);
                     sigmayz[i] -= dlambda*D0*dgdsig[5]*(1.-2.*v);
 
+                    I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
                     if (I1 > k_c/alpha_phi) {
                         sigmaxx[i] = k_c/alpha_phi/3.;
                         sigmayy[i] = k_c/alpha_phi/3.;
@@ -158,6 +159,15 @@ namespace GraMPM {
                         sigmaxz[i] = 0.;
                         sigmayz[i] = 0.;
                     }
+                    I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
+                    const F stest[6] {
+                        sigmaxx[i] - I1/3.,
+                        sigmayy[i] - I1/3.,
+                        sigmazz[i] - I1/3.,
+                        sigmaxy[i],
+                        sigmaxz[i],
+                        sigmayz[i],
+                    };
                 }
 
             }

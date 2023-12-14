@@ -89,15 +89,58 @@ TEST_CASE("Check DP elasto-plasticity") {
 
     std::array<double, 3> bf {0., 0., 0.};
     GraMPM::particle_system<double> p(1, bf, g, knl);
+    p.set_stress_update_function(GraMPM::stress_update::drucker_prager_elastoplastic<double>);
     const double pi = std::acos(-1.);
     p.set_DP_params(pi/4., pi/36., 0.);
 
     double phi, psi, cohesion, alpha_phi, alpha_psi, k_c;
     p.DP_params(phi, psi, cohesion, alpha_phi, alpha_psi, k_c);
     REQUIRE(phi==pi/4.);
-    REQUIRE(alpha_phi==3.*std::tan(phi)/std::sqrt(9.+12.*std::tan(phi)*std::tan(phi)));
+    REQUIRE(alpha_phi==2.*std::sin(phi)/(std::sqrt(3.)*(3.-std::sin(phi))));
     REQUIRE(psi==pi/36.);
-    REQUIRE(alpha_psi==3.*std::tan(psi)/std::sqrt(9.+12.*std::tan(phi)*std::tan(phi)));
+    REQUIRE(alpha_psi==2.*std::sin(psi)/(std::sqrt(3.)*(3.-std::sin(phi))));
     REQUIRE(cohesion==0.);
     REQUIRE(k_c==0.);
+
+    // check elasto-plastic compression
+    p.set_strainratexx(0, -1.);
+    p.set_strainrateyy(0, -2.);
+    p.set_strainratezz(0, -3.);
+    p.set_strainratexy(0, -4.);
+    p.set_strainratexz(0, -5.);
+    p.set_strainrateyz(0, -6.);
+
+    p.set_E(100.);
+    p.set_v(0.25);
+
+    p.update_stress(0.1);
+
+    REQUIRE(std::round(p.sigmaxx(0)*1e8)==-3952509695.);
+    REQUIRE(std::round(p.sigmayy(0)*1e8)==-4496397315.);
+    REQUIRE(std::round(p.sigmazz(0)*1e8)==-5040284935.);
+    REQUIRE(std::round(p.sigmaxy(0)*1e8)==-2175550481.);
+    REQUIRE(std::round(p.sigmaxz(0)*1e8)==-2719438102.);
+    REQUIRE(std::round(p.sigmayz(0)*1e8)==-3263325722.);
+
+    // check tensile correction
+    p.set_sigmaxx(0, 0.);
+    p.set_sigmayy(0, 0.);
+    p.set_sigmazz(0, 0.);
+    p.set_sigmaxy(0, 0.);
+    p.set_sigmaxz(0, 0.);
+    p.set_sigmayz(0, 0.);
+    p.set_strainratexx(0, 1.);
+    p.set_strainrateyy(0, 2.);
+    p.set_strainratezz(0, 3.);
+    p.set_strainratexy(0, 0.);
+    p.set_strainratexz(0, 0.);
+    p.set_strainrateyz(0, 0.);
+
+    p.update_stress(0.1);
+    REQUIRE(p.sigmaxx(0)==0.);
+    REQUIRE(p.sigmayy(0)==0.);
+    REQUIRE(p.sigmazz(0)==0.);
+    REQUIRE(p.sigmaxy(0)==0.);
+    REQUIRE(p.sigmaxz(0)==0.);
+    REQUIRE(p.sigmayz(0)==0.);
 }
