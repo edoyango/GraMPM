@@ -5,5 +5,7 @@ SRCFILENAMES = main.cpp
 
 SRCFILEPATHS = $(addprefix $(SRCDIR)/, $(SRCFILENAMES))
 
+CXXFLAGS := $(CXXFLAGS)
+
 mpm.x: $(SRCFILEPATHS)
-	g++ -o $@ $^ -I$(INCLUDEDIR)
+	g++ -o $@ $^ -I$(INCLUDEDIR) $(CXXFLAGS)
