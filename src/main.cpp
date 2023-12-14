@@ -75,9 +75,9 @@ static void force_boundary(GraMPM::grid<double> &self, const int &timestep, cons
 int main() {
 
     const int maxn = 10;
-    const double dcell=0.004;
+    const double dcell=0.002;
     const std::array<double, 3> mingrid {-dcell, -dcell, -dcell}, 
-        maxgrid {0.299+dcell, 0.019+dcell, 0.049+dcell}, gf {0., 0., -9.81};
+        maxgrid {0.299+dcell, 0.011+dcell, 0.049+dcell}, gf {0., 0., -9.81};
     // GraMPM::kernel_linear_bspline<double> knl(dcell);
     GraMPM::kernel_cubic_bspline<double> knl(dcell);
     GraMPM::grid<double> g(mingrid, maxgrid, dcell, momentum_boundary, force_boundary);
@@ -87,9 +87,9 @@ int main() {
     const double rho_ini = 1650.;
 
     // generate particles
-    for (int i = 0; i < 50; ++i) {
-        for (int j = 0; j < 10; ++j) {
-            for (int k = 0; k < 25; ++k) {
+    for (int i = 0; i < 100; ++i) {
+        for (int j = 0; j < 12; ++j) {
+            for (int k = 0; k < 50; ++k) {
                 GraMPM::particle<double> p;
                 p.x = (i+0.5)*dcell/2.;
                 p.y = (j+0.5)*dcell/2.;
@@ -107,12 +107,14 @@ int main() {
     const double dt = dcell/c;
 
     ps.set_body_force(gf);
-    ps.set_E(0.86e6);
-    ps.set_v(0.3);
+    ps.set_E(E);
+    ps.set_v(v);
+    const double pi = std::acos(-1.);
+    ps.set_DP_params(pi/9., 0., 0.);
 
     ps.save_to_file("outputdata/p_", 0);
 
-    GraMPM::integrators::MUSL<double>(ps, dt, 1000, 10, 10);
+    GraMPM::integrators::MUSL<double>(ps, dt, 6000, 50, 50);
 
     return 0;
 }
