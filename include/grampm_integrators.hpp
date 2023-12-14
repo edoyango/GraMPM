@@ -51,7 +51,6 @@ namespace GraMPM {
                     p.background_grid.update_momentum(dt);
 
                     // map nodal forces to particle accelerations
-                    #pragma omp master
                     p.map_acceleration_to_particles();
 
                     // update particles' velocities with calculated accelerations
@@ -70,7 +69,6 @@ namespace GraMPM {
                     p.background_grid.apply_momentum_boundary_conditions(itimestep, dt);
 
                     // map nodal velocities to particle strain/spin rates
-                    #pragma omp master
                     p.map_strainrate_to_particles();
 
                     // update particles' density
