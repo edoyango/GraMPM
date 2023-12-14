@@ -193,6 +193,7 @@ namespace GraMPM {
             { m_force_boundary_function = f; }
     
     template<typename F> void grid<F>::update_momentum(const F &dt) {
+        #pragma omp for
         for (int i = 0; i < ncells(); ++i) {
             m_momentumx[i] += dt*m_forcex[i];
             m_momentumy[i] += dt*m_forcey[i];

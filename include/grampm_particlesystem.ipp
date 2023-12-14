@@ -50,6 +50,12 @@ namespace GraMPM {
         , m_spinrateyz(size, 0.)
         , m_grid_idx(size, 0)
         , background_grid(ingrid)
+        , m_gax(ingrid.ncells())
+        , m_gay(ingrid.ncells())
+        , m_gaz(ingrid.ncells())
+        , m_gdxdt(ingrid.ncells())
+        , m_gdydt(ingrid.ncells())
+        , m_gdzdt(ingrid.ncells())
         , m_capacity {size}
         , m_size {size}
         , m_body_force {bf}
@@ -80,6 +86,12 @@ namespace GraMPM {
         , m_body_force {0., 0., 0.}
         , m_knl {knl}
         , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
+        , m_gax(ingrid.ncells())
+        , m_gay(ingrid.ncells())
+        , m_gaz(ingrid.ncells())
+        , m_gdxdt(ingrid.ncells())
+        , m_gdydt(ingrid.ncells())
+        , m_gdzdt(ingrid.ncells())
     {
     }
 
@@ -546,6 +558,16 @@ namespace GraMPM {
     }
 
     template<typename F>
+    void particle_system<F>::resize_grid_scratchspace(const int n) {
+        m_gax.resize(n);
+        m_gay.resize(n);
+        m_gaz.resize(n);
+        m_gdxdt.resize(n);
+        m_gdydt.resize(n);
+        m_gdzdt.resize(n);
+    }
+
+    template<typename F>
     void particle_system<F>::update_particle_to_cell_map(const int &start, const int &end) {
         for (int i = start; i < end; ++i) {
             set_grid_index(i,
@@ -705,31 +727,30 @@ namespace GraMPM {
     }
 
     template<typename F> void particle_system<F>::map_acceleration_to_particles() {
-        std::vector<F> tmp(background_grid.ncells());
         for (int i = 0; i < background_grid.ncells(); ++i) {
-            tmp[i] = background_grid.forcex(i)/background_grid.mass(i);
+            m_gax[i] = background_grid.forcex(i)/background_grid.mass(i);
         }
-        map2particles(tmp, ax());
+        map2particles(m_gax, ax());
         for (int i = 0; i < background_grid.ncells(); ++i) {
-            tmp[i] = background_grid.forcey(i)/background_grid.mass(i);
+            m_gay[i] = background_grid.forcey(i)/background_grid.mass(i);
         }
-        map2particles(tmp, ay());
+        map2particles(m_gay, ay());
         for (int i = 0; i < background_grid.ncells(); ++i) {
-            tmp[i] = background_grid.forcez(i)/background_grid.mass(i);
+            m_gaz[i] = background_grid.forcez(i)/background_grid.mass(i);
         }
-        map2particles(tmp, az());
+        map2particles(m_gaz, az());
         for (int i = 0; i < background_grid.ncells(); ++i) {
-            tmp[i] = background_grid.momentumx(i)/background_grid.mass(i);
+            m_gdxdt[i] = background_grid.momentumx(i)/background_grid.mass(i);
         }
-        map2particles(tmp, dxdt());
+        map2particles(m_gdxdt, dxdt());
         for (int i = 0; i < background_grid.ncells(); ++i) {
-            tmp[i] = background_grid.momentumy(i)/background_grid.mass(i);
+            m_gdydt[i] = background_grid.momentumy(i)/background_grid.mass(i);
         }
-        map2particles(tmp, dydt());
+        map2particles(m_gdydt, dydt());
         for (int i = 0; i < background_grid.ncells(); ++i) {
-            tmp[i] = background_grid.momentumz(i)/background_grid.mass(i);
+            m_gdzdt[i] = background_grid.momentumz(i)/background_grid.mass(i);
         }
-        map2particles(tmp, dzdt());
+        map2particles(m_gdzdt, dzdt());
     }
 
     template<typename F> void particle_system<F>::map_strainrate_to_particles() {

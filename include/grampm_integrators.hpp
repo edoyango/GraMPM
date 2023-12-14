@@ -48,7 +48,6 @@ namespace GraMPM {
                     p.background_grid.apply_force_boundary_conditions(itimestep, dt);
 
                     // update nodal momentums
-                    #pragma omp master
                     p.background_grid.update_momentum(dt);
 
                     // map nodal forces to particle accelerations

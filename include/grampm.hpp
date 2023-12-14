@@ -129,7 +129,8 @@ namespace GraMPM {
                 m_strainratezz, m_strainratexy, m_strainratexz, m_strainrateyz, m_spinratexy, m_spinratexz,
                 m_spinrateyz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
                 m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
-                m_p2g_neighbour_nodes_dwdz, m_momentumx, m_momentumy, m_momentumz, m_forcex, m_forcey, m_forcez;
+                m_p2g_neighbour_nodes_dwdz, m_momentumx, m_momentumy, m_momentumz, m_forcex, m_forcey, m_forcez, m_gax,
+                m_gay, m_gaz, m_gdxdt, m_gdydt, m_gdzdt;
             F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
             std::array<F, 3> m_body_force;
@@ -294,6 +295,8 @@ namespace GraMPM {
             void resize(const int n);
 
             void resize(const int n, const particle<F> p);
+
+            void resize_grid_scratchspace(const int n);
 
             void update_particle_to_cell_map(const int &start, const int &end);
             void update_particle_to_cell_map();
