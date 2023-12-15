@@ -633,25 +633,12 @@ namespace GraMPM {
             m_p2g_neighbour_nodes_dwdx.resize(m_nneighbour_nodes_perp*m_size);
             m_p2g_neighbour_nodes_dwdy.resize(m_nneighbour_nodes_perp*m_size);
             m_p2g_neighbour_nodes_dwdz.resize(m_nneighbour_nodes_perp*m_size);
-            m_g2p_neighbour_particles.resize(background_grid.ncells()*16);
+            m_g2p_neighbour_particles.resize(background_grid.ncells()*16*m_nneighbour_nodes_perp);
             m_g2p_particles_in_cell.resize(background_grid.ncells());
-        }
-
-        // update particles in each cell
-        #pragma omp single
-        {
-        for (int i = 0; i < background_grid.ncells(); ++i) 
-            m_g2p_particles_in_cell[i] = 0;
-        for (int i = 0; i < m_size; ++i) {
-            const std::array<int, 3> idx {
-                static_cast<int>((m_x[i] - background_grid.mingridx())/background_grid.cell_size()),
-                static_cast<int>((m_y[i] - background_grid.mingridy())/background_grid.cell_size()),
-                static_cast<int>((m_z[i] - background_grid.mingridz())/background_grid.cell_size())
-            };
-            const int idx_ravelled = ravel_grid_idx(idx[0], idx[1], idx[2]);
-            m_g2p_neighbour_particles[16*idx_ravelled + m_g2p_particles_in_cell[idx_ravelled]] = i;
-            m_g2p_particles_in_cell[idx_ravelled]++;
-        }
+            m_g2p_w.resize(background_grid.ncells()*16*m_nneighbour_nodes_perp);
+            m_g2p_dwdx.resize(background_grid.ncells()*16*m_nneighbour_nodes_perp);
+            m_g2p_dwdy.resize(background_grid.ncells()*16*m_nneighbour_nodes_perp);
+            m_g2p_dwdz.resize(background_grid.ncells()*16*m_nneighbour_nodes_perp);
         }
 
         // update neighbour indices
@@ -693,19 +680,49 @@ namespace GraMPM {
                 );
             }
         }
+
+        #pragma omp for
+        for (int i = 0; i < background_grid.ncells(); ++i) m_g2p_particles_in_cell[i] = 0;
+        #pragma omp for
+        for (int i = 0; i < m_size; ++i) {
+            for (int j = 0; j < m_nneighbour_nodes_perp; ++j){
+                const int ii = i*m_nneighbour_nodes_perp+j;
+                const int idx = m_p2g_neighbour_nodes[ii];
+                int np;
+                #pragma omp atomic capture
+                {
+                    np = m_g2p_particles_in_cell[idx];
+                    m_g2p_particles_in_cell[idx]++;
+                }
+                m_g2p_neighbour_particles[idx*16*m_nneighbour_nodes_perp+np] = i;
+                m_g2p_w[idx*16*m_nneighbour_nodes_perp+np] = m_p2g_neighbour_nodes_w[ii];
+                m_g2p_dwdx[idx*16*m_nneighbour_nodes_perp+np] = m_p2g_neighbour_nodes_dwdx[ii];
+                m_g2p_dwdy[idx*16*m_nneighbour_nodes_perp+np] = m_p2g_neighbour_nodes_dwdy[ii];
+                m_g2p_dwdz[idx*16*m_nneighbour_nodes_perp+np] = m_p2g_neighbour_nodes_dwdz[ii];
+
+            }
+        }
     }
 
     template<typename F>
     void particle_system<F>::map2grid(const std::vector<F> &p_property, std::vector<F> *g_property) {
 
         // zero the grid
-        std::fill(g_property->begin(), g_property->end(), 0.);
+        // std::fill(g_property->begin(), g_property->end(), 0.);
 
-        for (int i = 0; i < m_size; ++i)
-            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                (*g_property)[node_idx] += p2g_neighbour_node_w(i, j)*p_property[i];
+        // for (int i = 0; i < m_size; ++i)
+        //     for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+        //         const int node_idx = p2g_neighbour_node(i, j);
+        //         (*g_property)[node_idx] += p2g_neighbour_node_w(i, j)*p_property[i];
+        //     }
+        #pragma omp for nowait
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            (*g_property)[i] = 0.;
+            for (int j = 0; j < m_g2p_particles_in_cell[i]; ++j) {
+                const int pi = m_g2p_neighbour_particles[16*m_nneighbour_nodes_perp*i+j];
+                (*g_property)[i] += m_g2p_w[16*m_nneighbour_nodes_perp*i+j]*p_property[pi];
             }
+        }
     }
 
     template<typename F>
@@ -727,48 +744,51 @@ namespace GraMPM {
     template<typename F> void particle_system<F>::map_mass_to_grid() { map2grid(m_mass, background_grid.mass()); }
 
     template<typename F> void particle_system<F>::map_momentum_to_grid() { 
-        for (int i = 0; i < m_size; ++i) m_momentumx[i] = mass(i)*vx(i);
+        #pragma omp for
+        for (int i = 0; i < m_size; ++i) {
+            m_momentumx[i] = mass(i)*vx(i);
+            m_momentumy[i] = mass(i)*vy(i);
+            m_momentumz[i] = mass(i)*vz(i);
+        }
         map2grid(m_momentumx, background_grid.momentumx()); 
-        for (int i = 0; i < m_size; ++i) m_momentumy[i] = mass(i)*vy(i);
         map2grid(m_momentumy, background_grid.momentumy()); 
-        for (int i = 0; i < m_size; ++i) m_momentumz[i] = mass(i)*vz(i);
         map2grid(m_momentumz, background_grid.momentumz()); 
     }
 
     template<typename F> void particle_system<F>::map_force_to_grid() {
 
         // initialize grid force with body force
-        for (int i = 0; i < m_size; ++i) m_forcex[i] = mass(i)*body_force(0);
+        #pragma omp for
+        for (int i = 0; i < m_size; ++i) {
+            m_forcex[i] = mass(i)*body_force(0);
+            m_forcey[i] = mass(i)*body_force(1);
+            m_forcez[i] = mass(i)*body_force(2);
+        }
         map2grid(m_forcex, background_grid.forcex());
-        for (int i = 0; i < m_size; ++i) m_forcey[i] = mass(i)*body_force(1);
         map2grid(m_forcey, background_grid.forcey());
-        for (int i = 0; i < m_size; ++i) m_forcez[i] = mass(i)*body_force(2);
         map2grid(m_forcez, background_grid.forcez());
 
-        std::vector<F> *tmp_grid_forcex = background_grid.forcex(), 
-            *tmp_grid_forcey = background_grid.forcey(),
-            *tmp_grid_forcez = background_grid.forcez();
-
-        // div sigma
-        for (int i = 0; i < m_size; ++i)
-            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                (*tmp_grid_forcex)[node_idx] -= m_mass[i]/m_rho[i]*(
-                    sigmaxx(i)*p2g_neighbour_node_dwdx(i, j) +
-                    sigmaxy(i)*p2g_neighbour_node_dwdy(i, j) +
-                    sigmaxz(i)*p2g_neighbour_node_dwdz(i, j)
+        #pragma omp for
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            for (int j = 0; j < m_g2p_particles_in_cell[i]; ++j) {
+                const int pi = m_g2p_neighbour_particles[16*m_nneighbour_nodes_perp*i+j];
+                (*background_grid.forcex())[i] -= m_mass[pi]/m_rho[pi]*(
+                    sigmaxx(pi)*m_g2p_dwdx[16*m_nneighbour_nodes_perp*i+j] +
+                    sigmaxy(pi)*m_g2p_dwdy[16*m_nneighbour_nodes_perp*i+j] +
+                    sigmaxz(pi)*m_g2p_dwdz[16*m_nneighbour_nodes_perp*i+j]
                 );
-                (*tmp_grid_forcey)[node_idx] -= m_mass[i]/m_rho[i]*(
-                    sigmaxy(i)*p2g_neighbour_node_dwdx(i, j) +
-                    sigmayy(i)*p2g_neighbour_node_dwdy(i, j) +
-                    sigmayz(i)*p2g_neighbour_node_dwdz(i, j)
+                (*background_grid.forcey())[i] -= m_mass[pi]/m_rho[pi]*(
+                    sigmaxy(pi)*m_g2p_dwdx[16*m_nneighbour_nodes_perp*i+j] +
+                    sigmayy(pi)*m_g2p_dwdy[16*m_nneighbour_nodes_perp*i+j] +
+                    sigmayz(pi)*m_g2p_dwdz[16*m_nneighbour_nodes_perp*i+j]
                 );
-                (*tmp_grid_forcez)[node_idx] -= m_mass[i]/m_rho[i]*(
-                    sigmaxz(i)*p2g_neighbour_node_dwdx(i, j) +
-                    sigmayz(i)*p2g_neighbour_node_dwdy(i, j) +
-                    sigmazz(i)*p2g_neighbour_node_dwdz(i, j)
+                (*background_grid.forcez())[i] -= m_mass[pi]/m_rho[pi]*(
+                    sigmaxz(pi)*m_g2p_dwdx[16*m_nneighbour_nodes_perp*i+j] +
+                    sigmayz(pi)*m_g2p_dwdy[16*m_nneighbour_nodes_perp*i+j] +
+                    sigmazz(pi)*m_g2p_dwdz[16*m_nneighbour_nodes_perp*i+j]
                 );
             }
+        }
 
     }
 

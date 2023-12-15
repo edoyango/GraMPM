@@ -130,7 +130,7 @@ namespace GraMPM {
                 m_spinrateyz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
                 m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
                 m_p2g_neighbour_nodes_dwdz, m_momentumx, m_momentumy, m_momentumz, m_forcex, m_forcey, m_forcez, m_gax,
-                m_gay, m_gaz, m_gdxdt, m_gdydt, m_gdzdt;
+                m_gay, m_gaz, m_gdxdt, m_gdydt, m_gdzdt, m_g2p_w, m_g2p_dwdx, m_g2p_dwdy, m_g2p_dwdz;
             F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
             std::vector<int> m_grid_idx, m_p2g_neighbour_nodes, m_g2p_neighbour_particles, m_g2p_particles_in_cell;
             std::array<F, 3> m_body_force;

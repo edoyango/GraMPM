@@ -28,11 +28,9 @@ namespace GraMPM {
                     p.map_particles_to_grid();
 
                     // map particles' mass to nodes
-                    #pragma omp master
                     p.map_mass_to_grid();
 
                     // map particles' momentum to nodes
-                    #pragma omp master
                     p.map_momentum_to_grid();
 
                     // apply user-defined momentum boundary conditions to grid
@@ -40,7 +38,6 @@ namespace GraMPM {
                     p.background_grid.apply_momentum_boundary_conditions(itimestep, dt);
 
                     // map particles' force to nodes
-                    #pragma omp master
                     p.map_force_to_grid();
 
                     // apply user-defined force boundary conditions to grid
@@ -61,7 +58,6 @@ namespace GraMPM {
                     p.update_position(dt);
 
                     // map particles' momentum to nodes, in preparation for updating stress
-                    #pragma omp master
                     p.map_momentum_to_grid();
 
                     // apply user-defined momentum boundary conditions to grid
