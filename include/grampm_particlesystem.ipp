@@ -617,10 +617,9 @@ namespace GraMPM {
             );
         }
     }
-    
-    // NTS this could be faster
+
     template<typename F>
-    void particle_system<F>::map_particles_to_grid() {
+    void particle_system<F>::resize_mapping_data() {
 
         // size output arrays
         #pragma omp single
@@ -640,6 +639,12 @@ namespace GraMPM {
             m_g2p_dwdy.resize(background_grid.ncells()*16*m_nneighbour_nodes_perp);
             m_g2p_dwdz.resize(background_grid.ncells()*16*m_nneighbour_nodes_perp);
         }
+
+    }
+    
+    // NTS this could be faster
+    template<typename F>
+    void particle_system<F>::map_particles_to_grid() {
 
         // update neighbour indices
         #pragma omp for
@@ -864,6 +869,7 @@ namespace GraMPM {
     }
 
     template<typename F> void particle_system<F>::update_velocity(const F &dt) {
+        #pragma omp for nowait
         for (int i = 0; i < m_size; ++i) {
             m_vx[i] += dt*m_ax[i];
             m_vy[i] += dt*m_ay[i];
@@ -871,6 +877,7 @@ namespace GraMPM {
         }
     }
     template<typename F> void particle_system<F>::update_position(const F &dt) {
+        #pragma omp for nowait
         for (int i = 0; i < m_size; ++i) {
             m_x[i] += dt*m_dxdt[i];
             m_y[i] += dt*m_dydt[i];
@@ -879,6 +886,7 @@ namespace GraMPM {
     }
     template<typename F> void particle_system<F>::update_density(const F &dt) {
         // update density using volumentric strain increment
+        #pragma omp for nowait
         for (int i = 0; i < m_size; ++i) {
             m_rho[i] /= 1. + dt*(m_strainratexx[i] + m_strainrateyy[i] + m_strainratezz[i]);
         }

@@ -307,6 +307,7 @@ namespace GraMPM {
             void update_particle_to_cell_map(const int &start, const int &end);
             void update_particle_to_cell_map();
 
+            void resize_mapping_data();
             // NTS this could be faster
             void map_particles_to_grid();
 
