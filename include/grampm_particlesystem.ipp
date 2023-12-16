@@ -677,11 +677,23 @@ namespace GraMPM {
         // zero the particles' array
         std::fill(p_property->begin(), p_property->end(), 0.);
 
-        for (int i = 0; i < m_size; ++i)
+        for (int i = 0; i < m_size; ++i) {
+#ifdef __AVX2__
+            __m256d p_property_v = _mm256_setzero_pd();
+            for (int j = 0; j < m_nneighbour_nodes_perp; j+=4) {
+                const int node_idx = p2g_neighbour_node(i, j);
+                __m256d g_property_v = _mm256_loadu_pd(&g_property[node_idx]);
+                __m256d p2g_w_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_w[i*m_nneighbour_nodes_perp+j]);
+                p_property_v = _mm256_add_pd(_mm256_mul_pd(p2g_w_v, g_property_v), p_property_v);
+            }
+            m256d_reduce(p_property_v, (*p_property)[i]);
+#else
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 const int node_idx = p2g_neighbour_node(i, j);
                 (*p_property)[i] += p2g_neighbour_node_w(i, j)*g_property[node_idx];
             }
+#endif
+        }
     }
 
     template<typename F> void particle_system<F>::map_mass_to_grid() { map2grid(m_mass, background_grid.mass()); }
@@ -791,10 +803,14 @@ namespace GraMPM {
             __m256d spinratexz_cum_v = _mm256_setzero_pd();
             __m256d spinrateyz_cum_v = _mm256_setzero_pd();
             for (int j = 0; j < m_nneighbour_nodes_perp; j += 4) {
-                __m128i node_idx_v = _mm_loadu_si128((__m128i*)&m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+j]);
-                __m256d tmp_gvx_v = _mm256_i32gather_pd(tmp_gvx.data(), node_idx_v, 8);
-                __m256d tmp_gvy_v = _mm256_i32gather_pd(tmp_gvy.data(), node_idx_v, 8);
-                __m256d tmp_gvz_v = _mm256_i32gather_pd(tmp_gvz.data(), node_idx_v, 8);
+                // __m128i node_idx_v = _mm_loadu_si128((__m128i*)&m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+j]);
+                // __m256d tmp_gvx_v = _mm256_i32gather_pd(tmp_gvx.data(), node_idx_v, 8);
+                // __m256d tmp_gvy_v = _mm256_i32gather_pd(tmp_gvy.data(), node_idx_v, 8);
+                // __m256d tmp_gvz_v = _mm256_i32gather_pd(tmp_gvz.data(), node_idx_v, 8);
+                const int node_idx = m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+j];
+                __m256d tmp_gvx_v = _mm256_loadu_pd(&tmp_gvx[node_idx]);
+                __m256d tmp_gvy_v = _mm256_loadu_pd(&tmp_gvy[node_idx]);
+                __m256d tmp_gvz_v = _mm256_loadu_pd(&tmp_gvz[node_idx]);
                 __m256d p2g_dwdx_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdx[i*m_nneighbour_nodes_perp+j]);
                 __m256d p2g_dwdy_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdy[i*m_nneighbour_nodes_perp+j]);
                 __m256d p2g_dwdz_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j]);
@@ -817,24 +833,6 @@ namespace GraMPM {
             m256d_reduce(spinratexy_cum_v, m_spinratexy[i]);
             m256d_reduce(spinratexz_cum_v, m_spinratexz[i]);
             m256d_reduce(spinrateyz_cum_v, m_spinrateyz[i]);
-            // for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-            //     const int node_idx = p2g_neighbour_node(i, j);
-            //     // m_strainratexx[i] += p2g_neighbour_node_dwdx(i, j)*tmp_gvx[node_idx];
-            //     // m_strainrateyy[i] += p2g_neighbour_node_dwdy(i, j)*tmp_gvy[node_idx];
-            //     // m_strainratezz[i] += p2g_neighbour_node_dwdz(i, j)*tmp_gvz[node_idx];
-            //     // m_strainratexy[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*tmp_gvy[node_idx] + 
-            //     //     p2g_neighbour_node_dwdy(i, j)*tmp_gvx[node_idx]);
-            //     // m_strainratexz[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*tmp_gvz[node_idx] + 
-            //     //     p2g_neighbour_node_dwdz(i, j)*tmp_gvx[node_idx]);
-            //     // m_strainrateyz[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx] + 
-            //     //     p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx]);
-            //     // m_spinratexy[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*tmp_gvx[node_idx] -
-            //     //     p2g_neighbour_node_dwdx(i, j)*tmp_gvy[node_idx]);
-            //     // m_spinratexz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*tmp_gvx[node_idx] - 
-            //     //     p2g_neighbour_node_dwdx(i, j)*tmp_gvz[node_idx]);
-            //     m_spinrateyz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx] - 
-            //         p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx]);
-            // }
         }
 #else
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
