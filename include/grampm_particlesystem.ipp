@@ -484,9 +484,9 @@ namespace GraMPM {
         m_dxdt.resize(n, 0.);
         m_dydt.resize(n, 0.);
         m_dzdt.resize(n, 0.);
-        m_momentumx.resize(n, 0.);
-        m_momentumy.resize(n, 0.);
-        m_momentumz.resize(n, 0.);
+        m_momentumx.reize(n, 0.);
+        m_momentumy.reize(n, 0.);
+        m_momentumz.reize(n, 0.);
         m_forcex.resize(n, 0.);
         m_forcey.resize(n, 0.);
         m_forcez.resize(n, 0.);
@@ -582,9 +582,8 @@ namespace GraMPM {
 
     template<typename F>
     void particle_system<F>::update_particle_to_cell_map() {
-        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
-            set_grid_index(i,
+            set_grid_index( i,
                 ravel_grid_idx(
                     background_grid.calc_idxx(x(i)),
                     background_grid.calc_idxy(y(i)),
@@ -599,20 +598,16 @@ namespace GraMPM {
     void particle_system<F>::map_particles_to_grid() {
 
         // size output arrays
-        #pragma omp single
-        {
-            m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dx.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dy.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dz.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_w.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dwdx.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dwdy.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dwdz.resize(m_nneighbour_nodes_perp*m_size);
-        }
+        m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dx.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dy.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dz.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_w.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dwdx.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dwdy.resize(m_nneighbour_nodes_perp*m_size);
+        m_p2g_neighbour_nodes_dwdz.resize(m_nneighbour_nodes_perp*m_size);
 
         // update neighbour indices
-        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             const int idx = ravelled_grid_idx(i);
             int n = 0;
@@ -627,7 +622,6 @@ namespace GraMPM {
         }
 
         // update kernel and kernel gradient values
-        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 std::array<int, 3> idx;
