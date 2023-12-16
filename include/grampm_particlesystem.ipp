@@ -722,7 +722,34 @@ namespace GraMPM {
             *tmp_grid_forcez = background_grid.forcez();
 
         // div sigma
-        for (int i = 0; i < m_size; ++i)
+        for (int i = 0; i < m_size; ++i) {
+#ifdef __AVX2__
+            for (int j = 0; j< m_nneighbour_nodes_perp; j += 4) {
+                const int node_idx[4] {p2g_neighbour_node(i, j), p2g_neighbour_node(i, j+1), p2g_neighbour_node(i, j+2), p2g_neighbour_node(i, j+3)};
+                __m256d p2g_dwdx_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdx[i*m_nneighbour_nodes_perp+j]);
+                __m256d p2g_dwdy_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdy[i*m_nneighbour_nodes_perp+j]);
+                __m256d p2g_dwdz_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j]);
+                __m256d mass_v = _mm256_set1_pd(m_mass[i]);
+                __m256d rho_v = _mm256_set1_pd(m_rho[i]);
+                __m256d v_v = _mm256_div_pd(mass_v, rho_v);
+                __m256d sigxx_v = _mm256_set1_pd(m_sigmaxx[i]);
+                __m256d sigxy_v = _mm256_set1_pd(m_sigmaxy[i]);
+                __m256d sigxz_v = _mm256_set1_pd(m_sigmaxz[i]);
+                __m256d gfx_v = _mm256_mul_pd(v_v, _mm256_add_pd(_mm256_add_pd(_mm256_mul_pd(sigxx_v, p2g_dwdx_v), _mm256_mul_pd(sigxy_v, p2g_dwdy_v)), _mm256_mul_pd(sigxz_v, p2g_dwdz_v)));
+                double tmp[4];
+                _mm256_storeu_pd(tmp, gfx_v);
+                for (int ii = 0; ii < 4; ++ii) (*background_grid.forcex())[node_idx[ii]] -= tmp[ii];
+                __m256d sigyy_v = _mm256_set1_pd(m_sigmayy[i]);
+                __m256d sigyz_v = _mm256_set1_pd(m_sigmayz[i]);
+                __m256d gfy_v = _mm256_mul_pd(v_v, _mm256_add_pd(_mm256_add_pd(_mm256_mul_pd(sigxy_v, p2g_dwdx_v), _mm256_mul_pd(sigyy_v, p2g_dwdy_v)), _mm256_mul_pd(sigyz_v, p2g_dwdz_v)));
+                _mm256_storeu_pd(tmp, gfy_v);
+                for (int ii = 0; ii < 4; ++ii) (*background_grid.forcey())[node_idx[ii]] -= tmp[ii];
+                __m256d sigzz_v = _mm256_set1_pd(m_sigmazz[i]);
+                __m256d gfz_v = _mm256_mul_pd(v_v, _mm256_add_pd(_mm256_add_pd(_mm256_mul_pd(sigxz_v, p2g_dwdx_v), _mm256_mul_pd(sigyz_v, p2g_dwdy_v)), _mm256_mul_pd(sigzz_v, p2g_dwdz_v)));
+                _mm256_storeu_pd(tmp, gfz_v);
+                for (int ii = 0; ii < 4; ++ii) (*background_grid.forcez())[node_idx[ii]] -= tmp[ii];
+            }
+#else
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 const int node_idx = p2g_neighbour_node(i, j);
                 (*tmp_grid_forcex)[node_idx] -= m_mass[i]/m_rho[i]*(
@@ -741,7 +768,8 @@ namespace GraMPM {
                     sigmazz(i)*p2g_neighbour_node_dwdz(i, j)
                 );
             }
-
+#endif
+        }
     }
 
     template<typename F> void particle_system<F>::map_acceleration_to_particles() {
