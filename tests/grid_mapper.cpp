@@ -77,18 +77,14 @@ TEST_CASE("Correct determination of grid node neighbours (radius=1)", "[p]") {
                     REQUIRE(p.p2g_neighbour_node_dx(i, n)==p.x(i)-((idx[0]+di)*dcell+mingrid[0]));
                     REQUIRE(p.p2g_neighbour_node_dy(i, n)==p.y(i)-((idx[1]+dj)*dcell+mingrid[1]));
                     REQUIRE(p.p2g_neighbour_node_dz(i, n)==p.z(i)-((idx[2]+dk)*dcell+mingrid[2]));
-                    double w = knl.w(
-                        p.p2g_neighbour_node_dx(i, n), 
-                        p.p2g_neighbour_node_dy(i, n),
-                        p.p2g_neighbour_node_dz(i, n)
-                    );
-                    REQUIRE(p.p2g_neighbour_node_w(i, n)==w);
-                    double dwdx, dwdy, dwdz;
-                    knl.dwdx(
+                    double w, dwdx, dwdy, dwdz;
+                    knl.w_dwdx(
                         p.p2g_neighbour_node_dx(i, n), 
                         p.p2g_neighbour_node_dy(i, n), 
                         p.p2g_neighbour_node_dz(i, n),
+                        w,
                         dwdx, dwdy, dwdz);
+                    REQUIRE(p.p2g_neighbour_node_w(i, n)==w);
                     REQUIRE(p.p2g_neighbour_node_dwdx(i, n)==dwdx);
                     REQUIRE(p.p2g_neighbour_node_dwdy(i, n)==dwdy);
                     REQUIRE(p.p2g_neighbour_node_dwdz(i, n)==dwdz);
@@ -129,18 +125,14 @@ TEST_CASE("Correct determination of grid node neighbours (radius=2)") {
                     REQUIRE(p.p2g_neighbour_node_dx(i, n)==p.x(i)-((idx[0]+di)*dcell+mingrid[0]));
                     REQUIRE(p.p2g_neighbour_node_dy(i, n)==p.y(i)-((idx[1]+dj)*dcell+mingrid[1]));
                     REQUIRE(p.p2g_neighbour_node_dz(i, n)==p.z(i)-((idx[2]+dk)*dcell+mingrid[2]));
-                    double w = knlc.w(
-                        p.p2g_neighbour_node_dx(i, n), 
-                        p.p2g_neighbour_node_dy(i, n),
-                        p.p2g_neighbour_node_dz(i, n)
-                    );
-                    REQUIRE(p.p2g_neighbour_node_w(i, n)==w);
-                    double dwdx, dwdy, dwdz;
-                    knlc.dwdx(
+                    double w, dwdx, dwdy, dwdz;
+                    knlc.w_dwdx(
                         p.p2g_neighbour_node_dx(i, n), 
                         p.p2g_neighbour_node_dy(i, n), 
-                        p.p2g_neighbour_node_dz(i, n),
+                        p.p2g_neighbour_node_dz(i, n), 
+                        w,
                         dwdx, dwdy, dwdz);
+                    REQUIRE(p.p2g_neighbour_node_w(i, n)==w);
                     REQUIRE(p.p2g_neighbour_node_dwdx(i, n)==dwdx);
                     REQUIRE(p.p2g_neighbour_node_dwdy(i, n)==dwdy);
                     REQUIRE(p.p2g_neighbour_node_dwdz(i, n)==dwdz);

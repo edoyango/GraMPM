@@ -20,15 +20,13 @@ namespace GraMPM {
             {
             }
             const F radius, dcell;
-            F w(const F &dx, const F &dy, const F &dz) const {
-                return w1(std::abs(dx)/dcell)*w1(std::abs(dy)/dcell)*w1(std::abs(dz)/dcell);
-            }
-            void dwdx(const F &dx, const F &dy, const F &dz, F &dwdx, F &dwdy, F &dwdz) const 
-            { 
+            void w_dwdx(const F &dx, const F&dy, const F &dz, F &w, F &dwdx, F &dwdy, F &dwdz) const {
                 const F qx = std::abs(dx)/dcell, qy = std::abs(dy)/dcell, qz = std::abs(dz)/dcell;
-                dwdx = w1(qy)*w1(qz)*dw1dq(qx)*dqdr(dx);
-                dwdy = w1(qx)*w1(qz)*dw1dq(qy)*dqdr(dy);
-                dwdz = w1(qx)*w1(qy)*dw1dq(qz)*dqdr(dz);
+                const F w1x = w1(qx), w1y = w1(qy), w1z = w1(qz);
+                w = w1x*w1y*w1z;
+                dwdx = w1y*w1z*dw1dq(qx)*dqdr(dx);
+                dwdy = w1x*w1z*dw1dq(qy)*dqdr(dy);
+                dwdz = w1x*w1y*dw1dq(qz)*dqdr(dz);
             }
         protected:
             virtual F w1(const double &q) const {return 0.;}

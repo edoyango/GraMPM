@@ -484,9 +484,9 @@ namespace GraMPM {
         m_dxdt.resize(n, 0.);
         m_dydt.resize(n, 0.);
         m_dzdt.resize(n, 0.);
-        m_momentumx.reize(n, 0.);
-        m_momentumy.reize(n, 0.);
-        m_momentumz.reize(n, 0.);
+        m_momentumx.resize(n, 0.);
+        m_momentumy.resize(n, 0.);
+        m_momentumz.resize(n, 0.);
         m_forcex.resize(n, 0.);
         m_forcey.resize(n, 0.);
         m_forcez.resize(n, 0.);
@@ -629,15 +629,11 @@ namespace GraMPM {
                 m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j] = x(i) - (idx[0]*background_grid.cell_size() + background_grid.mingridx());
                 m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j] = y(i) - (idx[1]*background_grid.cell_size() + background_grid.mingridy());
                 m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j] = z(i) - (idx[2]*background_grid.cell_size() + background_grid.mingridz());
-                m_p2g_neighbour_nodes_w[i*m_nneighbour_nodes_perp+j] = m_knl.w(
-                    m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j],
-                    m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j],
-                    m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j]
-                );
-                m_knl.dwdx(
+                m_knl.w_dwdx(
                     m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j],
                     m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j],
                     m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j],
+                    m_p2g_neighbour_nodes_w[i*m_nneighbour_nodes_perp+j],
                     m_p2g_neighbour_nodes_dwdx[i*m_nneighbour_nodes_perp+j],
                     m_p2g_neighbour_nodes_dwdy[i*m_nneighbour_nodes_perp+j],
                     m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j]
