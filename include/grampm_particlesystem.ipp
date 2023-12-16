@@ -4,6 +4,18 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <immintrin.h>
+
+static void m256d_reduce(__m256d va, double &b) {
+    // adds all the elements of va to b
+    __m128d vb = _mm_set1_pd(b);
+    __m128d va_low = _mm256_castpd256_pd128(va);
+    __m128d va_hi = _mm256_extractf128_pd(va, 1);
+    va_low = _mm_add_pd(va_low, va_hi);
+    va_low = _mm_hadd_pd(va_low, va_low);
+    vb = _mm_add_sd(va_low, vb);
+    _mm_store_sd(&b, vb);
+}
 
 constexpr double pi {3.14159265358979311599796346854};
 
@@ -767,7 +779,64 @@ namespace GraMPM {
             tmp_gvz[i] = background_grid.momentumz(i)/background_grid.mass(i);
         }
 
-        for (int i = 0; i < m_size; ++i)
+        for (int i = 0; i < m_size; ++i) {
+#ifdef __AVX2__
+            __m256d strainratexx_cum_v = _mm256_setzero_pd();
+            __m256d strainrateyy_cum_v = _mm256_setzero_pd();
+            __m256d strainratezz_cum_v = _mm256_setzero_pd();
+            __m256d strainratexy_cum_v = _mm256_setzero_pd();
+            __m256d strainratexz_cum_v = _mm256_setzero_pd();
+            __m256d strainrateyz_cum_v = _mm256_setzero_pd();
+            __m256d spinratexy_cum_v = _mm256_setzero_pd();
+            __m256d spinratexz_cum_v = _mm256_setzero_pd();
+            __m256d spinrateyz_cum_v = _mm256_setzero_pd();
+            for (int j = 0; j < m_nneighbour_nodes_perp; j += 4) {
+                __m128i node_idx_v = _mm_loadu_si128((__m128i*)&m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+j]);
+                __m256d tmp_gvx_v = _mm256_i32gather_pd(tmp_gvx.data(), node_idx_v, 8);
+                __m256d tmp_gvy_v = _mm256_i32gather_pd(tmp_gvy.data(), node_idx_v, 8);
+                __m256d tmp_gvz_v = _mm256_i32gather_pd(tmp_gvz.data(), node_idx_v, 8);
+                __m256d p2g_dwdx_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdx[i*m_nneighbour_nodes_perp+j]);
+                __m256d p2g_dwdy_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdy[i*m_nneighbour_nodes_perp+j]);
+                __m256d p2g_dwdz_v = _mm256_loadu_pd(&m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j]);
+                strainratexx_cum_v = _mm256_add_pd(_mm256_mul_pd(tmp_gvx_v, p2g_dwdx_v), strainratexx_cum_v);
+                strainrateyy_cum_v = _mm256_add_pd(_mm256_mul_pd(tmp_gvy_v, p2g_dwdy_v), strainrateyy_cum_v);
+                strainratezz_cum_v = _mm256_add_pd(_mm256_mul_pd(tmp_gvz_v, p2g_dwdz_v), strainratezz_cum_v);
+                strainratexy_cum_v = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(0.5),_mm256_add_pd(_mm256_mul_pd(tmp_gvy_v, p2g_dwdx_v), _mm256_mul_pd(tmp_gvx_v, p2g_dwdy_v))), strainratexy_cum_v);
+                strainratexz_cum_v = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(0.5),_mm256_add_pd(_mm256_mul_pd(tmp_gvz_v, p2g_dwdx_v), _mm256_mul_pd(tmp_gvx_v, p2g_dwdz_v))), strainratexz_cum_v);
+                strainrateyz_cum_v = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(0.5),_mm256_add_pd(_mm256_mul_pd(tmp_gvz_v, p2g_dwdy_v), _mm256_mul_pd(tmp_gvy_v, p2g_dwdz_v))), strainrateyz_cum_v);
+                spinratexy_cum_v = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(0.5),_mm256_sub_pd(_mm256_mul_pd(tmp_gvx_v, p2g_dwdy_v), _mm256_mul_pd(tmp_gvy_v, p2g_dwdx_v))), spinratexy_cum_v);
+                spinratexz_cum_v = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(0.5),_mm256_sub_pd(_mm256_mul_pd(tmp_gvx_v, p2g_dwdz_v), _mm256_mul_pd(tmp_gvz_v, p2g_dwdx_v))), spinratexz_cum_v);
+                spinrateyz_cum_v = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(0.5),_mm256_sub_pd(_mm256_mul_pd(tmp_gvy_v, p2g_dwdz_v), _mm256_mul_pd(tmp_gvz_v, p2g_dwdy_v))), spinrateyz_cum_v);
+            }
+            m256d_reduce(strainratexx_cum_v, m_strainratexx[i]);
+            m256d_reduce(strainrateyy_cum_v, m_strainrateyy[i]);
+            m256d_reduce(strainratezz_cum_v, m_strainratezz[i]);
+            m256d_reduce(strainratexy_cum_v, m_strainratexy[i]);
+            m256d_reduce(strainratexz_cum_v, m_strainratexz[i]);
+            m256d_reduce(strainrateyz_cum_v, m_strainrateyz[i]);
+            m256d_reduce(spinratexy_cum_v, m_spinratexy[i]);
+            m256d_reduce(spinratexz_cum_v, m_spinratexz[i]);
+            m256d_reduce(spinrateyz_cum_v, m_spinrateyz[i]);
+            // for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+            //     const int node_idx = p2g_neighbour_node(i, j);
+            //     // m_strainratexx[i] += p2g_neighbour_node_dwdx(i, j)*tmp_gvx[node_idx];
+            //     // m_strainrateyy[i] += p2g_neighbour_node_dwdy(i, j)*tmp_gvy[node_idx];
+            //     // m_strainratezz[i] += p2g_neighbour_node_dwdz(i, j)*tmp_gvz[node_idx];
+            //     // m_strainratexy[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*tmp_gvy[node_idx] + 
+            //     //     p2g_neighbour_node_dwdy(i, j)*tmp_gvx[node_idx]);
+            //     // m_strainratexz[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*tmp_gvz[node_idx] + 
+            //     //     p2g_neighbour_node_dwdz(i, j)*tmp_gvx[node_idx]);
+            //     // m_strainrateyz[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx] + 
+            //     //     p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx]);
+            //     // m_spinratexy[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*tmp_gvx[node_idx] -
+            //     //     p2g_neighbour_node_dwdx(i, j)*tmp_gvy[node_idx]);
+            //     // m_spinratexz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*tmp_gvx[node_idx] - 
+            //     //     p2g_neighbour_node_dwdx(i, j)*tmp_gvz[node_idx]);
+            //     m_spinrateyz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx] - 
+            //         p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx]);
+            // }
+        }
+#else
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 const int node_idx = p2g_neighbour_node(i, j);
                 m_strainratexx[i] += p2g_neighbour_node_dwdx(i, j)*tmp_gvx[node_idx];
@@ -786,6 +855,8 @@ namespace GraMPM {
                 m_spinrateyz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*tmp_gvy[node_idx] - 
                     p2g_neighbour_node_dwdy(i, j)*tmp_gvz[node_idx]);
             }
+        }
+#endif
     }
 
     template<typename F> void particle_system<F>::update_stress(const F &dt) {
