@@ -106,7 +106,7 @@ namespace GraMPM {
             void update_momentum(const F &dt); 
             void apply_momentum_boundary_conditions(const int &timestep, const F dt);
             void apply_force_boundary_conditions(const int &timestep, const F dt);
-        private:
+        protected:
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
             const F m_mingridx, m_mingridy, m_mingridz, m_maxgridx, m_maxgridy, m_maxgridz, m_dcell;
@@ -121,7 +121,7 @@ namespace GraMPM {
     template<typename F>
     class particle_system {
 
-        private:
+        protected:
             long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
             const int m_nneighbour_nodes_perp;
             std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_ax, m_ay, m_az, m_dxdt, m_dydt, m_dzdt, m_mass, m_rho, 
