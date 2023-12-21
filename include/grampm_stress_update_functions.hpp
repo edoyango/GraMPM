@@ -26,6 +26,7 @@ namespace GraMPM {
                 dsigmayz(size);
 
             // DE*dstrain
+            #pragma omp for
             for (int i = 0; i < size; ++i) {
                 dsigmaxx[i] = D0*((1.-v)*strainratexx[i] + v*strainrateyy[i] + v*strainratezz[i]);
                 dsigmayy[i] = D0*(v*strainratexx[i] + (1.-v)*strainrateyy[i] + v*strainratezz[i]);
@@ -33,10 +34,10 @@ namespace GraMPM {
                 dsigmaxy[i] = D0*strainratexy[i]*(1.-2.*v);
                 dsigmaxz[i] = D0*strainratexz[i]*(1.-2.*v);
                 dsigmayz[i] = D0*strainrateyz[i]*(1.-2.*v);
-            }
+            // }
             
             // jaumann stress rate
-            for (int i = 0; i < size; ++i) {
+            // for (int i = 0; i < size; ++i) {
                 dsigmaxx[i] -= 2.*(spinratexy[i]*sigmaxy[i] + spinratexz[i]*sigmaxz[i]);
                 dsigmayy[i] -= 2.*(-spinratexy[i]*sigmaxy[i] + spinrateyz[i]*sigmayz[i]);
                 dsigmazz[i] += 2.*(spinratexz[i]*sigmaxz[i] + spinrateyz[i]*sigmayz[i]);
@@ -46,10 +47,10 @@ namespace GraMPM {
                     spinratexy[i]*sigmayz[i] - spinratexz[i]*sigmazz[i];
                 dsigmayz[i] += sigmaxy[i]*spinratexz[i] + sigmayy[i]*spinrateyz[i] +
                     spinratexy[i]*sigmaxz[i] - spinrateyz[i]*sigmazz[i];
-            }
+            // }
 
             // update original stress states
-            for (int i = 0; i < size; ++i) {
+            // for (int i = 0; i < size; ++i) {
                 sigmaxx[i] += dt*dsigmaxx[i];
                 sigmayy[i] += dt*dsigmayy[i];
                 sigmazz[i] += dt*dsigmazz[i];
@@ -84,6 +85,7 @@ namespace GraMPM {
             self.DP_params(phi, psi, coh, alpha_phi, alpha_psi, k_c);
 
             // begin plastic correction
+            #pragma omp for
             for (int i = 0; i < size; ++i) {
                 // calculating invariants and deviatoric stress tensor
                 F I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
