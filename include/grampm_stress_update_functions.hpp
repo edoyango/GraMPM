@@ -10,7 +10,7 @@ namespace GraMPM {
         void hookes_law(GraMPM::particle_system<F> &self, const F &dt) {
 
             const F E {self.E()}, v {self.v()};
-            const int size {self.size()};
+            const int size {static_cast<int>(self.size())};
             std::vector<F> &sigmaxx {*(self.sigmaxx())}, &sigmayy {*(self.sigmayy())}, 
                 &sigmazz {*(self.sigmazz())}, &sigmaxy {*(self.sigmaxy())}, 
                 &sigmaxz {*(self.sigmaxz())}, &sigmayz {*(self.sigmayz())};
@@ -68,7 +68,7 @@ namespace GraMPM {
 
             // setting up for plastic corrector step (duplicated code, would like to remove this somehow)
             const F E {self.E()}, v {self.v()};
-            const int size {self.size()};
+            const int size {static_cast<int>(self.size())};
             std::vector<F> &sigmaxx {*(self.sigmaxx())}, &sigmayy {*(self.sigmayy())}, 
                 &sigmazz {*(self.sigmazz())}, &sigmaxy {*(self.sigmaxy())}, 
                 &sigmaxz {*(self.sigmaxz())}, &sigmayz {*(self.sigmayz())};
