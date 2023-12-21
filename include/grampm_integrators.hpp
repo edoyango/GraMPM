@@ -58,6 +58,7 @@ namespace GraMPM {
 
                 // update particles' velocities with calculated accelerations
                 p.update_velocity(dt);
+
                 // update particles' position
                 p.update_position(dt);
 

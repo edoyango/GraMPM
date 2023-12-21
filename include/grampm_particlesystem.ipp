@@ -508,6 +508,18 @@ namespace GraMPM {
         m_size = n;
     }
 
+    // sizes temporary grid arrays appropriately
+    template<typename F>
+    void particle_system<F>::resize_temporary_grid_arrays() {
+        m_tmpgmass.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumx.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumy.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumz.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcex.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcey.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcez.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+    }
+
     template<typename F>
     void particle_system<F>::update_particle_to_cell_map(const int &start, const int &end) {
         #pragma omp for
