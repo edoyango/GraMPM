@@ -43,41 +43,30 @@ namespace GraMPM {
             hookes_law(self, dt);
 
             // setting up for plastic corrector step (duplicated code, would like to remove this somehow)
-            const F E {self.E()}, v {self.v()};
-            const int size {static_cast<int>(self.size())};
-            std::vector<F> &sigmaxx {*(self.sigmaxx())}, &sigmayy {*(self.sigmayy())}, 
-                &sigmazz {*(self.sigmazz())}, &sigmaxy {*(self.sigmaxy())}, 
-                &sigmaxz {*(self.sigmaxz())}, &sigmayz {*(self.sigmayz())};
-            std::vector<F> &strainratexx {*(self.strainratexx())}, &strainrateyy {*(self.strainrateyy())}, 
-                &strainratezz {*(self.strainratezz())}, &strainratexy {*(self.strainratexy())}, 
-                &strainratexz {*(self.strainratexz())}, &strainrateyz {*(self.strainrateyz())};
-            std::vector<F> &spinratexy {*(self.spinratexy())}, &spinratexz {*(self.spinratexz())},
-                &spinrateyz {*(self.spinrateyz())};
-
-            const F D0 {E/((1.+v)*(1.-2.*v))};
+            const F D0 {self.m_E/((1.+self.m_v)*(1.-2.*self.m_v))};
 
             F phi, psi, coh, alpha_phi, alpha_psi, k_c;
             self.DP_params(phi, psi, coh, alpha_phi, alpha_psi, k_c);
 
             // begin plastic correction
             #pragma omp for
-            for (int i = 0; i < size; ++i) {
+            for (int i = 0; i < self.m_size; ++i) {
                 // calculating invariants and deviatoric stress tensor
-                F I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
+                F I1 = self.m_sigmaxx[i] + self.m_sigmayy[i] + self.m_sigmazz[i];
                 const F s[6] {
-                    sigmaxx[i] - I1/3.,
-                    sigmayy[i] - I1/3.,
-                    sigmazz[i] - I1/3.,
-                    sigmaxy[i],
-                    sigmaxz[i],
-                    sigmayz[i],
+                    self.m_sigmaxx[i] - I1/3.,
+                    self.m_sigmayy[i] - I1/3.,
+                    self.m_sigmazz[i] - I1/3.,
+                    self.m_sigmaxy[i],
+                    self.m_sigmaxz[i],
+                    self.m_sigmayz[i],
                 };
                 const F J2 = 0.5*(s[0]*s[0] + s[1]*s[1] + s[2]*s[2] + 2.*(s[3]*s[3] + s[4]*s[4] + s[5]*s[5]));
                 // tensile correction 1
                 if (J2 == 0. && I1 > k_c/alpha_phi) {
-                    sigmaxx[i] = k_c/alpha_phi/3.;
-                    sigmayy[i] = k_c/alpha_phi/3.;
-                    sigmazz[i] = k_c/alpha_phi/3.;
+                    self.m_sigmaxx[i] = k_c/alpha_phi/3.;
+                    self.m_sigmayy[i] = k_c/alpha_phi/3.;
+                    self.m_sigmazz[i] = k_c/alpha_phi/3.;
                     I1 = k_c/alpha_phi;
                 }
 
@@ -112,39 +101,30 @@ namespace GraMPM {
                         shat[5],
                     };
                     const F dlambda {f/(
-                        dfdsig[0]*D0*((1.-v)*dgdsig[0] + v*dgdsig[1] + v*dgdsig[2]) +
-                        dfdsig[1]*D0*(v*dgdsig[0] + (1.-v)*dgdsig[1] + v*dgdsig[2]) +
-                        dfdsig[2]*D0*(v*dgdsig[0] + v*dgdsig[1] + (1.-v)*dgdsig[2]) +
-                        2.*dfdsig[3]*D0*dgdsig[3]*(1.-2.*v) +
-                        2.*dfdsig[4]*D0*dgdsig[4]*(1.-2.*v) +
-                        2.*dfdsig[5]*D0*dgdsig[5]*(1.-2.*v)
+                        dfdsig[0]*D0*((1.-self.m_v)*dgdsig[0] + self.m_v*dgdsig[1] + self.m_v*dgdsig[2]) +
+                        dfdsig[1]*D0*(self.m_v*dgdsig[0] + (1.-self.m_v)*dgdsig[1] + self.m_v*dgdsig[2]) +
+                        dfdsig[2]*D0*(self.m_v*dgdsig[0] + self.m_v*dgdsig[1] + (1.-self.m_v)*dgdsig[2]) +
+                        2.*dfdsig[3]*D0*dgdsig[3]*(1.-2.*self.m_v) +
+                        2.*dfdsig[4]*D0*dgdsig[4]*(1.-2.*self.m_v) +
+                        2.*dfdsig[5]*D0*dgdsig[5]*(1.-2.*self.m_v)
                     )};
                     
-                    sigmaxx[i] -= dlambda*D0*((1.-v)*dgdsig[0] + v*dgdsig[1] + v*dgdsig[2]);
-                    sigmayy[i] -= dlambda*D0*(v*dgdsig[0] + (1.-v)*dgdsig[1] + v*dgdsig[2]);
-                    sigmazz[i] -= dlambda*D0*(v*dgdsig[0] + v*dgdsig[1] + (1.-v)*dgdsig[2]);
-                    sigmaxy[i] -= dlambda*D0*dgdsig[3]*(1.-2.*v);
-                    sigmaxz[i] -= dlambda*D0*dgdsig[4]*(1.-2.*v);
-                    sigmayz[i] -= dlambda*D0*dgdsig[5]*(1.-2.*v);
+                    self.m_sigmaxx[i] -= dlambda*D0*((1.-self.m_v)*dgdsig[0] + self.m_v*dgdsig[1] + self.m_v*dgdsig[2]);
+                    self.m_sigmayy[i] -= dlambda*D0*(self.m_v*dgdsig[0] + (1.-self.m_v)*dgdsig[1] + self.m_v*dgdsig[2]);
+                    self.m_sigmazz[i] -= dlambda*D0*(self.m_v*dgdsig[0] + self.m_v*dgdsig[1] + (1.-self.m_v)*dgdsig[2]);
+                    self.m_sigmaxy[i] -= dlambda*D0*dgdsig[3]*(1.-2.*self.m_v);
+                    self.m_sigmaxz[i] -= dlambda*D0*dgdsig[4]*(1.-2.*self.m_v);
+                    self.m_sigmayz[i] -= dlambda*D0*dgdsig[5]*(1.-2.*self.m_v);
 
-                    I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
+                    I1 = self.m_sigmaxx[i] + self.m_sigmayy[i] + self.m_sigmazz[i];
                     if (I1 > k_c/alpha_phi) {
-                        sigmaxx[i] = k_c/alpha_phi/3.;
-                        sigmayy[i] = k_c/alpha_phi/3.;
-                        sigmazz[i] = k_c/alpha_phi/3.;
-                        sigmaxy[i] = 0.;
-                        sigmaxz[i] = 0.;
-                        sigmayz[i] = 0.;
+                        self.m_sigmaxx[i] = k_c/alpha_phi/3.;
+                        self.m_sigmayy[i] = k_c/alpha_phi/3.;
+                        self.m_sigmazz[i] = k_c/alpha_phi/3.;
+                        self.m_sigmaxy[i] = 0.;
+                        self.m_sigmaxz[i] = 0.;
+                        self.m_sigmayz[i] = 0.;
                     }
-                    I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
-                    const F stest[6] {
-                        sigmaxx[i] - I1/3.,
-                        sigmayy[i] - I1/3.,
-                        sigmazz[i] - I1/3.,
-                        sigmaxy[i],
-                        sigmaxz[i],
-                        sigmayz[i],
-                    };
                 }
 
             }
