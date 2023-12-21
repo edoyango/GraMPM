@@ -36,58 +36,44 @@ namespace GraMPM {
                 p.map_particles_to_grid();
 
                 // map particles' mass to nodes
-                // #pragma omp single
                 p.map_mass_to_grid();
 
                 // map particles' momentum to nodes
-                // #pragma omp single
                 p.map_momentum_to_grid();
 
                 // apply user-defined momentum boundary conditions to grid
-                // #pragma omp single
                 p.background_grid.apply_momentum_boundary_conditions(itimestep, dt);
 
                 // map particles' force to nodes
-                // #pragma omp single
                 p.map_force_to_grid();
 
                 // apply user-defined force boundary conditions to grid
-                // #pragma omp single
                 p.background_grid.apply_force_boundary_conditions(itimestep, dt);
 
                 // update nodal momentums
-                // #pragma omp single
                 p.background_grid.update_momentum(dt);
 
                 // map nodal forces to particle accelerations
-                // #pragma omp single
                 p.map_acceleration_to_particles();
 
                 // update particles' velocities with calculated accelerations
-                // #pragma omp single
                 p.update_velocity(dt);
                 // update particles' position
-                // #pragma omp single
                 p.update_position(dt);
 
                 // map particles' momentum to nodes, in preparation for updating stress
-                // #pragma omp single
                 p.map_momentum_to_grid();
 
                 // apply user-defined momentum boundary conditions to grid
-                // #pragma omp single
                 p.background_grid.apply_momentum_boundary_conditions(itimestep, dt);
 
                 // map nodal velocities to particle strain/spin rates
-                // #pragma omp single
                 p.map_strainrate_to_particles();
 
                 // update particles' density
-                // #pragma omp single
                 p.update_density(dt);
 
                 // update particles' stress
-                // #pragma omp single
                 p.update_stress(dt);
 
                 if (itimestep % save_timestep_interval == 0) {
