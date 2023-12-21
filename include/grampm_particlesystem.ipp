@@ -26,12 +26,6 @@ namespace GraMPM {
         , m_dxdt(size, 0.)
         , m_dydt(size, 0.)
         , m_dzdt(size, 0.)
-        , m_momentumx(size, 0.)
-        , m_momentumy(size, 0.)
-        , m_momentumz(size, 0.)
-        , m_forcex(size, 0.)
-        , m_forcey(size, 0.)
-        , m_forcez(size, 0.)
         , m_mass(size, 0.)
         , m_rho(size, 0.)
         , m_sigmaxx(size, 0.)
@@ -316,12 +310,6 @@ namespace GraMPM {
         m_dxdt.push_back(p.dxdt);
         m_dydt.push_back(p.dydt);
         m_dzdt.push_back(p.dzdt);
-        m_momentumx.push_back(0.);
-        m_momentumy.push_back(0.);
-        m_momentumz.push_back(0.);
-        m_forcex.push_back(0.);
-        m_forcey.push_back(0.);
-        m_forcez.push_back(0.);
         m_mass.push_back(p.mass);
         m_rho.push_back(p.rho);
         m_sigmaxx.push_back(p.sigmaxx);
@@ -361,15 +349,6 @@ namespace GraMPM {
         m_ax.reserve(n);
         m_ay.reserve(n);
         m_az.reserve(n);
-        m_dxdt.reserve(n);
-        m_dydt.reserve(n);
-        m_dzdt.reserve(n);
-        m_momentumx.reserve(n);
-        m_momentumy.reserve(n);
-        m_momentumz.reserve(n);
-        m_forcex.reserve(n);
-        m_forcey.reserve(n);
-        m_forcez.reserve(n);
         m_mass.reserve(n);
         m_rho.reserve(n);
         m_sigmaxx.reserve(n);
@@ -406,12 +385,6 @@ namespace GraMPM {
         m_dxdt.clear();
         m_dydt.clear();
         m_dzdt.clear();
-        m_momentumx.clear();
-        m_momentumy.clear();
-        m_momentumz.clear();
-        m_forcex.clear();
-        m_forcey.clear();
-        m_forcez.clear();
         m_mass.clear();
         m_rho.clear();
         m_sigmaxx.clear();
@@ -446,8 +419,6 @@ namespace GraMPM {
     bool particle_system<F>::empty() {
         return m_x.empty() && m_y.empty() && m_z.empty() && m_vx.empty() && m_vy.empty() && m_vz.empty() && 
             m_ax.empty() && m_ay.empty() && m_az.empty() && m_dxdt.empty() && m_dydt.empty() && m_dzdt.empty() &&
-            m_momentumx.empty() && m_momentumy.empty() && m_momentumz.empty() && m_forcex.empty() && m_forcey.empty() &&
-            m_forcez.empty() &&
             m_mass.empty() && m_rho.empty() && m_sigmaxx.empty() && m_sigmayy.empty() && m_sigmazz.empty() && 
             m_sigmaxy.empty() && m_sigmaxz.empty() && m_sigmayz.empty() && m_strainratexx.empty() && 
             m_strainrateyy.empty() && m_strainratezz.empty() && m_strainratexy.empty() && m_strainratexz.empty() && 
@@ -470,15 +441,6 @@ namespace GraMPM {
         m_ax.resize(n, 0.);
         m_ay.resize(n, 0.);
         m_az.resize(n, 0.);
-        m_dxdt.resize(n, 0.);
-        m_dydt.resize(n, 0.);
-        m_dzdt.resize(n, 0.);
-        m_momentumx.resize(n, 0.);
-        m_momentumy.resize(n, 0.);
-        m_momentumz.resize(n, 0.);
-        m_forcex.resize(n, 0.);
-        m_forcey.resize(n, 0.);
-        m_forcez.resize(n, 0.);
         m_mass.resize(n, 0.);
         m_rho.resize(n, 0.);
         m_sigmaxx.resize(n, 0.);
@@ -512,15 +474,6 @@ namespace GraMPM {
         m_ax.resize(n, p.ax);
         m_ay.resize(n, p.ay);
         m_az.resize(n, p.az);
-        m_dxdt.resize(n, p.ax);
-        m_dydt.resize(n, p.ay);
-        m_dzdt.resize(n, p.az);
-        m_momentumx.reize(n, 0.);
-        m_momentumy.reize(n, 0.);
-        m_momentumz.reize(n, 0.);
-        m_forcex.resize(n, 0.);
-        m_forcey.resize(n, 0.);
-        m_forcez.resize(n, 0.);
         m_mass.resize(n, p.mass);
         m_rho.resize(n, p.rho);
         m_sigmaxx.resize(n, p.sigmaxx);
@@ -544,6 +497,18 @@ namespace GraMPM {
             background_grid.calc_idxz(p.z)
         ));
         m_size = n;
+    }
+
+    // sizes temporary grid arrays appropriately
+    template<typename F>
+    void particle_system<F>::resize_temporary_grid_arrays() {
+        m_tmpgmass.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumx.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumy.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumz.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcex.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcey.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcez.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
     }
 
     template<typename F>
