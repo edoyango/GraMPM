@@ -26,12 +26,6 @@ namespace GraMPM {
         , m_dxdt(size, 0.)
         , m_dydt(size, 0.)
         , m_dzdt(size, 0.)
-        , m_momentumx(size, 0.)
-        , m_momentumy(size, 0.)
-        , m_momentumz(size, 0.)
-        , m_forcex(size, 0.)
-        , m_forcey(size, 0.)
-        , m_forcez(size, 0.)
         , m_mass(size, 0.)
         , m_rho(size, 0.)
         , m_sigmaxx(size, 0.)
@@ -51,12 +45,6 @@ namespace GraMPM {
         , m_spinrateyz(size, 0.)
         , m_grid_idx(size, 0)
         , background_grid(ingrid)
-        , m_gax(ingrid.ncells())
-        , m_gay(ingrid.ncells())
-        , m_gaz(ingrid.ncells())
-        , m_gdxdt(ingrid.ncells())
-        , m_gdydt(ingrid.ncells())
-        , m_gdzdt(ingrid.ncells())
         , m_capacity {size}
         , m_size {size}
         , m_body_force {bf}
@@ -87,12 +75,6 @@ namespace GraMPM {
         , m_body_force {0., 0., 0.}
         , m_knl {knl}
         , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
-        , m_gax(ingrid.ncells())
-        , m_gay(ingrid.ncells())
-        , m_gaz(ingrid.ncells())
-        , m_gdxdt(ingrid.ncells())
-        , m_gdydt(ingrid.ncells())
-        , m_gdzdt(ingrid.ncells())
     {
     }
 
@@ -328,12 +310,6 @@ namespace GraMPM {
         m_dxdt.push_back(p.dxdt);
         m_dydt.push_back(p.dydt);
         m_dzdt.push_back(p.dzdt);
-        m_momentumx.push_back(0.);
-        m_momentumy.push_back(0.);
-        m_momentumz.push_back(0.);
-        m_forcex.push_back(0.);
-        m_forcey.push_back(0.);
-        m_forcez.push_back(0.);
         m_mass.push_back(p.mass);
         m_rho.push_back(p.rho);
         m_sigmaxx.push_back(p.sigmaxx);
@@ -376,12 +352,6 @@ namespace GraMPM {
         m_dxdt.reserve(n);
         m_dydt.reserve(n);
         m_dzdt.reserve(n);
-        m_momentumx.reserve(n);
-        m_momentumy.reserve(n);
-        m_momentumz.reserve(n);
-        m_forcex.reserve(n);
-        m_forcey.reserve(n);
-        m_forcez.reserve(n);
         m_mass.reserve(n);
         m_rho.reserve(n);
         m_sigmaxx.reserve(n);
@@ -418,12 +388,6 @@ namespace GraMPM {
         m_dxdt.clear();
         m_dydt.clear();
         m_dzdt.clear();
-        m_momentumx.clear();
-        m_momentumy.clear();
-        m_momentumz.clear();
-        m_forcex.clear();
-        m_forcey.clear();
-        m_forcez.clear();
         m_mass.clear();
         m_rho.clear();
         m_sigmaxx.clear();
@@ -458,8 +422,6 @@ namespace GraMPM {
     bool particle_system<F>::empty() {
         return m_x.empty() && m_y.empty() && m_z.empty() && m_vx.empty() && m_vy.empty() && m_vz.empty() && 
             m_ax.empty() && m_ay.empty() && m_az.empty() && m_dxdt.empty() && m_dydt.empty() && m_dzdt.empty() &&
-            m_momentumx.empty() && m_momentumy.empty() && m_momentumz.empty() && m_forcex.empty() && m_forcey.empty() &&
-            m_forcez.empty() &&
             m_mass.empty() && m_rho.empty() && m_sigmaxx.empty() && m_sigmayy.empty() && m_sigmazz.empty() && 
             m_sigmaxy.empty() && m_sigmaxz.empty() && m_sigmayz.empty() && m_strainratexx.empty() && 
             m_strainrateyy.empty() && m_strainratezz.empty() && m_strainratexy.empty() && m_strainratexz.empty() && 
@@ -485,12 +447,6 @@ namespace GraMPM {
         m_dxdt.resize(n, 0.);
         m_dydt.resize(n, 0.);
         m_dzdt.resize(n, 0.);
-        m_momentumx.resize(n, 0.);
-        m_momentumy.resize(n, 0.);
-        m_momentumz.resize(n, 0.);
-        m_forcex.resize(n, 0.);
-        m_forcey.resize(n, 0.);
-        m_forcez.resize(n, 0.);
         m_mass.resize(n, 0.);
         m_rho.resize(n, 0.);
         m_sigmaxx.resize(n, 0.);
@@ -527,12 +483,6 @@ namespace GraMPM {
         m_dxdt.resize(n, p.ax);
         m_dydt.resize(n, p.ay);
         m_dzdt.resize(n, p.az);
-        m_momentumx.reize(n, 0.);
-        m_momentumy.reize(n, 0.);
-        m_momentumz.reize(n, 0.);
-        m_forcex.resize(n, 0.);
-        m_forcey.resize(n, 0.);
-        m_forcez.resize(n, 0.);
         m_mass.resize(n, p.mass);
         m_rho.resize(n, p.rho);
         m_sigmaxx.resize(n, p.sigmaxx);
@@ -558,18 +508,21 @@ namespace GraMPM {
         m_size = n;
     }
 
+    // sizes temporary grid arrays appropriately
     template<typename F>
-    void particle_system<F>::resize_grid_scratchspace(const int n) {
-        m_gax.resize(n);
-        m_gay.resize(n);
-        m_gaz.resize(n);
-        m_gdxdt.resize(n);
-        m_gdydt.resize(n);
-        m_gdzdt.resize(n);
+    void particle_system<F>::resize_temporary_grid_arrays() {
+        m_tmpgmass.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumx.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumy.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgmomentumz.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcex.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcey.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
+        m_tmpgforcez.resize(background_grid.ncells()*m_nneighbour_nodes_perp);
     }
 
     template<typename F>
     void particle_system<F>::update_particle_to_cell_map(const int &start, const int &end) {
+        #pragma omp for
         for (int i = start; i < end; ++i) {
             set_grid_index(i,
                 ravel_grid_idx(
@@ -583,6 +536,7 @@ namespace GraMPM {
 
     template<typename F>
     void particle_system<F>::update_particle_to_cell_map() {
+        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             set_grid_index( i,
                 ravel_grid_idx(
@@ -598,17 +552,21 @@ namespace GraMPM {
     template<typename F>
     void particle_system<F>::map_particles_to_grid() {
 
-        // size output arrays
-        m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
-        m_p2g_neighbour_nodes_dx.resize(m_nneighbour_nodes_perp*m_size);
-        m_p2g_neighbour_nodes_dy.resize(m_nneighbour_nodes_perp*m_size);
-        m_p2g_neighbour_nodes_dz.resize(m_nneighbour_nodes_perp*m_size);
-        m_p2g_neighbour_nodes_w.resize(m_nneighbour_nodes_perp*m_size);
-        m_p2g_neighbour_nodes_dwdx.resize(m_nneighbour_nodes_perp*m_size);
-        m_p2g_neighbour_nodes_dwdy.resize(m_nneighbour_nodes_perp*m_size);
-        m_p2g_neighbour_nodes_dwdz.resize(m_nneighbour_nodes_perp*m_size);
+        // size output arrays (this should probably be done before omp parallel)
+        #pragma omp single
+        {
+            m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
+            m_p2g_neighbour_nodes_dx.resize(m_nneighbour_nodes_perp*m_size);
+            m_p2g_neighbour_nodes_dy.resize(m_nneighbour_nodes_perp*m_size);
+            m_p2g_neighbour_nodes_dz.resize(m_nneighbour_nodes_perp*m_size);
+            m_p2g_neighbour_nodes_w.resize(m_nneighbour_nodes_perp*m_size);
+            m_p2g_neighbour_nodes_dwdx.resize(m_nneighbour_nodes_perp*m_size);
+            m_p2g_neighbour_nodes_dwdy.resize(m_nneighbour_nodes_perp*m_size);
+            m_p2g_neighbour_nodes_dwdz.resize(m_nneighbour_nodes_perp*m_size);
+        }
 
         // update neighbour indices
+        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             const int idx = ravelled_grid_idx(i);
             int n = 0;
@@ -623,6 +581,7 @@ namespace GraMPM {
         }
 
         // update kernel and kernel gradient values
+        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             int jstart = i*m_nneighbour_nodes_perp;
             for (int j = jstart; j < jstart+m_nneighbour_nodes_perp; ++j) {
@@ -644,144 +603,167 @@ namespace GraMPM {
         }
     }
 
-    template<typename F>
-    void particle_system<F>::map2grid(const std::vector<F> &p_property, std::vector<F> *g_property) {
+    #pragma omp declare reduction(vec_plus : std::vector<double> : \
+        std::transform(omp_out.begin(), omp_out.end(), omp_in.begin(), omp_out.begin(), std::plus<double>())) \
+        initializer(omp_priv = std::vector<double>(omp_orig.size()))
 
-        // zero the grid
-        std::fill(g_property->begin(), g_property->end(), 0.);
+    template<typename F> void particle_system<F>::map_mass_to_grid() { 
 
-        for (int i = 0; i < m_size; ++i)
+        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
+        #pragma omp for
+        for (int i = 0; i < background_grid.ncells(); ++i) m_tmpgmass[i] = 0.;
+
+        // map mass to grid
+        #pragma omp for reduction(vec_plus:m_tmpgmass)
+        for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 const int node_idx = p2g_neighbour_node(i, j);
-                (*g_property)[node_idx] += p2g_neighbour_node_w(i, j)*p_property[i];
+                m_tmpgmass[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i];
             }
+        }
+
+        // copy data from temporary array to real location (needs to be improved)
+        #pragma omp single
+        background_grid.m_mass = m_tmpgmass;
     }
-
-    template<typename F>
-    void particle_system<F>::map2particles(const std::vector<F> &g_property, std::vector<F> *p_property) {
-
-        // zero the particles' array
-        std::fill(p_property->begin(), p_property->end(), 0.);
-
-        for (int i = 0; i < m_size; ++i)
-            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                (*p_property)[i] += p2g_neighbour_node_w(i, j)*g_property[node_idx];
-            }
-    }
-
-    template<typename F> void particle_system<F>::map_mass_to_grid() { map2grid(m_mass, background_grid.mass()); }
 
     template<typename F> void particle_system<F>::map_momentum_to_grid() { 
-        for (int i = 0; i < m_size; ++i) m_momentumx[i] = mass(i)*vx(i);
-        map2grid(m_momentumx, background_grid.momentumx()); 
-        for (int i = 0; i < m_size; ++i) m_momentumy[i] = mass(i)*vy(i);
-        map2grid(m_momentumy, background_grid.momentumy()); 
-        for (int i = 0; i < m_size; ++i) m_momentumz[i] = mass(i)*vz(i);
-        map2grid(m_momentumz, background_grid.momentumz()); 
+        
+        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
+        #pragma omp for
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            m_tmpgmomentumx[i] = 0.;
+            m_tmpgmomentumy[i] = 0.;
+            m_tmpgmomentumz[i] = 0.;
+        }
+
+        // map momentum to grid
+        #pragma omp for reduction(vec_plus:m_tmpgmomentumx,m_tmpgmomentumy,m_tmpgmomentumz)
+        for (int i = 0; i < m_size; ++i) {
+            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+                const int node_idx = p2g_neighbour_node(i, j);
+                m_tmpgmomentumx[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i]*m_vx[i];
+                m_tmpgmomentumy[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i]*m_vy[i];
+                m_tmpgmomentumz[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i]*m_vz[i];
+            }
+        }
+
+        // copy data from temporary array to real location (needs to be improved)
+        #pragma omp single
+        {
+            background_grid.m_momentumx = m_tmpgmomentumx;
+            background_grid.m_momentumy = m_tmpgmomentumy;
+            background_grid.m_momentumz = m_tmpgmomentumz;
+        }
     }
 
     template<typename F> void particle_system<F>::map_force_to_grid() {
 
-        // initialize grid force with body force
-        for (int i = 0; i < m_size; ++i) m_forcex[i] = mass(i)*body_force(0);
-        map2grid(m_forcex, background_grid.forcex());
-        for (int i = 0; i < m_size; ++i) m_forcey[i] = mass(i)*body_force(1);
-        map2grid(m_forcey, background_grid.forcey());
-        for (int i = 0; i < m_size; ++i) m_forcez[i] = mass(i)*body_force(2);
-        map2grid(m_forcez, background_grid.forcez());
+        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
+        #pragma omp for
+        for (int i = 0; i < background_grid.ncells(); ++i) {
+            m_tmpgforcex[i] = 0.;
+            m_tmpgforcey[i] = 0.;
+            m_tmpgforcez[i] = 0.;
+        }
 
-        std::vector<F> *tmp_grid_forcex = background_grid.forcex(), 
-            *tmp_grid_forcey = background_grid.forcey(),
-            *tmp_grid_forcez = background_grid.forcez();
-
-        // div sigma
-        for (int i = 0; i < m_size; ++i)
+        // map force to grid (div sigma and body force together)
+        #pragma omp for reduction (vec_plus:m_tmpgforcex,m_tmpgforcey,m_tmpgforcez)
+        for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 const int node_idx = p2g_neighbour_node(i, j);
-                (*tmp_grid_forcex)[node_idx] -= m_mass[i]/m_rho[i]*(
+                m_tmpgforcex[node_idx] += -m_mass[i]/m_rho[i]*(
                     sigmaxx(i)*p2g_neighbour_node_dwdx(i, j) +
                     sigmaxy(i)*p2g_neighbour_node_dwdy(i, j) +
                     sigmaxz(i)*p2g_neighbour_node_dwdz(i, j)
-                );
-                (*tmp_grid_forcey)[node_idx] -= m_mass[i]/m_rho[i]*(
+                ) + body_force(0)*mass(i)*p2g_neighbour_node_w(i, j);
+                m_tmpgforcey[node_idx] += -m_mass[i]/m_rho[i]*(
                     sigmaxy(i)*p2g_neighbour_node_dwdx(i, j) +
                     sigmayy(i)*p2g_neighbour_node_dwdy(i, j) +
                     sigmayz(i)*p2g_neighbour_node_dwdz(i, j)
-                );
-                (*tmp_grid_forcez)[node_idx] -= m_mass[i]/m_rho[i]*(
+                ) + body_force(1)*mass(i)*p2g_neighbour_node_w(i, j);
+                m_tmpgforcez[node_idx] += -m_mass[i]/m_rho[i]*(
                     sigmaxz(i)*p2g_neighbour_node_dwdx(i, j) +
                     sigmayz(i)*p2g_neighbour_node_dwdy(i, j) +
                     sigmazz(i)*p2g_neighbour_node_dwdz(i, j)
-                );
+                ) + body_force(2)*mass(i)*p2g_neighbour_node_w(i, j);
             }
+        }
+
+        // copy data from temporary array to real location (needs to be improved)
+        #pragma omp single
+        {
+            background_grid.m_forcex = m_tmpgforcex;
+            background_grid.m_forcey = m_tmpgforcey;
+            background_grid.m_forcez = m_tmpgforcez;
+        }
 
     }
 
     template<typename F> void particle_system<F>::map_acceleration_to_particles() {
-        for (int i = 0; i < background_grid.ncells(); ++i) {
-            m_gax[i] = background_grid.forcex(i)/background_grid.mass(i);
+
+        // initialize particle data
+        #pragma omp for
+        for (int i = 0; i < m_size; ++i) {
+            m_ax[i] = 0.;
+            m_ay[i] = 0.;
+            m_az[i] = 0.;
+            m_dxdt[i] = 0.;
+            m_dydt[i] = 0.;
+            m_dzdt[i] = 0.;
         }
-        map2particles(m_gax, ax());
-        for (int i = 0; i < background_grid.ncells(); ++i) {
-            m_gay[i] = background_grid.forcey(i)/background_grid.mass(i);
+
+        // map acceleration and velocity to particles
+        #pragma omp for
+        for (int i = 0; i < m_size; ++i) {
+            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
+                const int node_idx = p2g_neighbour_node(i, j);
+                m_ax[i] += p2g_neighbour_node_w(i, j)*background_grid.forcex(node_idx)/background_grid.mass(node_idx);
+                m_ay[i] += p2g_neighbour_node_w(i, j)*background_grid.forcey(node_idx)/background_grid.mass(node_idx);
+                m_az[i] += p2g_neighbour_node_w(i, j)*background_grid.forcez(node_idx)/background_grid.mass(node_idx);
+                m_dxdt[i] += p2g_neighbour_node_w(i, j)*background_grid.momentumx(node_idx)/background_grid.mass(node_idx);
+                m_dydt[i] += p2g_neighbour_node_w(i, j)*background_grid.momentumy(node_idx)/background_grid.mass(node_idx);
+                m_dzdt[i] += p2g_neighbour_node_w(i, j)*background_grid.momentumz(node_idx)/background_grid.mass(node_idx);
+            }
         }
-        map2particles(m_gay, ay());
-        for (int i = 0; i < background_grid.ncells(); ++i) {
-            m_gaz[i] = background_grid.forcez(i)/background_grid.mass(i);
-        }
-        map2particles(m_gaz, az());
-        for (int i = 0; i < background_grid.ncells(); ++i) {
-            m_gdxdt[i] = background_grid.momentumx(i)/background_grid.mass(i);
-        }
-        map2particles(m_gdxdt, dxdt());
-        for (int i = 0; i < background_grid.ncells(); ++i) {
-            m_gdydt[i] = background_grid.momentumy(i)/background_grid.mass(i);
-        }
-        map2particles(m_gdydt, dydt());
-        for (int i = 0; i < background_grid.ncells(); ++i) {
-            m_gdzdt[i] = background_grid.momentumz(i)/background_grid.mass(i);
-        }
-        map2particles(m_gdzdt, dzdt());
     }
 
     template<typename F> void particle_system<F>::map_strainrate_to_particles() {
 
-        std::fill(m_strainratexx.begin(), m_strainratexx.end(), 0.);
-        std::fill(m_strainrateyy.begin(), m_strainrateyy.end(), 0.);
-        std::fill(m_strainratezz.begin(), m_strainratezz.end(), 0.);
-        std::fill(m_strainratexy.begin(), m_strainratexy.end(), 0.);
-        std::fill(m_strainratexz.begin(), m_strainratexz.end(), 0.);
-        std::fill(m_strainrateyz.begin(), m_strainrateyz.end(), 0.);
-        std::fill(m_spinratexy.begin(), m_spinratexy.end(), 0.);
-        std::fill(m_spinratexz.begin(), m_spinratexz.end(), 0.);
-        std::fill(m_spinrateyz.begin(), m_spinrateyz.end(), 0.);
-
-        // calculating velocities at grid
-        for (int i = 0; i < background_grid.ncells(); ++i) {
-            m_gdxdt[i] = background_grid.momentumx(i)/background_grid.mass(i);
-            m_gdydt[i] = background_grid.momentumy(i)/background_grid.mass(i);
-            m_gdzdt[i] = background_grid.momentumz(i)/background_grid.mass(i);
+        // initialize particle data
+        #pragma omp for
+        for (int i = 0; i < m_size; ++i) {
+            m_strainratexx[i] = 0.;
+            m_strainrateyy[i] = 0.;
+            m_strainratezz[i] = 0.;
+            m_strainratexy[i] = 0.;
+            m_strainratexz[i] = 0.;
+            m_strainrateyz[i] = 0.;
+            m_spinratexy[i] = 0.;
+            m_spinratexz[i] = 0.;
+            m_spinrateyz[i] = 0.;
         }
 
+        // map strainrates to particles
+        #pragma omp for
         for (int i = 0; i < m_size; ++i)
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
                 const int node_idx = p2g_neighbour_node(i, j);
-                m_strainratexx[i] += p2g_neighbour_node_dwdx(i, j)*m_gdxdt[node_idx];
-                m_strainrateyy[i] += p2g_neighbour_node_dwdy(i, j)*m_gdydt[node_idx];
-                m_strainratezz[i] += p2g_neighbour_node_dwdz(i, j)*m_gdzdt[node_idx];
-                m_strainratexy[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*m_gdydt[node_idx] + 
-                    p2g_neighbour_node_dwdy(i, j)*m_gdxdt[node_idx]);
-                m_strainratexz[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*m_gdzdt[node_idx] + 
-                    p2g_neighbour_node_dwdz(i, j)*m_gdxdt[node_idx]);
-                m_strainrateyz[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*m_gdzdt[node_idx] + 
-                    p2g_neighbour_node_dwdz(i, j)*m_gdydt[node_idx]);
-                m_spinratexy[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*m_gdxdt[node_idx] -
-                    p2g_neighbour_node_dwdx(i, j)*m_gdydt[node_idx]);
-                m_spinratexz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*m_gdxdt[node_idx] - 
-                    p2g_neighbour_node_dwdx(i, j)*m_gdzdt[node_idx]);
-                m_spinrateyz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*m_gdydt[node_idx] - 
-                    p2g_neighbour_node_dwdy(i, j)*m_gdzdt[node_idx]);
+                m_strainratexx[i] += p2g_neighbour_node_dwdx(i, j)*background_grid.momentumx(node_idx)/background_grid.mass(node_idx);
+                m_strainrateyy[i] += p2g_neighbour_node_dwdy(i, j)*background_grid.momentumy(node_idx)/background_grid.mass(node_idx);
+                m_strainratezz[i] += p2g_neighbour_node_dwdz(i, j)*background_grid.momentumz(node_idx)/background_grid.mass(node_idx);
+                m_strainratexy[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*background_grid.momentumy(node_idx)/background_grid.mass(node_idx) + 
+                    p2g_neighbour_node_dwdy(i, j)*background_grid.momentumx(node_idx)/background_grid.mass(node_idx));
+                m_strainratexz[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*background_grid.momentumz(node_idx)/background_grid.mass(node_idx) + 
+                    p2g_neighbour_node_dwdz(i, j)*background_grid.momentumx(node_idx)/background_grid.mass(node_idx));
+                m_strainrateyz[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*background_grid.momentumz(node_idx)/background_grid.mass(node_idx) + 
+                    p2g_neighbour_node_dwdz(i, j)*background_grid.momentumy(node_idx)/background_grid.mass(node_idx));
+                m_spinratexy[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*background_grid.momentumx(node_idx)/background_grid.mass(node_idx) -
+                    p2g_neighbour_node_dwdx(i, j)*background_grid.momentumy(node_idx)/background_grid.mass(node_idx));
+                m_spinratexz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*background_grid.momentumx(node_idx)/background_grid.mass(node_idx) - 
+                    p2g_neighbour_node_dwdx(i, j)*background_grid.momentumz(node_idx)/background_grid.mass(node_idx));
+                m_spinrateyz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*background_grid.momentumy(node_idx)/background_grid.mass(node_idx) - 
+                    p2g_neighbour_node_dwdy(i, j)*background_grid.momentumz(node_idx)/background_grid.mass(node_idx));
             }
     }
 
@@ -790,6 +772,7 @@ namespace GraMPM {
     }
 
     template<typename F> void particle_system<F>::update_velocity(const F &dt) {
+        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             m_vx[i] += dt*m_ax[i];
             m_vy[i] += dt*m_ay[i];
@@ -797,6 +780,7 @@ namespace GraMPM {
         }
     }
     template<typename F> void particle_system<F>::update_position(const F &dt) {
+        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             m_x[i] += dt*m_dxdt[i];
             m_y[i] += dt*m_dydt[i];
@@ -805,6 +789,7 @@ namespace GraMPM {
     }
     template<typename F> void particle_system<F>::update_density(const F &dt) {
         // update density using volumentric strain increment
+        #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             m_rho[i] /= 1. + dt*(m_strainratexx[i] + m_strainrateyy[i] + m_strainratezz[i]);
         }

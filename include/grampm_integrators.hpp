@@ -9,11 +9,22 @@ namespace GraMPM {
         template<typename F>
         void MUSL(GraMPM::particle_system<F> &p, const F &dt, const int &max_timestep, 
             const int &print_timestep_interval, const int &save_timestep_interval) {
-            
+
+            p.m_tmpgmass.resize(p.background_grid.ncells());
+            p.m_tmpgmomentumx.resize(p.background_grid.ncells());
+            p.m_tmpgmomentumy.resize(p.background_grid.ncells());
+            p.m_tmpgmomentumz.resize(p.background_grid.ncells());
+            p.m_tmpgforcex.resize(p.background_grid.ncells());
+            p.m_tmpgforcey.resize(p.background_grid.ncells());
+            p.m_tmpgforcez.resize(p.background_grid.ncells());
+
+            #pragma omp parallel default(shared)
+            {
             for (int itimestep = 1; itimestep < max_timestep+1; ++itimestep) {
 
                 // print to terminal
                 if (itimestep % print_timestep_interval == 0) {
+                    #pragma omp single
                     std::cout << itimestep << ' ' << dt*itimestep << '\n';
                 }
 
@@ -47,6 +58,7 @@ namespace GraMPM {
 
                 // update particles' velocities with calculated accelerations
                 p.update_velocity(dt);
+
                 // update particles' position
                 p.update_position(dt);
 
@@ -66,9 +78,11 @@ namespace GraMPM {
                 p.update_stress(dt);
 
                 if (itimestep % save_timestep_interval == 0) {
+                    #pragma omp single
                     p.save_to_file("p_", itimestep);
                 }
 
+            }
             }
         }
     }
