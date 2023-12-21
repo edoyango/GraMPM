@@ -111,74 +111,11 @@ namespace GraMPM {
     const grid<F>* particle_system<F>::grid_address() { return &background_grid; }
 
     // property getters
-    template<typename F>const F& particle_system<F>::x(const int &i) const { return m_x[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::x() { return &m_x; }
-    template<typename F>const F& particle_system<F>::y(const int &i) const { return m_y[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::y() { return &m_y; }
-    template<typename F>const F& particle_system<F>::z(const int &i) const { return m_z[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::z() { return &m_z; }
-    template<typename F>const F& particle_system<F>::vx(const int &i) const { return m_vx[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::vx() { return &m_vx; }
-    template<typename F>const F& particle_system<F>::vy(const int &i) const { return m_vy[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::vy() { return &m_vy; }
-    template<typename F>const F& particle_system<F>::vz(const int &i) const { return m_vz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::vz() { return &m_vz; }
-    template<typename F>const F& particle_system<F>::ax(const int &i) const { return m_ax[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::ax() { return &m_ax; }
-    template<typename F>const F& particle_system<F>::ay(const int &i) const { return m_ay[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::ay() { return &m_ay; }
-    template<typename F>const F& particle_system<F>::az(const int &i) const { return m_az[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::az() { return &m_az; }
-    template<typename F>const F& particle_system<F>::dxdt(const int &i) const { return m_dxdt[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::dxdt() { return &m_dxdt; }
-    template<typename F>const F& particle_system<F>::dydt(const int &i) const { return m_dydt[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::dydt() { return &m_dydt; }
-    template<typename F>const F& particle_system<F>::dzdt(const int &i) const { return m_dzdt[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::dzdt() { return &m_dzdt; }
-    template<typename F>const F& particle_system<F>::mass(const int &i) const { return m_mass[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::mass() { return &m_mass; }
-    template<typename F>const F& particle_system<F>::rho(const int &i) const { return m_rho[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::rho() { return &m_rho; }
-    template<typename F>const F& particle_system<F>::sigmaxx(const int &i) const { return m_sigmaxx[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::sigmaxx() { return &m_sigmaxx; }
-    template<typename F>const F& particle_system<F>::sigmayy(const int &i) const { return m_sigmayy[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::sigmayy() { return &m_sigmayy; }
-    template<typename F>const F& particle_system<F>::sigmazz(const int &i) const { return m_sigmazz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::sigmazz() { return &m_sigmazz; }
-    template<typename F>const F& particle_system<F>::sigmaxy(const int &i) const { return m_sigmaxy[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::sigmaxy() { return &m_sigmaxy; }
-    template<typename F>const F& particle_system<F>::sigmaxz(const int &i) const { return m_sigmaxz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::sigmaxz() { return &m_sigmaxz; }
-    template<typename F>const F& particle_system<F>::sigmayz(const int &i) const { return m_sigmayz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::sigmayz() { return &m_sigmayz; }
-    template<typename F>const F& particle_system<F>::strainratexx(const int &i) const { return m_strainratexx[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::strainratexx() { return &m_strainratexx; }
-    template<typename F>const F& particle_system<F>::strainrateyy(const int &i) const { return m_strainrateyy[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::strainrateyy() { return &m_strainrateyy; }
-    template<typename F>const F& particle_system<F>::strainratezz(const int &i) const { return m_strainratezz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::strainratezz() { return &m_strainratezz; }
-    template<typename F>const F& particle_system<F>::strainratexy(const int &i) const { return m_strainratexy[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::strainratexy() { return &m_strainratexy; }
-    template<typename F>const F& particle_system<F>::strainratexz(const int &i) const { return m_strainratexz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::strainratexz() { return &m_strainratexz; }
-    template<typename F>const F& particle_system<F>::strainrateyz(const int &i) const { return m_strainrateyz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::strainrateyz() { return &m_strainrateyz; }
-    template<typename F>const F& particle_system<F>::spinratexy(const int &i) const { return m_spinratexy[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::spinratexy() { return &m_spinratexy; }
-    template<typename F>const F& particle_system<F>::spinratexz(const int &i) const { return m_spinratexz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::spinratexz() { return &m_spinratexz; }
-    template<typename F>const F& particle_system<F>::spinrateyz(const int &i) const { return m_spinrateyz[i]; }
-    template<typename F> std::vector<F>* particle_system<F>::spinrateyz() { return &m_spinrateyz; }
-    template<typename F>const std::array<F, 3>& particle_system<F>::body_force() const { return m_body_force; }
-    template<typename F>const F& particle_system<F>::body_force(const int &i) const { return m_body_force[i]; }
-    template<typename F>const F& particle_system<F>::E() const { return m_E; }
-    template<typename F>const F& particle_system<F>::v() const { return m_v; }
     template<typename F> void particle_system<F>::DP_params(F& phi, F& psi, F& coh) const { phi = m_phi; psi = m_psi; coh = m_coh; }
     template<typename F> void particle_system<F>::DP_params(F& phi, F& psi, F& coh, F& alpha_phi, F& alpha_psi, F& k_c) const {
          phi = m_phi; psi = m_psi; coh = m_coh; 
          alpha_phi = m_alphaphi; alpha_psi = m_alphapsi; k_c = m_kc;
     }
-    template<typename F>const int& particle_system<F>::ravelled_grid_idx(const int &i) const { return m_grid_idx[i]; }
     template<typename F>
     std::array<int, 3> particle_system<F>::grid_idx(const int &i) const { return unravel_grid_idx(m_grid_idx[i]); }
 
@@ -230,48 +167,9 @@ namespace GraMPM {
         return m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j];
     }
     template<typename F> const long unsigned int& particle_system<F>::capacity() const { return m_capacity; }
-    template<typename F> const long unsigned int& particle_system<F>::size() const { return m_size; }
 
     
-    template<typename F> void particle_system<F>::set_x(const int &i, const F &x) { m_x[i] = x;}
-    template<typename F> void particle_system<F>::set_y(const int &i, const F &y) { m_y[i] = y;}
-    template<typename F> void particle_system<F>::set_z(const int &i, const F &z) { m_z[i] = z;}
-    template<typename F> void particle_system<F>::set_vx(const int &i, const F &vx) { m_vx[i] = vx;}
-    template<typename F> void particle_system<F>::set_vy(const int &i, const F &vy) { m_vy[i] = vy;}
-    template<typename F> void particle_system<F>::set_vz(const int &i, const F &vz) { m_vz[i] = vz;}
-    template<typename F> void particle_system<F>::set_ax(const int &i, const F &ax) { m_ax[i] = ax;}
-    template<typename F> void particle_system<F>::set_ay(const int &i, const F &ay) { m_ay[i] = ay;}
-    template<typename F> void particle_system<F>::set_az(const int &i, const F &az) { m_az[i] = az;}
-    template<typename F> void particle_system<F>::set_dxdt(const int &i, const F &dxdt) { m_dxdt[i] = dxdt;}
-    template<typename F> void particle_system<F>::set_dydt(const int &i, const F &dydt) { m_dydt[i] = dydt;}
-    template<typename F> void particle_system<F>::set_dzdt(const int &i, const F &dzdt) { m_dzdt[i] = dzdt;}
-    template<typename F> void particle_system<F>::set_mass(const int &i, const F &m) { m_mass[i] = m; }
-    template<typename F> void particle_system<F>::set_rho(const int &i, const F &rho) { m_rho[i] = rho; }
-    template<typename F> void particle_system<F>::set_sigmaxx(const int &i, const F &sigmaxx) { m_sigmaxx[i] = sigmaxx; }
-    template<typename F> void particle_system<F>::set_sigmayy(const int &i, const F &sigmayy) { m_sigmayy[i] = sigmayy; }
-    template<typename F> void particle_system<F>::set_sigmazz(const int &i, const F &sigmazz) { m_sigmazz[i] = sigmazz; }
-    template<typename F> void particle_system<F>::set_sigmaxy(const int &i, const F &sigmaxy) { m_sigmaxy[i] = sigmaxy; }
-    template<typename F> void particle_system<F>::set_sigmaxz(const int &i, const F &sigmaxz) { m_sigmaxz[i] = sigmaxz; }
-    template<typename F> void particle_system<F>::set_sigmayz(const int &i, const F &sigmayz) { m_sigmayz[i] = sigmayz; }
-    template<typename F> void particle_system<F>::set_strainratexx(const int &i, const F &strainratexx) { m_strainratexx[i] = strainratexx; }
-    template<typename F> void particle_system<F>::set_strainrateyy(const int &i, const F &strainrateyy) { m_strainrateyy[i] = strainrateyy; }
-    template<typename F> void particle_system<F>::set_strainratezz(const int &i, const F &strainratezz) { m_strainratezz[i] = strainratezz; }
-    template<typename F> void particle_system<F>::set_strainratexy(const int &i, const F &strainratexy) { m_strainratexy[i] = strainratexy; }
-    template<typename F> void particle_system<F>::set_strainratexz(const int &i, const F &strainratexz) { m_strainratexz[i] = strainratexz; }
-    template<typename F> void particle_system<F>::set_strainrateyz(const int &i, const F &strainrateyz) { m_strainrateyz[i] = strainrateyz; }
-    template<typename F> void particle_system<F>::set_spinratexy(const int &i, const F &spinratexy) { m_spinratexy[i] = spinratexy; }
-    template<typename F> void particle_system<F>::set_spinratexz(const int &i, const F &spinratexz) { m_spinratexz[i] = spinratexz; }
-    template<typename F> void particle_system<F>::set_spinrateyz(const int &i, const F &spinrateyz) { m_spinrateyz[i] = spinrateyz; }
-    template<typename F> void particle_system<F>::set_body_force(const std::array<F, 3> &bf) { m_body_force = bf; }
-    template<typename F> void particle_system<F>::set_body_force(const F &bfx, const F &bfy, const F &bfz) { 
-        m_body_force[0] = bfx;
-        m_body_force[1] = bfy;
-        m_body_force[2] = bfz;
-    }
-    template<typename F> void particle_system<F>::set_grid_index(const int &i, const int &idx) { m_grid_idx[i] = idx; }
     template<typename F> void particle_system<F>::set_stress_update_function(std::function<void(particle_system<F>&, const F&)> f) { m_stress_update_function = f; }
-    template<typename F> void particle_system<F>::set_E(const F &E) { m_E = E; }
-    template<typename F> void particle_system<F>::set_v(const F &v) { m_v = v; }
     template<typename F> void particle_system<F>::set_DP_params(const F &phi, const F &psi, const F &coh) {
         m_phi = phi; m_psi = psi; m_coh = coh;
         // const F denom = std::sqrt(9.+12.*std::tan(phi)*std::tan(phi));
@@ -507,18 +405,6 @@ namespace GraMPM {
         m_size = n;
     }
 
-    // sizes temporary grid arrays appropriately
-    template<typename F>
-    void particle_system<F>::resize_temporary_grid_arrays() {
-        m_tmpgmass.resize(background_grid.m_ncells*m_nneighbour_nodes_perp);
-        m_tmpgmomentumx.resize(background_grid.m_ncells*m_nneighbour_nodes_perp);
-        m_tmpgmomentumy.resize(background_grid.m_ncells*m_nneighbour_nodes_perp);
-        m_tmpgmomentumz.resize(background_grid.m_ncells*m_nneighbour_nodes_perp);
-        m_tmpgforcex.resize(background_grid.m_ncells*m_nneighbour_nodes_perp);
-        m_tmpgforcey.resize(background_grid.m_ncells*m_nneighbour_nodes_perp);
-        m_tmpgforcez.resize(background_grid.m_ncells*m_nneighbour_nodes_perp);
-    }
-
     template<typename F>
     void particle_system<F>::update_particle_to_cell_map(const int &start, const int &end) {
         #pragma omp for
@@ -563,7 +449,7 @@ namespace GraMPM {
         // update neighbour indices
         #pragma omp for
         for (int i = 0; i < m_size; ++i) {
-            const int idx = ravelled_grid_idx(i);
+            const int idx = m_grid_idx[i];
             int n = 0;
             for (int di=1-m_knl.radius; di <= m_knl.radius; ++di) {
                 for (int dj = 1-m_knl.radius; dj <= m_knl.radius; ++dj) {

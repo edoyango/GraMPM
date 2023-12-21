@@ -9,8 +9,8 @@ static void momentum_boundary(GraMPM::grid<double> &self, const int &timestep, c
 
     // floor
     #pragma omp for collapse(2)
-    for (int i = 0; i < self.ngridx(); ++i) {
-        for (int j = 0; j < self.ngridy(); ++j) {
+    for (int i = 0; i < self.m_ngridx; ++i) {
+        for (int j = 0; j < self.m_ngridy; ++j) {
             self.set_momentumx(i, j, 0, 0.);
             self.set_momentumx(i, j, 1, 0.);
             self.set_momentumy(i, j, 0, 0.);
@@ -21,10 +21,10 @@ static void momentum_boundary(GraMPM::grid<double> &self, const int &timestep, c
     }
 
     // east/west wall
-    const int xup = self.ngridx()-1;
+    const int xup = self.m_ngridx-1;
     #pragma omp for collapse(2)
-    for (int j = 0; j < self.ngridy(); ++j) {
-        for (int k = 0; k < self.ngridz(); ++k) {
+    for (int j = 0; j < self.m_ngridy; ++j) {
+        for (int k = 0; k < self.m_ngridz; ++k) {
             self.set_momentumx(0, j, k, 0.);
             self.set_momentumx(1, j, k, 0.);
             self.set_momentumx(xup-1, j, k, 0.);
@@ -33,10 +33,10 @@ static void momentum_boundary(GraMPM::grid<double> &self, const int &timestep, c
     }
 
     // north/south wall
-    const int yup = self.ngridy()-1;
+    const int yup = self.m_ngridy-1;
     #pragma omp for collapse(2)
-    for (int i = 0; i < self.ngridx(); ++i) {
-        for (int k = 0; k < self.ngridz(); ++k) {
+    for (int i = 0; i < self.m_ngridx; ++i) {
+        for (int k = 0; k < self.m_ngridz; ++k) {
             self.set_momentumy(i, 0, k, 0.);
             self.set_momentumy(i, 1, k, 0.);
             self.set_momentumy(i, yup-1, k, 0.);
@@ -48,8 +48,8 @@ static void momentum_boundary(GraMPM::grid<double> &self, const int &timestep, c
 static void force_boundary(GraMPM::grid<double> &self, const int &timestep, const double &dt) {
     // floor
     #pragma omp for collapse(2)
-    for (int i = 0; i < self.ngridx(); ++i)
-        for (int j = 0; j < self.ngridy(); ++j) {
+    for (int i = 0; i < self.m_ngridx; ++i)
+        for (int j = 0; j < self.m_ngridy; ++j) {
             self.set_forcex(i, j, 0, 0.);
             self.set_forcex(i, j, 1, 0.);
             self.set_forcey(i, j, 0, 0.);
@@ -59,10 +59,10 @@ static void force_boundary(GraMPM::grid<double> &self, const int &timestep, cons
         }
 
     // east/west wall
-    const int xup = self.ngridx()-1;
+    const int xup = self.m_ngridx-1;
     #pragma omp for collapse(2)
-    for (int j = 0; j < self.ngridy(); ++j)
-        for (int k = 0; k < self.ngridz(); ++k) {
+    for (int j = 0; j < self.m_ngridy; ++j)
+        for (int k = 0; k < self.m_ngridz; ++k) {
             self.set_forcex(0, j, k, 0.);
             self.set_forcex(1, j, k, 0.);
             self.set_forcex(xup-1, j, k, 0.);
@@ -70,10 +70,10 @@ static void force_boundary(GraMPM::grid<double> &self, const int &timestep, cons
         }
 
     // north/south wall
-    const int yup = self.ngridy()-1;
+    const int yup = self.m_ngridy-1;
     #pragma omp for collapse(2)
-    for (int i = 0; i < self.ngridx(); ++i) 
-        for (int k = 0; k < self.ngridz(); ++k) {
+    for (int i = 0; i < self.m_ngridx; ++i) 
+        for (int k = 0; k < self.m_ngridz; ++k) {
             self.set_forcey(i, 0, k, 0.);
             self.set_forcey(i, 1, k, 0.);
             self.set_forcey(i, yup-1, k, 0.);
@@ -115,15 +115,15 @@ int main() {
     const double c = std::sqrt((K+4./3.*G)/rho_ini);
     const double dt = dcell/c;
 
-    ps.set_body_force(gf);
-    ps.set_E(E);
-    ps.set_v(v);
+    ps.m_body_force = gf;
+    ps.m_E = E;
+    ps.m_v = v;
     const double pi = std::acos(-1.);
     ps.set_DP_params(pi/9., 0., 0.);
 
     ps.save_to_file("outputdata/p_", 0);
 
-    GraMPM::integrators::MUSL<double>(ps, dt, 5000, 100, 100);
+    GraMPM::integrators::MUSL<double>(ps, dt, 600, 100, 100);
 
     return 0;
 }

@@ -10,13 +10,13 @@ namespace GraMPM {
         void MUSL(GraMPM::particle_system<F> &p, const F &dt, const int &max_timestep, 
             const int &print_timestep_interval, const int &save_timestep_interval) {
 
-            p.m_tmpgmass.resize(p.background_grid.ncells());
-            p.m_tmpgmomentumx.resize(p.background_grid.ncells());
-            p.m_tmpgmomentumy.resize(p.background_grid.ncells());
-            p.m_tmpgmomentumz.resize(p.background_grid.ncells());
-            p.m_tmpgforcex.resize(p.background_grid.ncells());
-            p.m_tmpgforcey.resize(p.background_grid.ncells());
-            p.m_tmpgforcez.resize(p.background_grid.ncells());
+            p.m_tmpgmass.resize(p.background_grid.m_ncells);
+            p.m_tmpgmomentumx.resize(p.background_grid.m_ncells);
+            p.m_tmpgmomentumy.resize(p.background_grid.m_ncells);
+            p.m_tmpgmomentumz.resize(p.background_grid.m_ncells);
+            p.m_tmpgforcex.resize(p.background_grid.m_ncells);
+            p.m_tmpgforcey.resize(p.background_grid.m_ncells);
+            p.m_tmpgforcez.resize(p.background_grid.m_ncells);
 
             #pragma omp parallel default(shared)
             {
