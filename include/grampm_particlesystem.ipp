@@ -578,7 +578,7 @@ namespace GraMPM {
     template<typename F>
     void particle_system<F>::map_particles_to_grid() {
 
-        // size output arrays
+        // size output arrays (this should probably be done before omp parallel)
         #pragma omp single
         {
             m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
@@ -633,36 +633,13 @@ namespace GraMPM {
         std::transform(omp_out.begin(), omp_out.end(), omp_in.begin(), omp_out.begin(), std::plus<double>())) \
         initializer(omp_priv = std::vector<double>(omp_orig.size()))
 
-    template<typename F>
-    void particle_system<F>::map2grid(const std::vector<F> &p_property, std::vector<F> *g_property) {
-
-        // zero the grid
-        std::fill(g_property->begin(), g_property->end(), 0.);
-
-        for (int i = 0; i < m_size; ++i)
-            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                (*g_property)[node_idx] += p2g_neighbour_node_w(i, j)*p_property[i];
-            }
-    }
-
-    template<typename F>
-    void particle_system<F>::map2particles(const std::vector<F> &g_property, std::vector<F> *p_property) {
-
-        // zero the particles' array
-        std::fill(p_property->begin(), p_property->end(), 0.);
-
-        for (int i = 0; i < m_size; ++i)
-            for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                (*p_property)[i] += p2g_neighbour_node_w(i, j)*g_property[node_idx];
-            }
-    }
-
     template<typename F> void particle_system<F>::map_mass_to_grid() { 
-        // map2grid(m_mass, background_grid.mass()); 
+
+        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
         #pragma omp for
         for (int i = 0; i < background_grid.ncells(); ++i) m_tmpgmass[i] = 0.;
+
+        // map mass to grid
         #pragma omp for reduction(vec_plus:m_tmpgmass)
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
@@ -670,23 +647,23 @@ namespace GraMPM {
                 m_tmpgmass[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i];
             }
         }
+
+        // copy data from temporary array to real location (needs to be improved)
         #pragma omp single
         background_grid.m_mass = m_tmpgmass;
     }
 
     template<typename F> void particle_system<F>::map_momentum_to_grid() { 
-        // for (int i = 0; i < m_size; ++i) m_momentumx[i] = mass(i)*vx(i);
-        // map2grid(m_momentumx, background_grid.momentumx()); 
-        // for (int i = 0; i < m_size; ++i) m_momentumy[i] = mass(i)*vy(i);
-        // map2grid(m_momentumy, background_grid.momentumy()); 
-        // for (int i = 0; i < m_size; ++i) m_momentumz[i] = mass(i)*vz(i);
-        // map2grid(m_momentumz, background_grid.momentumz());
+        
+        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
         #pragma omp for
         for (int i = 0; i < background_grid.ncells(); ++i) {
             m_tmpgmomentumx[i] = 0.;
             m_tmpgmomentumy[i] = 0.;
             m_tmpgmomentumz[i] = 0.;
         }
+
+        // map momentum to grid
         #pragma omp for reduction(vec_plus:m_tmpgmomentumx,m_tmpgmomentumy,m_tmpgmomentumz)
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
@@ -696,6 +673,8 @@ namespace GraMPM {
                 m_tmpgmomentumz[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i]*m_vz[i];
             }
         }
+
+        // copy data from temporary array to real location (needs to be improved)
         #pragma omp single
         {
             background_grid.m_momentumx = m_tmpgmomentumx;
@@ -706,24 +685,15 @@ namespace GraMPM {
 
     template<typename F> void particle_system<F>::map_force_to_grid() {
 
-        // initialize grid force with body force
-        // for (int i = 0; i < m_size; ++i) m_forcex[i] = mass(i)*body_force(0);
-        // map2grid(m_forcex, background_grid.forcex());
-        // for (int i = 0; i < m_size; ++i) m_forcey[i] = mass(i)*body_force(1);
-        // map2grid(m_forcey, background_grid.forcey());
-        // for (int i = 0; i < m_size; ++i) m_forcez[i] = mass(i)*body_force(2);
-        // map2grid(m_forcez, background_grid.forcez());
-
-        // std::vector<F> *tmp_grid_forcex = background_grid.forcex(), 
-        //     *tmp_grid_forcey = background_grid.forcey(),
-        //     *tmp_grid_forcez = background_grid.forcez();
+        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
         #pragma omp for
         for (int i = 0; i < background_grid.ncells(); ++i) {
             m_tmpgforcex[i] = 0.;
             m_tmpgforcey[i] = 0.;
             m_tmpgforcez[i] = 0.;
         }
-        // div sigma
+
+        // map force to grid (div sigma and body force together)
         #pragma omp for reduction (vec_plus:m_tmpgforcex,m_tmpgforcey,m_tmpgforcez)
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
@@ -745,6 +715,8 @@ namespace GraMPM {
                 ) + body_force(2)*mass(i)*p2g_neighbour_node_w(i, j);
             }
         }
+
+        // copy data from temporary array to real location (needs to be improved)
         #pragma omp single
         {
             background_grid.m_forcex = m_tmpgforcex;
@@ -755,6 +727,8 @@ namespace GraMPM {
     }
 
     template<typename F> void particle_system<F>::map_acceleration_to_particles() {
+
+        // initialize particle data
         #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             m_ax[i] = 0.;
@@ -765,6 +739,7 @@ namespace GraMPM {
             m_dzdt[i] = 0.;
         }
 
+        // map acceleration and velocity to particles
         #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
@@ -777,34 +752,11 @@ namespace GraMPM {
                 m_dzdt[i] += p2g_neighbour_node_w(i, j)*background_grid.momentumz(node_idx)/background_grid.mass(node_idx);
             }
         }
-        // for (int i = 0; i < background_grid.ncells(); ++i) {
-        //     m_gax[i] = background_grid.forcex(i)/background_grid.mass(i);
-        // }
-        // map2particles(m_gax, ax());
-        // for (int i = 0; i < background_grid.ncells(); ++i) {
-        //     m_gay[i] = background_grid.forcey(i)/background_grid.mass(i);
-        // }
-        // map2particles(m_gay, ay());
-        // for (int i = 0; i < background_grid.ncells(); ++i) {
-        //     m_gaz[i] = background_grid.forcez(i)/background_grid.mass(i);
-        // }
-        // map2particles(m_gaz, az());
-        // for (int i = 0; i < background_grid.ncells(); ++i) {
-        //     m_gdxdt[i] = background_grid.momentumx(i)/background_grid.mass(i);
-        // }
-        // map2particles(m_gdxdt, dxdt());
-        // for (int i = 0; i < background_grid.ncells(); ++i) {
-        //     m_gdydt[i] = background_grid.momentumy(i)/background_grid.mass(i);
-        // }
-        // map2particles(m_gdydt, dydt());
-        // for (int i = 0; i < background_grid.ncells(); ++i) {
-        //     m_gdzdt[i] = background_grid.momentumz(i)/background_grid.mass(i);
-        // }
-        // map2particles(m_gdzdt, dzdt());
     }
 
     template<typename F> void particle_system<F>::map_strainrate_to_particles() {
 
+        // initialize particle data
         #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             m_strainratexx[i] = 0.;
@@ -818,6 +770,7 @@ namespace GraMPM {
             m_spinrateyz[i] = 0.;
         }
 
+        // map strainrates to particles
         #pragma omp for
         for (int i = 0; i < m_size; ++i)
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {

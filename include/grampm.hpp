@@ -106,7 +106,7 @@ namespace GraMPM {
             void update_momentum(const F &dt); 
             void apply_momentum_boundary_conditions(const int &timestep, const F dt);
             void apply_force_boundary_conditions(const int &timestep, const F dt);
-        // protected:
+
             // access geometry of underlying grid
             const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
             const F m_mingridx, m_mingridy, m_mingridz, m_maxgridx, m_maxgridy, m_maxgridz, m_dcell;
@@ -121,7 +121,6 @@ namespace GraMPM {
     template<typename F>
     class particle_system {
 
-        // protected:
         public:
             long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
             const int m_nneighbour_nodes_perp;
@@ -143,11 +142,6 @@ namespace GraMPM {
             std::array<int, 3> unravel_grid_idx(const int &idx) const;
 
             void unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const;
-
-            void map2grid(const std::vector<F> &p_property, std::vector<F> *g_property);
-            void map2particles(const std::vector<F> &g_property, std::vector<F> *p_property);
-
-        // public:
 
             // variables
             grid<F> &background_grid;
