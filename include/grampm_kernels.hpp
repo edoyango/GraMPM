@@ -15,8 +15,8 @@ namespace GraMPM {
     class kernel_base {
         public:
             kernel_base(const F dc, const F r)
-                : dcell(dc)
-                , radius(r)
+                : radius(r)
+                , dcell(dc)
             {
             }
             const F radius, dcell;
