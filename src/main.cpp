@@ -93,6 +93,8 @@ int main() {
     GraMPM::kernel_cubic_bspline<double> knl(dcell);
     GraMPM::MPM_system<double> myMPM(gf, knl, mingrid, maxgrid, dcell);
     myMPM.set_stress_update_function(GraMPM::stress_update::drucker_prager_elastoplastic<double>);
+    myMPM.g_set_momentum_boundary_function(momentum_boundary);
+    myMPM.g_set_force_boundary_function(force_boundary);
 
     const double rho_ini = 1650.;
 
@@ -123,7 +125,7 @@ int main() {
 
     myMPM.save_to_file("outputdata/p_", 0);
 
-    GraMPM::integrators::MUSL<double>(myMPM, dt, 600, 100, 100);
+    GraMPM::integrators::MUSL<double>(myMPM, dt, 500, 500, 600);
 
     return 0;
 }

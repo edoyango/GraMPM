@@ -78,7 +78,7 @@ namespace GraMPM {
     template<typename F>
     void MPM_system<F>::map_particles_to_grid() {
 
-        // size output arrays (this should probably be done before omp parallel)
+        // size output arrays (putting it here seems to make it perform better)
         #pragma omp single
         {
             pg_nns.resize(pg_nns_pp*p_size);
@@ -134,7 +134,7 @@ namespace GraMPM {
 
     template<typename F> void MPM_system<F>::map_p2g_mass() { 
 
-        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
+        // initialize grid data.
         #pragma omp for
         for (int i = 0; i < g_size; ++i) g_mass[i] = 0.;
 
@@ -150,7 +150,7 @@ namespace GraMPM {
 
     template<typename F> void MPM_system<F>::map_p2g_momentum() { 
         
-        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
+        // initialize grid data.
         #pragma omp for
         for (int i = 0; i < g_size; ++i) {
             g_momentumx[i] = 0.;
@@ -172,7 +172,7 @@ namespace GraMPM {
 
     template<typename F> void MPM_system<F>::map_p2g_force() {
 
-        // initialize grid data. Temporary arrays used because omp reduction needs class member or variable local to scope
+        // initialize grid data.
         #pragma omp for
         for (int i = 0; i < g_size; ++i) {
             g_forcex[i] = 0.;
