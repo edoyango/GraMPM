@@ -35,13 +35,13 @@ namespace GraMPM {
     struct MPM_system {
 
         // constructors
-        MPM_system(std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
+        MPM_system(std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
-        MPM_system(int p_size_in, std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
+        MPM_system(int p_size_in, std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
-        MPM_system(std::vector<particle<F>> pv, std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
+        MPM_system(std::vector<particle<F>> pv, std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
-        MPM_system(std::string fname, std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
+        MPM_system(std::string fname, std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
 
         // grid data and functions
@@ -102,14 +102,14 @@ namespace GraMPM {
         const int pg_nns_pp;
         std::vector<F> pg_nns_dx, pg_nns_dy, pg_nns_dz, pg_nns_w, pg_nns_dwdx, pg_nns_dwdy, pg_nns_dwdz;
         std::vector<int> pg_nns;
-        const int& ps_nn(const int i, const int j) const ;
-        const F& ps_nn_dx(const int i, const int j) const ;
-        const F& ps_nn_dy(const int i, const int j) const ;
-        const F& ps_nn_dz(const int i, const int j) const ;
-        const F& ps_nn_w(const int i, const int j) const ;
-        const F& ps_nn_dwdx(const int i, const int j) const ;
-        const F& ps_nn_dwdy(const int i, const int j) const ;
-        const F& ps_nn_dwdz(const int i, const int j) const ;
+        const int& pg_nn(const int i, const int j) const ;
+        const F& pg_nn_dx(const int i, const int j) const ;
+        const F& pg_nn_dy(const int i, const int j) const ;
+        const F& pg_nn_dz(const int i, const int j) const ;
+        const F& pg_nn_w(const int i, const int j) const ;
+        const F& pg_nn_dwdx(const int i, const int j) const ;
+        const F& pg_nn_dwdy(const int i, const int j) const ;
+        const F& pg_nn_dwdz(const int i, const int j) const ;
         void update_particle_to_cell_map(const int &start, const int &end);
         void update_particle_to_cell_map();
         // NTS this could be faster
@@ -121,7 +121,7 @@ namespace GraMPM {
         void map_g2p_strainrate();
         
         // global data
-        const kernel_base<F> knl;
+        const kernel_base<F> &knl;
         
         // utility functions
         int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;

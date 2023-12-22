@@ -3,49 +3,49 @@
 
 namespace GraMPM {
     template<typename F>
-    const int& MPM_system<F>::ps_nn(const int i, const int j) const { 
+    const int& MPM_system<F>::pg_nn(const int i, const int j) const { 
         assert(j < pg_nns_pp); 
         return pg_nns[i*pg_nns_pp+j];
     }
 
     template<typename F>
-    const F& MPM_system<F>::ps_nn_dx(const int i, const int j) const {
+    const F& MPM_system<F>::pg_nn_dx(const int i, const int j) const {
         assert(j < pg_nns_pp);
         return pg_nns_dx[i*pg_nns_pp+j];
     }
 
     template<typename F>
-    const F& MPM_system<F>::ps_nn_dy(const int i, const int j) const {
+    const F& MPM_system<F>::pg_nn_dy(const int i, const int j) const {
         assert(j < pg_nns_pp);
         return pg_nns_dy[i*pg_nns_pp+j];
     }
 
     template<typename F>
-    const F& MPM_system<F>::ps_nn_dz(const int i, const int j) const {
+    const F& MPM_system<F>::pg_nn_dz(const int i, const int j) const {
         assert(j < pg_nns_pp);
         return pg_nns_dz[i*pg_nns_pp+j];
     }
     
     template<typename F>
-    const F& MPM_system<F>::ps_nn_w(const int i, const int j) const {
+    const F& MPM_system<F>::pg_nn_w(const int i, const int j) const {
         assert(j < pg_nns_pp);
         return pg_nns_w[i*pg_nns_pp+j];
     }
     
     template<typename F>
-    const F& MPM_system<F>::ps_nn_dwdx(const int i, const int j) const {
+    const F& MPM_system<F>::pg_nn_dwdx(const int i, const int j) const {
         assert(j < pg_nns_pp);
         return pg_nns_dwdx[i*pg_nns_pp+j];
     }
     
     template<typename F>
-    const F& MPM_system<F>::ps_nn_dwdy(const int i, const int j) const {
+    const F& MPM_system<F>::pg_nn_dwdy(const int i, const int j) const {
         assert(j < pg_nns_pp);
         return pg_nns_dwdy[i*pg_nns_pp+j];
     }
 
     template<typename F>
-    const F& MPM_system<F>::ps_nn_dwdz(const int i, const int j) const {
+    const F& MPM_system<F>::pg_nn_dwdz(const int i, const int j) const {
         assert(j < pg_nns_pp);
         return pg_nns_dwdz[i*pg_nns_pp+j];
     }
@@ -142,8 +142,8 @@ namespace GraMPM {
         #pragma omp for reduction(vec_plus:g_mass)
         for (int i = 0; i < p_size; ++i) {
             for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = ps_nn(i, j);
-                g_mass[node_idx] += ps_nn_w(i, j)*p_mass[i];
+                const int node_idx = pg_nn(i, j);
+                g_mass[node_idx] += pg_nn_w(i, j)*p_mass[i];
             }
         }
     }
@@ -162,10 +162,10 @@ namespace GraMPM {
         #pragma omp for reduction(vec_plus:g_momentumx,g_momentumy,g_momentumz)
         for (int i = 0; i < p_size; ++i) {
             for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = ps_nn(i, j);
-                g_momentumx[node_idx] += ps_nn_w(i, j)*p_mass[i]*p_vx[i];
-                g_momentumy[node_idx] += ps_nn_w(i, j)*p_mass[i]*p_vy[i];
-                g_momentumz[node_idx] += ps_nn_w(i, j)*p_mass[i]*p_vz[i];
+                const int node_idx = pg_nn(i, j);
+                g_momentumx[node_idx] += pg_nn_w(i, j)*p_mass[i]*p_vx[i];
+                g_momentumy[node_idx] += pg_nn_w(i, j)*p_mass[i]*p_vy[i];
+                g_momentumz[node_idx] += pg_nn_w(i, j)*p_mass[i]*p_vz[i];
             }
         }
     }
@@ -184,22 +184,22 @@ namespace GraMPM {
         #pragma omp for reduction (vec_plus:g_forcex,g_forcey,g_forcez)
         for (int i = 0; i < p_size; ++i) {
             for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = ps_nn(i, j);
+                const int node_idx = pg_nn(i, j);
                 g_forcex[node_idx] += -p_mass[i]/p_rho[i]*(
-                    p_sigmaxx[i]*ps_nn_dwdx(i, j) +
-                    p_sigmaxy[i]*ps_nn_dwdy(i, j) +
-                    p_sigmaxz[i]*ps_nn_dwdz(i, j)
-                ) + p_body_force[0]*p_mass[i]*ps_nn_w(i, j);
+                    p_sigmaxx[i]*pg_nn_dwdx(i, j) +
+                    p_sigmaxy[i]*pg_nn_dwdy(i, j) +
+                    p_sigmaxz[i]*pg_nn_dwdz(i, j)
+                ) + p_body_force[0]*p_mass[i]*pg_nn_w(i, j);
                 g_forcey[node_idx] += -p_mass[i]/p_rho[i]*(
-                    p_sigmaxy[i]*ps_nn_dwdx(i, j) +
-                    p_sigmayy[i]*ps_nn_dwdy(i, j) +
-                    p_sigmayz[i]*ps_nn_dwdz(i, j)
-                ) + p_body_force[1]*p_mass[i]*ps_nn_w(i, j);
+                    p_sigmaxy[i]*pg_nn_dwdx(i, j) +
+                    p_sigmayy[i]*pg_nn_dwdy(i, j) +
+                    p_sigmayz[i]*pg_nn_dwdz(i, j)
+                ) + p_body_force[1]*p_mass[i]*pg_nn_w(i, j);
                 g_forcez[node_idx] += -p_mass[i]/p_rho[i]*(
-                    p_sigmaxz[i]*ps_nn_dwdx(i, j) +
-                    p_sigmayz[i]*ps_nn_dwdy(i, j) +
-                    p_sigmazz[i]*ps_nn_dwdz(i, j)
-                ) + p_body_force[2]*p_mass[i]*ps_nn_w(i, j);
+                    p_sigmaxz[i]*pg_nn_dwdx(i, j) +
+                    p_sigmayz[i]*pg_nn_dwdy(i, j) +
+                    p_sigmazz[i]*pg_nn_dwdz(i, j)
+                ) + p_body_force[2]*p_mass[i]*pg_nn_w(i, j);
             }
         }
 
@@ -217,13 +217,13 @@ namespace GraMPM {
             p_dydt[i] = 0.;
             p_dzdt[i] = 0.;
             for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = ps_nn(i, j);
-                p_ax[i] += ps_nn_w(i, j)*g_forcex[node_idx]/g_mass[node_idx];
-                p_ay[i] += ps_nn_w(i, j)*g_forcey[node_idx]/g_mass[node_idx];
-                p_az[i] += ps_nn_w(i, j)*g_forcez[node_idx]/g_mass[node_idx];
-                p_dxdt[i] += ps_nn_w(i, j)*g_momentumx[node_idx]/g_mass[node_idx];
-                p_dydt[i] += ps_nn_w(i, j)*g_momentumy[node_idx]/g_mass[node_idx];
-                p_dzdt[i] += ps_nn_w(i, j)*g_momentumz[node_idx]/g_mass[node_idx];
+                const int node_idx = pg_nn(i, j);
+                p_ax[i] += pg_nn_w(i, j)*g_forcex[node_idx]/g_mass[node_idx];
+                p_ay[i] += pg_nn_w(i, j)*g_forcey[node_idx]/g_mass[node_idx];
+                p_az[i] += pg_nn_w(i, j)*g_forcez[node_idx]/g_mass[node_idx];
+                p_dxdt[i] += pg_nn_w(i, j)*g_momentumx[node_idx]/g_mass[node_idx];
+                p_dydt[i] += pg_nn_w(i, j)*g_momentumy[node_idx]/g_mass[node_idx];
+                p_dzdt[i] += pg_nn_w(i, j)*g_momentumz[node_idx]/g_mass[node_idx];
             }
         }
     }
@@ -243,22 +243,22 @@ namespace GraMPM {
             p_spinratexz[i] = 0.;
             p_spinrateyz[i] = 0.;
             for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = ps_nn(i, j);
-                p_strainratexx[i] += ps_nn_dwdx(i, j)*g_momentumx[node_idx]/g_mass[node_idx];
-                p_strainrateyy[i] += ps_nn_dwdy(i, j)*g_momentumy[node_idx]/g_mass[node_idx];
-                p_strainratezz[i] += ps_nn_dwdz(i, j)*g_momentumz[node_idx]/g_mass[node_idx];
-                p_strainratexy[i] += 0.5*(ps_nn_dwdx(i, j)*g_momentumy[node_idx]/g_mass[node_idx] + 
-                    ps_nn_dwdy(i, j)*g_momentumx[node_idx]/g_mass[node_idx]);
-                p_strainratexz[i] += 0.5*(ps_nn_dwdx(i, j)*g_momentumz[node_idx]/g_mass[node_idx] + 
-                    ps_nn_dwdz(i, j)*g_momentumx[node_idx]/g_mass[node_idx]);
-                p_strainrateyz[i] += 0.5*(ps_nn_dwdy(i, j)*g_momentumz[node_idx]/g_mass[node_idx] + 
-                    ps_nn_dwdz(i, j)*g_momentumy[node_idx]/g_mass[node_idx]);
-                p_spinratexy[i] += 0.5*(ps_nn_dwdy(i, j)*g_momentumx[node_idx]/g_mass[node_idx] -
-                    ps_nn_dwdx(i, j)*g_momentumy[node_idx]/g_mass[node_idx]);
-                p_spinratexz[i] += 0.5*(ps_nn_dwdz(i, j)*g_momentumx[node_idx]/g_mass[node_idx] - 
-                    ps_nn_dwdx(i, j)*g_momentumz[node_idx]/g_mass[node_idx]);
-                p_spinrateyz[i] += 0.5*(ps_nn_dwdz(i, j)*g_momentumy[node_idx]/g_mass[node_idx] - 
-                    ps_nn_dwdy(i, j)*g_momentumz[node_idx]/g_mass[node_idx]);
+                const int node_idx = pg_nn(i, j);
+                p_strainratexx[i] += pg_nn_dwdx(i, j)*g_momentumx[node_idx]/g_mass[node_idx];
+                p_strainrateyy[i] += pg_nn_dwdy(i, j)*g_momentumy[node_idx]/g_mass[node_idx];
+                p_strainratezz[i] += pg_nn_dwdz(i, j)*g_momentumz[node_idx]/g_mass[node_idx];
+                p_strainratexy[i] += 0.5*(pg_nn_dwdx(i, j)*g_momentumy[node_idx]/g_mass[node_idx] + 
+                    pg_nn_dwdy(i, j)*g_momentumx[node_idx]/g_mass[node_idx]);
+                p_strainratexz[i] += 0.5*(pg_nn_dwdx(i, j)*g_momentumz[node_idx]/g_mass[node_idx] + 
+                    pg_nn_dwdz(i, j)*g_momentumx[node_idx]/g_mass[node_idx]);
+                p_strainrateyz[i] += 0.5*(pg_nn_dwdy(i, j)*g_momentumz[node_idx]/g_mass[node_idx] + 
+                    pg_nn_dwdz(i, j)*g_momentumy[node_idx]/g_mass[node_idx]);
+                p_spinratexy[i] += 0.5*(pg_nn_dwdy(i, j)*g_momentumx[node_idx]/g_mass[node_idx] -
+                    pg_nn_dwdx(i, j)*g_momentumy[node_idx]/g_mass[node_idx]);
+                p_spinratexz[i] += 0.5*(pg_nn_dwdz(i, j)*g_momentumx[node_idx]/g_mass[node_idx] - 
+                    pg_nn_dwdx(i, j)*g_momentumz[node_idx]/g_mass[node_idx]);
+                p_spinrateyz[i] += 0.5*(pg_nn_dwdz(i, j)*g_momentumy[node_idx]/g_mass[node_idx] - 
+                    pg_nn_dwdy(i, j)*g_momentumz[node_idx]/g_mass[node_idx]);
             }
         }
     }
