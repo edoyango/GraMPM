@@ -20,7 +20,7 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(myMPM.g_dcell==dcell_in);
 
     // test array get interface
-    std::array<double, 3> mingridx_out {myMPM.g_get_mingrid()}, maxgridx_out {myMPM.g_get_maxgrid()};
+    std::array<double, 3> mingridx_out {myMPM.g_mingrid()}, maxgridx_out {myMPM.g_maxgrid()};
 
     REQUIRE(mingridx_out[0]==mingridx_in[0]);
     REQUIRE(mingridx_out[1]==mingridx_in[1]);
@@ -36,13 +36,13 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(ngridx_out[2]==5);
 
     // test element-by-element get interface
-    REQUIRE(myMPM.g_mingridx==mingridx_in[0]);
-    REQUIRE(myMPM.g_mingridy==mingridx_in[1]);
-    REQUIRE(myMPM.g_mingridz==mingridx_in[2]);
+    REQUIRE(myMPM.g_mingridx()==mingridx_in[0]);
+    REQUIRE(myMPM.g_mingridy()==mingridx_in[1]);
+    REQUIRE(myMPM.g_mingridz()==mingridx_in[2]);
     
-    REQUIRE(myMPM.g_maxgridx==maxgridx_in[0]);
-    REQUIRE(myMPM.g_maxgridy==maxgridx_in[1]);
-    REQUIRE(myMPM.g_maxgridz==maxgridx_in[2]);
+    REQUIRE(myMPM.g_maxgridx()==maxgridx_in[0]);
+    REQUIRE(myMPM.g_maxgridy()==maxgridx_in[1]);
+    REQUIRE(myMPM.g_maxgridz()==maxgridx_in[2]);
 
     REQUIRE(myMPM.g_ngridx==3);
     REQUIRE(myMPM.g_ngridy==4);

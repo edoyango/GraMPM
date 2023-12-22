@@ -35,9 +35,12 @@ namespace GraMPM {
         idxz = tmp.rem;
     }
 
-    template<typename F> int MPM_system<F>::calc_idxx(const F &x) const { return static_cast<int>((x-g_mingridx)/g_dcell); }
-    template<typename F> int MPM_system<F>::calc_idxy(const F &y) const { return static_cast<int>((y-g_mingridy)/g_dcell); }
-    template<typename F> int MPM_system<F>::calc_idxz(const F &z) const { return static_cast<int>((z-g_mingridz)/g_dcell); }
+    template<typename F> 
+    int MPM_system<F>::calc_idxx(const F &x) const { return static_cast<int>((x-m_g_mingridx)/g_dcell); }
+    template<typename F> 
+    int MPM_system<F>::calc_idxy(const F &y) const { return static_cast<int>((y-m_g_mingridy)/g_dcell); }
+    template<typename F> 
+    int MPM_system<F>::calc_idxz(const F &z) const { return static_cast<int>((z-m_g_mingridz)/g_dcell); }
 
     template<typename F> void MPM_system<F>::save_to_file(const std::string &prefix, const int &timestep) const {
 

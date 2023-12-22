@@ -95,7 +95,7 @@ namespace GraMPM {
         void map_g2p_strainrate();
 
         // grid data and functions
-        const F g_mingridx, g_mingridy, g_mingridz, g_maxgridx, g_maxgridy, g_maxgridz, g_dcell;
+        const F m_g_mingridx, m_g_mingridy, m_g_mingridz, m_g_maxgridx, m_g_maxgridy, m_g_maxgridz, g_dcell;
         const int g_ngridx, g_ngridy, g_ngridz, g_size;
         std::vector<F> g_mass, g_momentumx, g_momentumy, g_momentumz, g_forcex, g_forcey, g_forcez;
         std::function<void(MPM_system<F>&, const int&, const F&)> g_momentum_boundary_function, 
@@ -132,7 +132,21 @@ namespace GraMPM {
         int calc_idxz(const F &z) const;
         int calc_ngrid(const F &maxx, const F &minx, const F &dc) { return std::ceil((maxx-minx)/dc)+1; }
         void save_to_file(const std::string &prefix, const int &timestep) const;
+        
+        // trivial getters and setters
+        const F& g_mingridx() const;
+        const F& g_mingridy() const;
+        const F& g_mingridz() const;
+        std::array<F, 3> g_mingrid() const;
+        void g_mingrid(F &mingridx, F &mingridy, F &mingridz) const;
+        const F& g_maxgridx() const;
+        const F& g_maxgridy() const;
+        const F& g_maxgridz() const;
+        std::array<F, 3> g_maxgrid() const;
+        void g_maxgrid(F &maxgridx, F &maxgridy, F &maxgridz) const;
+        
     };
+
 
 }
 
@@ -142,5 +156,5 @@ namespace GraMPM {
 #include <grampm_particlesystem.ipp>
 #include <grampm_pair.ipp>
 #include <grampm_utility.ipp>
-
+#include <grampm_getset.ipp>
 #endif
