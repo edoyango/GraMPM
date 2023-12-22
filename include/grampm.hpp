@@ -37,7 +37,7 @@ namespace GraMPM {
         // constructors ------------------------------------------------------------------------------------------------
         MPM_system(std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
-        MPM_system(int p_size_in, std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
+        MPM_system(size_t p_size_in, std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
         MPM_system(std::vector<particle<F>> pv, std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
@@ -45,7 +45,7 @@ namespace GraMPM {
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
 
         // particle data and functions ---------------------------------------------------------------------------------
-        long unsigned int p_size, p_neighbour_nodes_size;
+        size_t m_p_size, p_neighbour_nodes_size;
         std::vector<F> m_p_x, m_p_y, m_p_z, m_p_vx, m_p_vy, m_p_vz, m_p_ax, m_p_ay, m_p_az, m_p_dxdt, m_p_dydt, 
             m_p_dzdt, m_p_mass, m_p_rho, m_p_sigmaxx, m_p_sigmayy, m_p_sigmazz, m_p_sigmaxy, m_p_sigmaxz, m_p_sigmayz, 
             m_p_strainratexx, m_p_strainrateyy, m_p_strainratezz, m_p_strainratexy, m_p_strainratexz, m_p_strainrateyz, 
@@ -182,6 +182,8 @@ namespace GraMPM {
         F& p_spinratexz(const int &i);
         F& p_spinrateyz(const int &i);
         int& p_grid_idx(const int &i);
+
+        const size_t& p_size() const;
         
     };
 

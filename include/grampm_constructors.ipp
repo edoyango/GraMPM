@@ -12,7 +12,7 @@ namespace GraMPM {
     template<typename F>
     MPM_system<F>::MPM_system(std::array<F, 3> bf, kernel_base<F> &knl_in, std::array<F, 3> g_mingrid_in, 
         std::array<F, 3> g_maxgrid_in, F cell_size_in)
-        : p_size {0}
+        : m_p_size {0}
         , m_body_force {bf}
         , knl {knl_in}
         , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
@@ -39,9 +39,9 @@ namespace GraMPM {
 
     // construct with zeroed particles
     template<typename F>
-    MPM_system<F>::MPM_system(int p_size_in, std::array<F, 3> bf, kernel_base<F> &knl_in, std::array<F, 3> g_mingrid_in, 
-        std::array<F, 3> g_maxgrid_in, F cell_size_in)
-        : p_size {p_size_in}
+    MPM_system<F>::MPM_system(size_t p_size_in, std::array<F, 3> bf, kernel_base<F> &knl_in, 
+        std::array<F, 3> g_mingrid_in, std::array<F, 3> g_maxgrid_in, F cell_size_in)
+        : m_p_size {p_size_in}
         , m_p_x(p_size_in, 0.)
         , m_p_y(p_size_in, 0.)
         , m_p_z(p_size_in, 0.)
@@ -123,7 +123,7 @@ namespace GraMPM {
         {
             p_clear();
             for (int i = 0; i < pv.size(); ++i) p_push_back(pv[i]);
-            p_size = pv.size();
+            m_p_size = pv.size();
         }; // empty object (everything to be defined later)
 
     // construct from file
@@ -151,7 +151,7 @@ namespace GraMPM {
         , m_g_forcex(m_g_size, 0.)
         , m_g_forcey(m_g_size, 0.)
         , m_g_forcez(m_g_size, 0.)
-        , p_size {0}
+        , m_p_size {0}
     {
         std::ifstream file(fname);
         std::string line, header;

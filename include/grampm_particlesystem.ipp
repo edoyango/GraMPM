@@ -60,7 +60,7 @@ namespace GraMPM {
                 calc_idxz(p.z)
             )
         );
-        p_size++;
+        m_p_size++;
     }
 
     // vector-like api: clear. Makes size 0.
@@ -96,7 +96,7 @@ namespace GraMPM {
         m_p_spinratexz.clear();
         m_p_spinrateyz.clear();
         m_p_grid_idx.clear();
-        p_size = 0;
+        m_p_size = 0;
     }
 
     // vector-like api: empty. Checks whether all member vectors are empty. Also checks the m_size member
@@ -109,7 +109,7 @@ namespace GraMPM {
             m_p_strainratexx.empty() && m_p_strainrateyy.empty() && m_p_strainratezz.empty() && 
             m_p_strainratexy.empty() && m_p_strainratexz.empty() && m_p_strainrateyz.empty() && 
             m_p_spinratexy.empty() && m_p_spinratexz.empty() && m_p_spinrateyz.empty() &&m_p_grid_idx.empty() && 
-            p_size==0;
+            m_p_size==0;
     }
 
     // vector-like api: resize. Shrinks/grows the member vectors. zeros the vectors.
@@ -145,7 +145,7 @@ namespace GraMPM {
         m_p_spinratexz.resize(n, 0.);
         m_p_spinrateyz.resize(n, 0.);
         m_p_grid_idx.resize(n, 0);
-        p_size = n;
+        m_p_size = n;
     }
 
     // property getters
@@ -182,7 +182,7 @@ namespace GraMPM {
     template<typename F> 
     void MPM_system<F>::p_update_velocity(const F &dt) {
         #pragma omp for
-        for (int i = 0; i < p_size; ++i) {
+        for (int i = 0; i < m_p_size; ++i) {
             m_p_vx[i] += dt*m_p_ax[i];
             m_p_vy[i] += dt*m_p_ay[i];
             m_p_vz[i] += dt*m_p_az[i];
@@ -191,7 +191,7 @@ namespace GraMPM {
     template<typename F> 
     void MPM_system<F>::p_update_position(const F &dt) {
         #pragma omp for
-        for (int i = 0; i < p_size; ++i) {
+        for (int i = 0; i < m_p_size; ++i) {
             m_p_x[i] += dt*m_p_dxdt[i];
             m_p_y[i] += dt*m_p_dydt[i];
             m_p_z[i] += dt*m_p_dzdt[i];
@@ -201,7 +201,7 @@ namespace GraMPM {
     void MPM_system<F>::p_update_density(const F &dt) {
         // update density using volumentric strain increment
         #pragma omp for
-        for (int i = 0; i < p_size; ++i) {
+        for (int i = 0; i < m_p_size; ++i) {
             m_p_rho[i] /= 1. + dt*(m_p_strainratexx[i] + m_p_strainrateyy[i] + m_p_strainratezz[i]);
         }
     }

@@ -112,5 +112,7 @@ namespace GraMPM {
     template<typename F> F& MPM_system<F>::p_spinratexz(const int &i) { return m_p_spinratexz[i]; }
     template<typename F> F& MPM_system<F>::p_spinrateyz(const int &i) { return m_p_spinrateyz[i]; }
     template<typename F> int& MPM_system<F>::p_grid_idx(const int &i) { return m_p_grid_idx[i]; }
+    
+    template<typename F> const size_t& MPM_system<F>::p_size() const { return m_p_size; }
 }
 #endif

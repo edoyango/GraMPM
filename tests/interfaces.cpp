@@ -118,7 +118,7 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
         REQUIRE(myMPM.p_spinrateyz(i)==0.);
     }
 
-    REQUIRE(myMPM.p_size==5);
+    REQUIRE(myMPM.p_size()==5);
 
     // check that aggregate interface works
     std::vector<GraMPM::particle<double>> pv;
@@ -205,7 +205,7 @@ TEST_CASE("IO", "[myMPM]") {
 
     GraMPM::MPM_system<double> myMPM3("testfile0000001", bf, knl, mingridx_in, maxgridx_in, dcell_in);
 
-    REQUIRE(myMPM3.p_size==5);
+    REQUIRE(myMPM3.p_size()==5);
 
     // check that manual setter functions work
     for (int i = 0; i < 1; ++i) {
@@ -245,7 +245,7 @@ TEST_CASE("Check clearing and resizing", "[myMPM]") {
     myMPM.p_clear();
     REQUIRE(myMPM.p_empty());
     myMPM.p_resize(3);
-    REQUIRE(myMPM.p_size==3);
+    REQUIRE(myMPM.p_size()==3);
     for (int i = 0; i < 3; ++i) {
         REQUIRE(myMPM.p_x(i)==0.);
         REQUIRE(myMPM.p_y(i)==0.);
