@@ -36,54 +36,13 @@ namespace GraMPM {
 
         // constructors
         MPM_system(std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
-            std::array<F, 3> g_maxgrid_in, F cell_size_in)
-            : p_size(0)
-            , knl(knl)
-            , p_body_force(bf)
-            , g_mingridx(g_mingrid_in[0])
-            , g_mingridy(g_mingrid_in[1])
-            , g_mingridz(g_mingrid_in[2])
-            , g_maxgridx(g_maxgrid_in[0])
-            , g_maxgridy(g_maxgrid_in[1])
-            , g_maxgridz(g_maxgrid_in[2])
-            , g_dcell(cell_size_in)
-            , g_ngridx(static_cast<int>((g_maxgrid_in[0]-g_mingrid_in[0])/cell_size_in))
-            , g_ngridy(static_cast<int>((g_maxgrid_in[0]-g_mingrid_in[0])/cell_size_in))
-            , g_ngridz(static_cast<int>((g_maxgrid_in[0]-g_mingrid_in[0])/cell_size_in))
-            , g_size(g_ngridx*g_ngridy*g_ngridz)
-            , pg_nns_pp(static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius)))
-            
-        {
-        }; // empty object (everything to be defined later)
-
-        // // initalize empty (no size)
-        // template<typename F>
-        // particle_system<F>::particle_system(std::string fname, grid<F> &ingrid, kernel_base<F> &knl)
-        //     : background_grid(ingrid)
-        //     , m_capacity {0}
-        //     , m_size {0}
-        //     , m_body_force {0., 0., 0.}
-        //     , m_knl {knl}
-        //     , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
-        // {
-        //     std::ifstream file(fname);
-        //     std::string line, header;
-
-        //     // pull out header
-        //     std::getline(file, header);
-
-        //     while (std::getline(file, line)) {
-        //         std::istringstream iss(line);
-        //         GraMPM::particle<F> p;
-        //         iss >> p.x >> p.y >> p.z >> p.vx >> p.vy >> p.vz >> p.mass >> p.rho >> p.sigmaxx >> p.sigmayy >> 
-        //             p.sigmazz >> p.sigmaxy >> p.sigmaxz >> p.sigmayz >> p.ax >> p.ay >> p.az >> p.dxdt >> p.dydt >>
-        //             p.dzdt >> p.strainratexx >> p.strainrateyy >> p.strainratezz >> p.strainratexy >> p.strainratexz >>
-        //             p.strainrateyz >> p.spinratexy >> p.spinratexz >> p.spinrateyz;
-                    
-        //         push_back(p);
-                
-        //     }
-        // }
+            std::array<F, 3> g_maxgrid_in, F cell_size_in);
+        MPM_system(int p_size_in, std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
+            std::array<F, 3> g_maxgrid_in, F cell_size_in);
+        MPM_system(std::vector<particle<F>> pv, std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
+            std::array<F, 3> g_maxgrid_in, F cell_size_in);
+        MPM_system(std::string fname, std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
+            std::array<F, 3> g_maxgrid_in, F cell_size_in);
 
         // grid data and functions
         const int g_ngridx, g_ngridy, g_ngridz, g_size;
@@ -171,11 +130,13 @@ namespace GraMPM {
         int calc_idxx(const F &x) const;
         int calc_idxy(const F &y) const;
         int calc_idxz(const F &z) const;
+        int calc_ngrid(const F &maxx, const F &minx, const F &dc) { return std::ceil((maxx-minx)/dc)+1; }
         void save_to_file(const std::string &prefix, const int &timestep) const;
     };
 
 }
 
+#include <grampm_constructors.ipp>
 #include <grampm_particle.ipp>
 #include <grampm_grid.ipp>
 #include <grampm_particlesystem.ipp>
