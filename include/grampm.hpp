@@ -96,7 +96,7 @@ namespace GraMPM {
 
         // grid data and functions
         const F m_g_mingridx, m_g_mingridy, m_g_mingridz, m_g_maxgridx, m_g_maxgridy, m_g_maxgridz, g_dcell;
-        const int g_ngridx, g_ngridy, g_ngridz, g_size;
+        const int m_g_ngridx, m_g_ngridy, m_g_ngridz, m_g_size;
         std::vector<F> g_mass, g_momentumx, g_momentumy, g_momentumz, g_forcex, g_forcey, g_forcez;
         std::function<void(MPM_system<F>&, const int&, const F&)> g_momentum_boundary_function, 
             g_force_boundary_function;
@@ -107,9 +107,6 @@ namespace GraMPM {
         const F& g_get_forcex(const int &i, const int &j, const int &k) const;
         const F& g_get_forcey(const int &i, const int &j, const int &k) const;
         const F& g_get_forcez(const int &i, const int &j, const int &k) const;
-        std::array<F, 3> g_get_mingrid() const;
-        std::array<F, 3> g_get_maxgrid() const;
-        std::array<int, 3> g_get_ngrid() const;
         void g_set_mass(const int &i, const int &j, const int &k, const F &m);
         void g_set_momentumx(const int &i, const int &j, const int &k, const F &mx);
         void g_set_momentumy(const int &i, const int &j, const int &k, const F &my);
@@ -144,6 +141,12 @@ namespace GraMPM {
         const F& g_maxgridz() const;
         std::array<F, 3> g_maxgrid() const;
         void g_maxgrid(F &maxgridx, F &maxgridy, F &maxgridz) const;
+        const int& g_ngridx() const;
+        const int& g_ngridy() const;
+        const int& g_ngridz() const;
+        std::array<int, 3> g_ngrid() const;
+        void g_ngrid(int &ngridx, int &ngridy, int &ngridz) const;
+        const int& g_size() const;
         
     };
 

@@ -7,12 +7,6 @@ namespace GraMPM {
     
     // getters
     template<typename F> 
-    std::array<F, 3> MPM_system<F>::g_get_mingrid() const { return {g_mingridx, g_mingridy, g_mingridz}; }
-    template<typename F>
-    std::array<F, 3> MPM_system<F>::g_get_maxgrid() const { return {g_maxgridx, g_maxgridy, g_maxgridz}; }
-    template<typename F> 
-    std::array<int, 3> MPM_system<F>::g_get_ngrid() const { return {g_ngridx, g_ngridy, g_ngridz}; }
-    template<typename F> 
     const F& MPM_system<F>::g_get_mass(const int &i, const int &j, const int &k) const { 
         return g_mass[ravel_grid_idx(i, j, k)];
     }

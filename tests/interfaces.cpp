@@ -30,7 +30,7 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(maxgridx_out[1]==maxgridx_in[1]);
     REQUIRE(maxgridx_out[2]==maxgridx_in[2]);
 
-    std::array<int, 3> ngridx_out = myMPM.g_get_ngrid();
+    std::array<int, 3> ngridx_out = myMPM.g_ngrid();
     REQUIRE(ngridx_out[0]==3);
     REQUIRE(ngridx_out[1]==4);
     REQUIRE(ngridx_out[2]==5);
@@ -44,12 +44,12 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(myMPM.g_maxgridy()==maxgridx_in[1]);
     REQUIRE(myMPM.g_maxgridz()==maxgridx_in[2]);
 
-    REQUIRE(myMPM.g_ngridx==3);
-    REQUIRE(myMPM.g_ngridy==4);
-    REQUIRE(myMPM.g_ngridz==5);
-    REQUIRE(myMPM.g_size==60);
+    REQUIRE(myMPM.g_ngridx()==3);
+    REQUIRE(myMPM.g_ngridy()==4);
+    REQUIRE(myMPM.g_ngridz()==5);
+    REQUIRE(myMPM.g_size()==60);
 
-    for (int i = 0; i < myMPM.g_size; ++i) {
+    for (int i = 0; i < myMPM.g_size(); ++i) {
         REQUIRE(myMPM.g_mass[i]==0.);
         REQUIRE(myMPM.g_momentumx[i]==0.);
         REQUIRE(myMPM.g_momentumy[i]==0.);
@@ -59,9 +59,9 @@ TEST_CASE("grid intialized correctly", "[grid]") {
         REQUIRE(myMPM.g_forcez[i]==0.);
     }
 
-    for (int i = 0; i < myMPM.g_ngridx; ++i) 
-        for (int j = 0; j < myMPM.g_ngridy; ++j)
-            for (int k = 0; k < myMPM.g_ngridz; ++k) {
+    for (int i = 0; i < myMPM.g_ngridx(); ++i) 
+        for (int j = 0; j < myMPM.g_ngridy(); ++j)
+            for (int k = 0; k < myMPM.g_ngridz(); ++k) {
                 myMPM.g_set_mass(i, j, k, (i+j+k)*1.);
                 REQUIRE(myMPM.g_get_mass(i, j, k)==(i+j+k)*1.);
                 myMPM.g_set_momentumx(i, j, k, (i+j+k)*2.);
