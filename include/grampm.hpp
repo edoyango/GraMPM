@@ -53,7 +53,7 @@ namespace GraMPM {
         std::vector<int> p_grid_idx;
         F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
         std::function<void(MPM_system<F>&, const F&)> p_stress_update_function;
-        std::array<F, 3> p_body_force;
+        std::array<F, 3> m_body_force;
         particle<F> p_at(const int &i);
         void p_push_back(const particle<F> &p);
         void p_clear();
@@ -148,6 +148,9 @@ namespace GraMPM {
         F& g_forcey(const int &i, const int &j, const int &k);
         F& g_forcez(const int &i);
         F& g_forcez(const int &i, const int &j, const int &k);
+
+        const std::array<F, 3>& body_force() const;
+        const F& body_force(const int i) const;
         
     };
 

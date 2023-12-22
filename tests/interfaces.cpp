@@ -82,9 +82,9 @@ TEST_CASE("grid intialized correctly", "[grid]") {
 TEST_CASE("Particle initialized correctly", "[grid]") {
 
     // test that body force vector is set to the correct values
-    REQUIRE(myMPM.p_body_force[0] == 1.);
-    REQUIRE(myMPM.p_body_force[1] == 2.);
-    REQUIRE(myMPM.p_body_force[2] == 3.);
+    REQUIRE(myMPM.body_force(0) == 1.);
+    REQUIRE(myMPM.body_force(1) == 2.);
+    REQUIRE(myMPM.body_force(2) == 3.);
 
     // check that the myMPM instance has 5 myMPM, but all zeroed
     for (int i = 0; i < 5; ++i) {

@@ -76,5 +76,10 @@ namespace GraMPM {
     F& MPM_system<F>::g_forcez(const int &i, const int &j, const int &k){ 
         return m_g_forcez[ravel_grid_idx(i, j, k)]; 
     }
+    
+    template<typename F> 
+    const std::array<F, 3>& MPM_system<F>::body_force() const { return m_body_force; }
+    template<typename F> 
+    const F& MPM_system<F>::body_force(const int i) const { return m_body_force[i]; }
 }
 #endif

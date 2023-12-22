@@ -189,17 +189,17 @@ namespace GraMPM {
                     p_sigmaxx[i]*pg_nn_dwdx(i, j) +
                     p_sigmaxy[i]*pg_nn_dwdy(i, j) +
                     p_sigmaxz[i]*pg_nn_dwdz(i, j)
-                ) + p_body_force[0]*p_mass[i]*pg_nn_w(i, j);
+                ) + m_body_force[0]*p_mass[i]*pg_nn_w(i, j);
                 g_forcey[node_idx] += -p_mass[i]/p_rho[i]*(
                     p_sigmaxy[i]*pg_nn_dwdx(i, j) +
                     p_sigmayy[i]*pg_nn_dwdy(i, j) +
                     p_sigmayz[i]*pg_nn_dwdz(i, j)
-                ) + p_body_force[1]*p_mass[i]*pg_nn_w(i, j);
+                ) + m_body_force[1]*p_mass[i]*pg_nn_w(i, j);
                 g_forcez[node_idx] += -p_mass[i]/p_rho[i]*(
                     p_sigmaxz[i]*pg_nn_dwdx(i, j) +
                     p_sigmayz[i]*pg_nn_dwdy(i, j) +
                     p_sigmazz[i]*pg_nn_dwdz(i, j)
-                ) + p_body_force[2]*p_mass[i]*pg_nn_w(i, j);
+                ) + m_body_force[2]*p_mass[i]*pg_nn_w(i, j);
             }
         }
 
