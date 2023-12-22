@@ -27,13 +27,13 @@ namespace GraMPM {
         , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
         , m_g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
         , m_g_size {m_g_ngridx*m_g_ngridy*m_g_ngridz}
-        , g_mass(m_g_size, 0.)
-        , g_momentumx(m_g_size, 0.)
-        , g_momentumy(m_g_size, 0.)
-        , g_momentumz(m_g_size, 0.)
-        , g_forcex(m_g_size, 0.)
-        , g_forcey(m_g_size, 0.)
-        , g_forcez(m_g_size, 0.)
+        , m_g_mass(m_g_size, 0.)
+        , m_g_momentumx(m_g_size, 0.)
+        , m_g_momentumy(m_g_size, 0.)
+        , m_g_momentumz(m_g_size, 0.)
+        , m_g_forcex(m_g_size, 0.)
+        , m_g_forcey(m_g_size, 0.)
+        , m_g_forcez(m_g_size, 0.)
         {
         }; // empty object (everything to be defined later)
 
@@ -85,13 +85,13 @@ namespace GraMPM {
         , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
         , m_g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
         , m_g_size {m_g_ngridx*m_g_ngridy*m_g_ngridz}
-        , g_mass(m_g_size, 0.)
-        , g_momentumx(m_g_size, 0.)
-        , g_momentumy(m_g_size, 0.)
-        , g_momentumz(m_g_size, 0.)
-        , g_forcex(m_g_size, 0.)
-        , g_forcey(m_g_size, 0.)
-        , g_forcez(m_g_size, 0.)
+        , m_g_mass(m_g_size, 0.)
+        , m_g_momentumx(m_g_size, 0.)
+        , m_g_momentumy(m_g_size, 0.)
+        , m_g_momentumz(m_g_size, 0.)
+        , m_g_forcex(m_g_size, 0.)
+        , m_g_forcey(m_g_size, 0.)
+        , m_g_forcez(m_g_size, 0.)
         {
         }; // empty object (everything to be defined later)
 
@@ -113,13 +113,13 @@ namespace GraMPM {
         , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
         , m_g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
         , m_g_size {m_g_ngridx*m_g_ngridy*m_g_ngridz}
-        , g_mass(m_g_size, 0.)
-        , g_momentumx(m_g_size, 0.)
-        , g_momentumy(m_g_size, 0.)
-        , g_momentumz(m_g_size, 0.)
-        , g_forcex(m_g_size, 0.)
-        , g_forcey(m_g_size, 0.)
-        , g_forcez(m_g_size, 0.)
+        , m_g_mass(m_g_size, 0.)
+        , m_g_momentumx(m_g_size, 0.)
+        , m_g_momentumy(m_g_size, 0.)
+        , m_g_momentumz(m_g_size, 0.)
+        , m_g_forcex(m_g_size, 0.)
+        , m_g_forcey(m_g_size, 0.)
+        , m_g_forcez(m_g_size, 0.)
         {
             p_clear();
             for (int i = 0; i < pv.size(); ++i) p_push_back(pv[i]);
@@ -144,13 +144,13 @@ namespace GraMPM {
         , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
         , m_g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
         , m_g_size {m_g_ngridx*m_g_ngridy*m_g_ngridz}
-        , g_mass(m_g_size, 0.)
-        , g_momentumx(m_g_size, 0.)
-        , g_momentumy(m_g_size, 0.)
-        , g_momentumz(m_g_size, 0.)
-        , g_forcex(m_g_size, 0.)
-        , g_forcey(m_g_size, 0.)
-        , g_forcez(m_g_size, 0.)
+        , m_g_mass(m_g_size, 0.)
+        , m_g_momentumx(m_g_size, 0.)
+        , m_g_momentumy(m_g_size, 0.)
+        , m_g_momentumz(m_g_size, 0.)
+        , m_g_forcex(m_g_size, 0.)
+        , m_g_forcey(m_g_size, 0.)
+        , m_g_forcez(m_g_size, 0.)
         , p_size {0}
     {
         std::ifstream file(fname);

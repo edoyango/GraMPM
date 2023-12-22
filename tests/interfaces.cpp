@@ -50,32 +50,32 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(myMPM.g_size()==60);
 
     for (int i = 0; i < myMPM.g_size(); ++i) {
-        REQUIRE(myMPM.g_mass[i]==0.);
-        REQUIRE(myMPM.g_momentumx[i]==0.);
-        REQUIRE(myMPM.g_momentumy[i]==0.);
-        REQUIRE(myMPM.g_momentumz[i]==0.);
-        REQUIRE(myMPM.g_forcex[i]==0.);
-        REQUIRE(myMPM.g_forcey[i]==0.);
-        REQUIRE(myMPM.g_forcez[i]==0.);
+        REQUIRE(myMPM.g_mass(i)==0.);
+        REQUIRE(myMPM.g_momentumx(i)==0.);
+        REQUIRE(myMPM.g_momentumy(i)==0.);
+        REQUIRE(myMPM.g_momentumz(i)==0.);
+        REQUIRE(myMPM.g_forcex(i)==0.);
+        REQUIRE(myMPM.g_forcey(i)==0.);
+        REQUIRE(myMPM.g_forcez(i)==0.);
     }
 
     for (int i = 0; i < myMPM.g_ngridx(); ++i) 
         for (int j = 0; j < myMPM.g_ngridy(); ++j)
             for (int k = 0; k < myMPM.g_ngridz(); ++k) {
-                myMPM.g_set_mass(i, j, k, (i+j+k)*1.);
-                REQUIRE(myMPM.g_get_mass(i, j, k)==(i+j+k)*1.);
-                myMPM.g_set_momentumx(i, j, k, (i+j+k)*2.);
-                REQUIRE(myMPM.g_get_momentumx(i, j, k)==(i+j+k)*2.);
-                myMPM.g_set_momentumy(i, j, k, (i+j+k)*3.);
-                REQUIRE(myMPM.g_get_momentumy(i, j, k)==(i+j+k)*3.);
-                myMPM.g_set_momentumz(i, j, k, (i+j+k)*4.);
-                REQUIRE(myMPM.g_get_momentumz(i, j, k)==(i+j+k)*4.);
-                myMPM.g_set_forcex(i, j, k, (i+j+k)*5.);
-                REQUIRE(myMPM.g_get_forcex(i, j, k)==(i+j+k)*5.);
-                myMPM.g_set_forcey(i, j, k, (i+j+k)*6.);
-                REQUIRE(myMPM.g_get_forcey(i, j, k)==(i+j+k)*6.);
-                myMPM.g_set_forcez(i, j, k, (i+j+k)*7.);
-                REQUIRE(myMPM.g_get_forcez(i, j, k)==(i+j+k)*7.);
+                myMPM.g_mass(i, j, k) = (i+j+k)*1.;
+                REQUIRE(myMPM.g_mass(i, j, k)==(i+j+k)*1.);
+                myMPM.g_momentumx(i, j, k) = (i+j+k)*2.;
+                REQUIRE(myMPM.g_momentumx(i, j, k)==(i+j+k)*2.);
+                myMPM.g_momentumy(i, j, k) = (i+j+k)*3.;
+                REQUIRE(myMPM.g_momentumy(i, j, k)==(i+j+k)*3.);
+                myMPM.g_momentumz(i, j, k) = (i+j+k)*4.;
+                REQUIRE(myMPM.g_momentumz(i, j, k)==(i+j+k)*4.);
+                myMPM.g_forcex(i, j, k) = (i+j+k)*5.;
+                REQUIRE(myMPM.g_forcex(i, j, k)==(i+j+k)*5.);
+                myMPM.g_forcey(i, j, k) = (i+j+k)*6.;
+                REQUIRE(myMPM.g_forcey(i, j, k)==(i+j+k)*6.);
+                myMPM.g_forcez(i, j, k) = (i+j+k)*7.;
+                REQUIRE(myMPM.g_forcez(i, j, k)==(i+j+k)*7.);
             }
 }
 

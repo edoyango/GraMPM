@@ -27,17 +27,54 @@ namespace GraMPM {
         maxgridy = m_g_maxgridy;
         maxgridz = m_g_maxgridz;
     }
-        template<typename F> const int& MPM_system<F>::g_ngridx() const { return m_g_ngridx; }
-        template<typename F> const int& MPM_system<F>::g_ngridy() const { return m_g_ngridy; }
-        template<typename F> const int& MPM_system<F>::g_ngridz() const { return m_g_ngridz; }
-        template<typename F> 
-        std::array<int, 3> MPM_system<F>::g_ngrid() const { return {m_g_ngridx, m_g_ngridy, m_g_ngridz}; }
-        template<typename F>
-        void MPM_system<F>::g_ngrid(int &ngridx, int &ngridy, int &ngridz) const {
-            ngridx = m_g_ngridx;
-            ngridy = m_g_ngridy;
-            ngridz = m_g_ngridz;
-        };
-        template<typename F> const int& MPM_system<F>::g_size() const { return m_g_size; };
+    template<typename F> const int& MPM_system<F>::g_ngridx() const { return m_g_ngridx; }
+    template<typename F> const int& MPM_system<F>::g_ngridy() const { return m_g_ngridy; }
+    template<typename F> const int& MPM_system<F>::g_ngridz() const { return m_g_ngridz; }
+    template<typename F> 
+    std::array<int, 3> MPM_system<F>::g_ngrid() const { return {m_g_ngridx, m_g_ngridy, m_g_ngridz}; }
+    template<typename F>
+    void MPM_system<F>::g_ngrid(int &ngridx, int &ngridy, int &ngridz) const {
+        ngridx = m_g_ngridx;
+        ngridy = m_g_ngridy;
+        ngridz = m_g_ngridz;
+    }
+    template<typename F> const int& MPM_system<F>::g_size() const { return m_g_size; };
+    
+    template<typename F> F& MPM_system<F>::g_mass(const int &i) { return m_g_mass[i]; }
+    template<typename F> F& MPM_system<F>::g_momentumx(const int &i) { return m_g_momentumx[i]; }
+    template<typename F> F& MPM_system<F>::g_momentumy(const int &i) { return m_g_momentumy[i]; }
+    template<typename F> F& MPM_system<F>::g_momentumz(const int &i) { return m_g_momentumz[i]; }
+    template<typename F> F& MPM_system<F>::g_forcex(const int &i) { return m_g_forcex[i]; }
+    template<typename F> F& MPM_system<F>::g_forcey(const int &i) { return m_g_forcey[i]; }
+    template<typename F> F& MPM_system<F>::g_forcez(const int &i) { return m_g_forcez[i]; }
+    
+    template<typename F> 
+    F& MPM_system<F>::g_mass(const int &i, const int &j, const int &k){ 
+        return m_g_mass[ravel_grid_idx(i, j, k)]; 
+    }
+    template<typename F> 
+    F& MPM_system<F>::g_momentumx(const int &i, const int &j, const int &k){ 
+        return m_g_momentumx[ravel_grid_idx(i, j, k)]; 
+    }
+    template<typename F> 
+    F& MPM_system<F>::g_momentumy(const int &i, const int &j, const int &k){ 
+        return m_g_momentumy[ravel_grid_idx(i, j, k)]; 
+    }
+    template<typename F> 
+    F& MPM_system<F>::g_momentumz(const int &i, const int &j, const int &k){ 
+        return m_g_momentumz[ravel_grid_idx(i, j, k)]; 
+    }
+    template<typename F> 
+    F& MPM_system<F>::g_forcex(const int &i, const int &j, const int &k){ 
+        return m_g_forcex[ravel_grid_idx(i, j, k)]; 
+    }
+    template<typename F> 
+    F& MPM_system<F>::g_forcey(const int &i, const int &j, const int &k){ 
+        return m_g_forcey[ravel_grid_idx(i, j, k)]; 
+    }
+    template<typename F> 
+    F& MPM_system<F>::g_forcez(const int &i, const int &j, const int &k){ 
+        return m_g_forcez[ravel_grid_idx(i, j, k)]; 
+    }
 }
 #endif

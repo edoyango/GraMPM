@@ -34,7 +34,7 @@ namespace GraMPM {
     template<typename F>
     struct MPM_system {
 
-        // constructors
+        // constructors ------------------------------------------------------------------------------------------------
         MPM_system(std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
         MPM_system(int p_size_in, std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
@@ -44,7 +44,7 @@ namespace GraMPM {
         MPM_system(std::string fname, std::array<F, 3> bf, kernel_base<F> &knl, std::array<F, 3> g_mingrid_in, 
             std::array<F, 3> g_maxgrid_in, F cell_size_in);
 
-        // particle data and functions
+        // particle data and functions ---------------------------------------------------------------------------------
         long unsigned int p_size, p_neighbour_nodes_size;
         std::vector<F> p_x, p_y, p_z, p_vx, p_vy, p_vz, p_ax, p_ay, p_az, p_dxdt, p_dydt, p_dzdt, p_mass, p_rho, 
             p_sigmaxx, p_sigmayy, p_sigmazz, p_sigmaxy, p_sigmaxz, p_sigmayz, p_strainratexx, p_strainrateyy, 
@@ -72,7 +72,7 @@ namespace GraMPM {
         // global data
         const kernel_base<F> &knl;
             
-        // particle-node pair data and functions
+        // particle-node pair data and functions -----------------------------------------------------------------------
         const int pg_nns_pp;
         std::vector<F> pg_nns_dx, pg_nns_dy, pg_nns_dz, pg_nns_w, pg_nns_dwdx, pg_nns_dwdy, pg_nns_dwdz;
         std::vector<int> pg_nns;
@@ -94,33 +94,19 @@ namespace GraMPM {
         void map_g2p_acceleration();
         void map_g2p_strainrate();
 
-        // grid data and functions
+        // grid data and functions -------------------------------------------------------------------------------------
         const F m_g_mingridx, m_g_mingridy, m_g_mingridz, m_g_maxgridx, m_g_maxgridy, m_g_maxgridz, g_dcell;
         const int m_g_ngridx, m_g_ngridy, m_g_ngridz, m_g_size;
-        std::vector<F> g_mass, g_momentumx, g_momentumy, g_momentumz, g_forcex, g_forcey, g_forcez;
+        std::vector<F> m_g_mass, m_g_momentumx, m_g_momentumy, m_g_momentumz, m_g_forcex, m_g_forcey, m_g_forcez;
         std::function<void(MPM_system<F>&, const int&, const F&)> g_momentum_boundary_function, 
             g_force_boundary_function;
-        const F& g_get_mass(const int &i, const int &j, const int &k) const;
-        const F& g_get_momentumx(const int &i, const int &j, const int &k) const;
-        const F& g_get_momentumy(const int &i, const int &j, const int &k) const;
-        const F& g_get_momentumz(const int &i, const int &j, const int &k) const;
-        const F& g_get_forcex(const int &i, const int &j, const int &k) const;
-        const F& g_get_forcey(const int &i, const int &j, const int &k) const;
-        const F& g_get_forcez(const int &i, const int &j, const int &k) const;
-        void g_set_mass(const int &i, const int &j, const int &k, const F &m);
-        void g_set_momentumx(const int &i, const int &j, const int &k, const F &mx);
-        void g_set_momentumy(const int &i, const int &j, const int &k, const F &my);
-        void g_set_momentumz(const int &i, const int &j, const int &k, const F &mz);
-        void g_set_forcex(const int &i, const int &j, const int &k, const F &fx);
-        void g_set_forcey(const int &i, const int &j, const int &k, const F &fy);
-        void g_set_forcez(const int &i, const int &j, const int &k, const F &fz);
         void g_set_momentum_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f);
         void g_set_force_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f);
         void g_update_momentum(const F &dt); 
         void g_apply_momentum_boundary_conditions(const int &timestep, const F dt);
         void g_apply_force_boundary_conditions(const int &timestep, const F dt);
         
-        // utility functions
+        // utility functions -------------------------------------------------------------------------------------------
         int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;
         std::array<int, 3> unravel_grid_idx(const int &idx) const;
         void unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const;
@@ -130,7 +116,8 @@ namespace GraMPM {
         int calc_ngrid(const F &maxx, const F &minx, const F &dc) { return std::ceil((maxx-minx)/dc)+1; }
         void save_to_file(const std::string &prefix, const int &timestep) const;
         
-        // trivial getters and setters
+        // trivial getters and setters ---------------------------------------------------------------------------------
+        // grid
         const F& g_mingridx() const;
         const F& g_mingridy() const;
         const F& g_mingridz() const;
@@ -147,6 +134,20 @@ namespace GraMPM {
         std::array<int, 3> g_ngrid() const;
         void g_ngrid(int &ngridx, int &ngridy, int &ngridz) const;
         const int& g_size() const;
+        F& g_mass(const int &i);
+        F& g_momentumx(const int &i);
+        F& g_momentumx(const int &i, const int &j, const int &k);
+        F& g_momentumy(const int &i);
+        F& g_momentumy(const int &i, const int &j, const int &k);
+        F& g_momentumz(const int &i);
+        F& g_momentumz(const int &i, const int &j, const int &k);
+        F& g_mass(const int &i, const int &j, const int &k);
+        F& g_forcex(const int &i);
+        F& g_forcex(const int &i, const int &j, const int &k);
+        F& g_forcey(const int &i);
+        F& g_forcey(const int &i, const int &j, const int &k);
+        F& g_forcez(const int &i);
+        F& g_forcez(const int &i, const int &j, const int &k);
         
     };
 
