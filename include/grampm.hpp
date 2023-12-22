@@ -91,13 +91,13 @@ namespace GraMPM {
         std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_ax, m_ay, m_az, m_dxdt, m_dydt, m_dzdt, m_mass, m_rho, 
             m_sigmaxx, m_sigmayy, m_sigmazz, m_sigmaxy, m_sigmaxz, m_sigmayz, m_strainratexx, m_strainrateyy, 
             m_strainratezz, m_strainratexy, m_strainratexz, m_strainrateyz, m_spinratexy, m_spinratexz,
-            m_spinrateyz, m_p2g_neighbour_nodes_dx, m_p2g_neighbour_nodes_dy, m_p2g_neighbour_nodes_dz, 
-            m_p2g_neighbour_nodes_w, m_p2g_neighbour_nodes_dwdx, m_p2g_neighbour_nodes_dwdy, 
-            m_p2g_neighbour_nodes_dwdz;
+            m_spinrateyz, m_ps_nns_dx, m_ps_nns_dy, m_ps_nns_dz, 
+            m_ps_nns_w, m_ps_nns_dwdx, m_ps_nns_dwdy, 
+            m_ps_nns_dwdz;
         std::vector<F> m_tmpgmass, m_tmpgmomentumx, m_tmpgmomentumy, m_tmpgmomentumz, m_tmpgforcex, m_tmpgforcey, m_tmpgforcez;
             
         F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
-        std::vector<int> m_grid_idx, m_p2g_neighbour_nodes;
+        std::vector<int> m_grid_idx, m_ps_nns;
         std::array<F, 3> m_body_force;
         std::function<void(particle_system<F>&, const F&)> m_stress_update_function;
 
@@ -127,14 +127,14 @@ namespace GraMPM {
         void DP_params(F& phi, F& psi, F& coh) const;
         void DP_params(F& phi, F& psi, F& coh, F& alpha_phi, F& alpha_psi, F& k_c) const;
         std::array<int, 3> grid_idx(const int &i) const;
-        const int& p2g_neighbour_node(const int i, const int j) const ;
-        const F& p2g_neighbour_node_dx(const int i, const int j) const ;
-        const F& p2g_neighbour_node_dy(const int i, const int j) const ;
-        const F& p2g_neighbour_node_dz(const int i, const int j) const ;
-        const F& p2g_neighbour_node_w(const int i, const int j) const ;
-        const F& p2g_neighbour_node_dwdx(const int i, const int j) const ;
-        const F& p2g_neighbour_node_dwdy(const int i, const int j) const ;
-        const F& p2g_neighbour_node_dwdz(const int i, const int j) const ;
+        const int& ps_nn(const int i, const int j) const ;
+        const F& ps_nn_dx(const int i, const int j) const ;
+        const F& ps_nn_dy(const int i, const int j) const ;
+        const F& ps_nn_dz(const int i, const int j) const ;
+        const F& ps_nn_w(const int i, const int j) const ;
+        const F& ps_nn_dwdx(const int i, const int j) const ;
+        const F& ps_nn_dwdy(const int i, const int j) const ;
+        const F& ps_nn_dwdz(const int i, const int j) const ;
         const long unsigned int& capacity() const;
 
         // "low level" setter functions

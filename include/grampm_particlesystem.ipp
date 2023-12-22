@@ -120,51 +120,51 @@ namespace GraMPM {
     std::array<int, 3> particle_system<F>::grid_idx(const int &i) const { return unravel_grid_idx(m_grid_idx[i]); }
 
     template<typename F>
-    const int& particle_system<F>::p2g_neighbour_node(const int i, const int j) const { 
+    const int& particle_system<F>::ps_nn(const int i, const int j) const { 
         assert(j < m_nneighbour_nodes_perp); 
-        return m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+j];
+        return m_ps_nns[i*m_nneighbour_nodes_perp+j];
     }
 
     template<typename F>
-    const F& particle_system<F>::p2g_neighbour_node_dx(const int i, const int j) const {
+    const F& particle_system<F>::ps_nn_dx(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
-        return m_p2g_neighbour_nodes_dx[i*m_nneighbour_nodes_perp+j];
+        return m_ps_nns_dx[i*m_nneighbour_nodes_perp+j];
     }
 
     template<typename F>
-    const F& particle_system<F>::p2g_neighbour_node_dy(const int i, const int j) const {
+    const F& particle_system<F>::ps_nn_dy(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
-        return m_p2g_neighbour_nodes_dy[i*m_nneighbour_nodes_perp+j];
+        return m_ps_nns_dy[i*m_nneighbour_nodes_perp+j];
     }
 
     template<typename F>
-    const F& particle_system<F>::p2g_neighbour_node_dz(const int i, const int j) const {
+    const F& particle_system<F>::ps_nn_dz(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
-        return m_p2g_neighbour_nodes_dz[i*m_nneighbour_nodes_perp+j];
+        return m_ps_nns_dz[i*m_nneighbour_nodes_perp+j];
     }
     
     template<typename F>
-    const F& particle_system<F>::p2g_neighbour_node_w(const int i, const int j) const {
+    const F& particle_system<F>::ps_nn_w(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
-        return m_p2g_neighbour_nodes_w[i*m_nneighbour_nodes_perp+j];
+        return m_ps_nns_w[i*m_nneighbour_nodes_perp+j];
     }
     
     template<typename F>
-    const F& particle_system<F>::p2g_neighbour_node_dwdx(const int i, const int j) const {
+    const F& particle_system<F>::ps_nn_dwdx(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
-        return m_p2g_neighbour_nodes_dwdx[i*m_nneighbour_nodes_perp+j];
+        return m_ps_nns_dwdx[i*m_nneighbour_nodes_perp+j];
     }
     
     template<typename F>
-    const F& particle_system<F>::p2g_neighbour_node_dwdy(const int i, const int j) const {
+    const F& particle_system<F>::ps_nn_dwdy(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
-        return m_p2g_neighbour_nodes_dwdy[i*m_nneighbour_nodes_perp+j];
+        return m_ps_nns_dwdy[i*m_nneighbour_nodes_perp+j];
     }
 
     template<typename F>
-    const F& particle_system<F>::p2g_neighbour_node_dwdz(const int i, const int j) const {
+    const F& particle_system<F>::ps_nn_dwdz(const int i, const int j) const {
         assert(j < m_nneighbour_nodes_perp);
-        return m_p2g_neighbour_nodes_dwdz[i*m_nneighbour_nodes_perp+j];
+        return m_ps_nns_dwdz[i*m_nneighbour_nodes_perp+j];
     }
     template<typename F> const long unsigned int& particle_system<F>::capacity() const { return m_capacity; }
 
@@ -303,14 +303,14 @@ namespace GraMPM {
         m_spinratexz.clear();
         m_spinrateyz.clear();
         m_grid_idx.clear();
-        m_p2g_neighbour_nodes.clear();
-        m_p2g_neighbour_nodes_dx.clear();
-        m_p2g_neighbour_nodes_dy.clear();
-        m_p2g_neighbour_nodes_dz.clear();
-        m_p2g_neighbour_nodes_w.clear();
-        m_p2g_neighbour_nodes_dwdx.clear();
-        m_p2g_neighbour_nodes_dwdy.clear();
-        m_p2g_neighbour_nodes_dwdz.clear();
+        m_ps_nns.clear();
+        m_ps_nns_dx.clear();
+        m_ps_nns_dy.clear();
+        m_ps_nns_dz.clear();
+        m_ps_nns_w.clear();
+        m_ps_nns_dwdx.clear();
+        m_ps_nns_dwdy.clear();
+        m_ps_nns_dwdz.clear();
         m_size = 0;
     }
 
@@ -323,10 +323,10 @@ namespace GraMPM {
             m_sigmaxy.empty() && m_sigmaxz.empty() && m_sigmayz.empty() && m_strainratexx.empty() && 
             m_strainrateyy.empty() && m_strainratezz.empty() && m_strainratexy.empty() && m_strainratexz.empty() && 
             m_strainrateyz.empty() && m_spinratexy.empty() && m_spinratexz.empty() && 
-            m_spinrateyz.empty() &&m_grid_idx.empty() && m_p2g_neighbour_nodes.empty() && 
-            m_p2g_neighbour_nodes_dx.empty() && m_p2g_neighbour_nodes_dy.empty() && m_p2g_neighbour_nodes_dz.empty() && 
-            m_p2g_neighbour_nodes_w.empty() && m_p2g_neighbour_nodes_dwdx.empty() &&
-            m_p2g_neighbour_nodes_dwdy.empty() && m_p2g_neighbour_nodes_dwdz.empty() && m_size==0;
+            m_spinrateyz.empty() &&m_grid_idx.empty() && m_ps_nns.empty() && 
+            m_ps_nns_dx.empty() && m_ps_nns_dy.empty() && m_ps_nns_dz.empty() && 
+            m_ps_nns_w.empty() && m_ps_nns_dwdx.empty() &&
+            m_ps_nns_dwdy.empty() && m_ps_nns_dwdz.empty() && m_size==0;
     }
 
     // vector-like api: resize. Shrinks/grows the member vectors. zeros the vectors.
@@ -436,14 +436,14 @@ namespace GraMPM {
         // size output arrays (this should probably be done before omp parallel)
         #pragma omp single
         {
-            m_p2g_neighbour_nodes.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dx.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dy.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dz.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_w.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dwdx.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dwdy.resize(m_nneighbour_nodes_perp*m_size);
-            m_p2g_neighbour_nodes_dwdz.resize(m_nneighbour_nodes_perp*m_size);
+            m_ps_nns.resize(m_nneighbour_nodes_perp*m_size);
+            m_ps_nns_dx.resize(m_nneighbour_nodes_perp*m_size);
+            m_ps_nns_dy.resize(m_nneighbour_nodes_perp*m_size);
+            m_ps_nns_dz.resize(m_nneighbour_nodes_perp*m_size);
+            m_ps_nns_w.resize(m_nneighbour_nodes_perp*m_size);
+            m_ps_nns_dwdx.resize(m_nneighbour_nodes_perp*m_size);
+            m_ps_nns_dwdy.resize(m_nneighbour_nodes_perp*m_size);
+            m_ps_nns_dwdz.resize(m_nneighbour_nodes_perp*m_size);
         }
 
         // update neighbour indices
@@ -454,7 +454,7 @@ namespace GraMPM {
             for (int di=1-m_knl.radius; di <= m_knl.radius; ++di) {
                 for (int dj = 1-m_knl.radius; dj <= m_knl.radius; ++dj) {
                     for (int dk = 1-m_knl.radius; dk <= m_knl.radius; ++dk) {
-                        m_p2g_neighbour_nodes[i*m_nneighbour_nodes_perp+n] = idx + ravel_grid_idx(di, dj, dk);
+                        m_ps_nns[i*m_nneighbour_nodes_perp+n] = idx + ravel_grid_idx(di, dj, dk);
                         n++;
                     }
                 }
@@ -467,18 +467,18 @@ namespace GraMPM {
             int jstart = i*m_nneighbour_nodes_perp;
             for (int j = jstart; j < jstart+m_nneighbour_nodes_perp; ++j) {
                 std::array<int, 3> idx;
-                idx = unravel_grid_idx(m_p2g_neighbour_nodes[j]);
-                m_p2g_neighbour_nodes_dx[j] = m_x[i] - (idx[0]*background_grid.m_dcell + background_grid.m_mingridx);
-                m_p2g_neighbour_nodes_dy[j] = m_y[i] - (idx[1]*background_grid.m_dcell + background_grid.m_mingridy);
-                m_p2g_neighbour_nodes_dz[j] = m_z[i] - (idx[2]*background_grid.m_dcell + background_grid.m_mingridz);
+                idx = unravel_grid_idx(m_ps_nns[j]);
+                m_ps_nns_dx[j] = m_x[i] - (idx[0]*background_grid.m_dcell + background_grid.m_mingridx);
+                m_ps_nns_dy[j] = m_y[i] - (idx[1]*background_grid.m_dcell + background_grid.m_mingridy);
+                m_ps_nns_dz[j] = m_z[i] - (idx[2]*background_grid.m_dcell + background_grid.m_mingridz);
                 m_knl.w_dwdx(
-                    m_p2g_neighbour_nodes_dx[j],
-                    m_p2g_neighbour_nodes_dy[j],
-                    m_p2g_neighbour_nodes_dz[j],
-                    m_p2g_neighbour_nodes_w[j],
-                    m_p2g_neighbour_nodes_dwdx[j],
-                    m_p2g_neighbour_nodes_dwdy[j],
-                    m_p2g_neighbour_nodes_dwdz[j]
+                    m_ps_nns_dx[j],
+                    m_ps_nns_dy[j],
+                    m_ps_nns_dz[j],
+                    m_ps_nns_w[j],
+                    m_ps_nns_dwdx[j],
+                    m_ps_nns_dwdy[j],
+                    m_ps_nns_dwdz[j]
                 );
             }
         }
@@ -498,8 +498,8 @@ namespace GraMPM {
         #pragma omp for reduction(vec_plus:m_tmpgmass)
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                m_tmpgmass[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i];
+                const int node_idx = ps_nn(i, j);
+                m_tmpgmass[node_idx] += ps_nn_w(i, j)*m_mass[i];
             }
         }
 
@@ -522,10 +522,10 @@ namespace GraMPM {
         #pragma omp for reduction(vec_plus:m_tmpgmomentumx,m_tmpgmomentumy,m_tmpgmomentumz)
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                m_tmpgmomentumx[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i]*m_vx[i];
-                m_tmpgmomentumy[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i]*m_vy[i];
-                m_tmpgmomentumz[node_idx] += p2g_neighbour_node_w(i, j)*m_mass[i]*m_vz[i];
+                const int node_idx = ps_nn(i, j);
+                m_tmpgmomentumx[node_idx] += ps_nn_w(i, j)*m_mass[i]*m_vx[i];
+                m_tmpgmomentumy[node_idx] += ps_nn_w(i, j)*m_mass[i]*m_vy[i];
+                m_tmpgmomentumz[node_idx] += ps_nn_w(i, j)*m_mass[i]*m_vz[i];
             }
         }
 
@@ -552,22 +552,22 @@ namespace GraMPM {
         #pragma omp for reduction (vec_plus:m_tmpgforcex,m_tmpgforcey,m_tmpgforcez)
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
+                const int node_idx = ps_nn(i, j);
                 m_tmpgforcex[node_idx] += -m_mass[i]/m_rho[i]*(
-                    m_sigmaxx[i]*p2g_neighbour_node_dwdx(i, j) +
-                    m_sigmaxy[i]*p2g_neighbour_node_dwdy(i, j) +
-                    m_sigmaxz[i]*p2g_neighbour_node_dwdz(i, j)
-                ) + m_body_force[0]*m_mass[i]*p2g_neighbour_node_w(i, j);
+                    m_sigmaxx[i]*ps_nn_dwdx(i, j) +
+                    m_sigmaxy[i]*ps_nn_dwdy(i, j) +
+                    m_sigmaxz[i]*ps_nn_dwdz(i, j)
+                ) + m_body_force[0]*m_mass[i]*ps_nn_w(i, j);
                 m_tmpgforcey[node_idx] += -m_mass[i]/m_rho[i]*(
-                    m_sigmaxy[i]*p2g_neighbour_node_dwdx(i, j) +
-                    m_sigmayy[i]*p2g_neighbour_node_dwdy(i, j) +
-                    m_sigmayz[i]*p2g_neighbour_node_dwdz(i, j)
-                ) + m_body_force[1]*m_mass[i]*p2g_neighbour_node_w(i, j);
+                    m_sigmaxy[i]*ps_nn_dwdx(i, j) +
+                    m_sigmayy[i]*ps_nn_dwdy(i, j) +
+                    m_sigmayz[i]*ps_nn_dwdz(i, j)
+                ) + m_body_force[1]*m_mass[i]*ps_nn_w(i, j);
                 m_tmpgforcez[node_idx] += -m_mass[i]/m_rho[i]*(
-                    m_sigmaxz[i]*p2g_neighbour_node_dwdx(i, j) +
-                    m_sigmayz[i]*p2g_neighbour_node_dwdy(i, j) +
-                    m_sigmazz[i]*p2g_neighbour_node_dwdz(i, j)
-                ) + m_body_force[2]*m_mass[i]*p2g_neighbour_node_w(i, j);
+                    m_sigmaxz[i]*ps_nn_dwdx(i, j) +
+                    m_sigmayz[i]*ps_nn_dwdy(i, j) +
+                    m_sigmazz[i]*ps_nn_dwdz(i, j)
+                ) + m_body_force[2]*m_mass[i]*ps_nn_w(i, j);
             }
         }
 
@@ -598,13 +598,13 @@ namespace GraMPM {
         #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                m_ax[i] += p2g_neighbour_node_w(i, j)*background_grid.m_forcex[node_idx]/background_grid.m_mass[node_idx];
-                m_ay[i] += p2g_neighbour_node_w(i, j)*background_grid.m_forcey[node_idx]/background_grid.m_mass[node_idx];
-                m_az[i] += p2g_neighbour_node_w(i, j)*background_grid.m_forcez[node_idx]/background_grid.m_mass[node_idx];
-                m_dxdt[i] += p2g_neighbour_node_w(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx];
-                m_dydt[i] += p2g_neighbour_node_w(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx];
-                m_dzdt[i] += p2g_neighbour_node_w(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx];
+                const int node_idx = ps_nn(i, j);
+                m_ax[i] += ps_nn_w(i, j)*background_grid.m_forcex[node_idx]/background_grid.m_mass[node_idx];
+                m_ay[i] += ps_nn_w(i, j)*background_grid.m_forcey[node_idx]/background_grid.m_mass[node_idx];
+                m_az[i] += ps_nn_w(i, j)*background_grid.m_forcez[node_idx]/background_grid.m_mass[node_idx];
+                m_dxdt[i] += ps_nn_w(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx];
+                m_dydt[i] += ps_nn_w(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx];
+                m_dzdt[i] += ps_nn_w(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx];
             }
         }
     }
@@ -629,22 +629,22 @@ namespace GraMPM {
         #pragma omp for
         for (int i = 0; i < m_size; ++i) {
             for (int j = 0; j < m_nneighbour_nodes_perp; ++j) {
-                const int node_idx = p2g_neighbour_node(i, j);
-                m_strainratexx[i] += p2g_neighbour_node_dwdx(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx];
-                m_strainrateyy[i] += p2g_neighbour_node_dwdy(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx];
-                m_strainratezz[i] += p2g_neighbour_node_dwdz(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx];
-                m_strainratexy[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx] + 
-                    p2g_neighbour_node_dwdy(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx]);
-                m_strainratexz[i] += 0.5*(p2g_neighbour_node_dwdx(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx] + 
-                    p2g_neighbour_node_dwdz(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx]);
-                m_strainrateyz[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx] + 
-                    p2g_neighbour_node_dwdz(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx]);
-                m_spinratexy[i] += 0.5*(p2g_neighbour_node_dwdy(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx] -
-                    p2g_neighbour_node_dwdx(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx]);
-                m_spinratexz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx] - 
-                    p2g_neighbour_node_dwdx(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx]);
-                m_spinrateyz[i] += 0.5*(p2g_neighbour_node_dwdz(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx] - 
-                    p2g_neighbour_node_dwdy(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx]);
+                const int node_idx = ps_nn(i, j);
+                m_strainratexx[i] += ps_nn_dwdx(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx];
+                m_strainrateyy[i] += ps_nn_dwdy(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx];
+                m_strainratezz[i] += ps_nn_dwdz(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx];
+                m_strainratexy[i] += 0.5*(ps_nn_dwdx(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx] + 
+                    ps_nn_dwdy(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx]);
+                m_strainratexz[i] += 0.5*(ps_nn_dwdx(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx] + 
+                    ps_nn_dwdz(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx]);
+                m_strainrateyz[i] += 0.5*(ps_nn_dwdy(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx] + 
+                    ps_nn_dwdz(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx]);
+                m_spinratexy[i] += 0.5*(ps_nn_dwdy(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx] -
+                    ps_nn_dwdx(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx]);
+                m_spinratexz[i] += 0.5*(ps_nn_dwdz(i, j)*background_grid.m_momentumx[node_idx]/background_grid.m_mass[node_idx] - 
+                    ps_nn_dwdx(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx]);
+                m_spinrateyz[i] += 0.5*(ps_nn_dwdz(i, j)*background_grid.m_momentumy[node_idx]/background_grid.m_mass[node_idx] - 
+                    ps_nn_dwdy(i, j)*background_grid.m_momentumz[node_idx]/background_grid.m_mass[node_idx]);
             }
         }
     }
