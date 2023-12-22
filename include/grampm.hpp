@@ -46,11 +46,11 @@ namespace GraMPM {
 
         // particle data and functions ---------------------------------------------------------------------------------
         long unsigned int p_size, p_neighbour_nodes_size;
-        std::vector<F> p_x, p_y, p_z, p_vx, p_vy, p_vz, p_ax, p_ay, p_az, p_dxdt, p_dydt, p_dzdt, p_mass, p_rho, 
-            p_sigmaxx, p_sigmayy, p_sigmazz, p_sigmaxy, p_sigmaxz, p_sigmayz, p_strainratexx, p_strainrateyy, 
-            p_strainratezz, p_strainratexy, p_strainratexz, p_strainrateyz, p_spinratexy, p_spinratexz,
-            p_spinrateyz;
-        std::vector<int> p_grid_idx;
+        std::vector<F> m_p_x, m_p_y, m_p_z, m_p_vx, m_p_vy, m_p_vz, m_p_ax, m_p_ay, m_p_az, m_p_dxdt, m_p_dydt, 
+            m_p_dzdt, m_p_mass, m_p_rho, m_p_sigmaxx, m_p_sigmayy, m_p_sigmazz, m_p_sigmaxy, m_p_sigmaxz, m_p_sigmayz, 
+            m_p_strainratexx, m_p_strainrateyy, m_p_strainratezz, m_p_strainratexy, m_p_strainratexz, m_p_strainrateyz, 
+            m_p_spinratexy, m_p_spinratexz, m_p_spinrateyz;
+        std::vector<int> m_p_grid_idx;
         F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
         std::function<void(MPM_system<F>&, const F&)> p_stress_update_function;
         std::array<F, 3> m_body_force;
@@ -151,6 +151,37 @@ namespace GraMPM {
 
         const std::array<F, 3>& body_force() const;
         const F& body_force(const int i) const;
+
+        F& p_x(const int &i);
+        F& p_y(const int &i);
+        F& p_z(const int &i);
+        F& p_vx(const int &i);
+        F& p_vy(const int &i);
+        F& p_vz(const int &i);
+        F& p_ax(const int &i);
+        F& p_ay(const int &i);
+        F& p_az(const int &i);
+        F& p_dxdt(const int &i);
+        F& p_dydt(const int &i);
+        F& p_dzdt(const int &i);
+        F& p_mass(const int &i);
+        F& p_rho(const int &i);
+        F& p_sigmaxx(const int &i);
+        F& p_sigmayy(const int &i);
+        F& p_sigmazz(const int &i);
+        F& p_sigmaxy(const int &i);
+        F& p_sigmaxz(const int &i);
+        F& p_sigmayz(const int &i);
+        F& p_strainratexx(const int &i);
+        F& p_strainrateyy(const int &i);
+        F& p_strainratezz(const int &i);
+        F& p_strainratexy(const int &i);
+        F& p_strainratexz(const int &i);
+        F& p_strainrateyz(const int &i);
+        F& p_spinratexy(const int &i);
+        F& p_spinratexz(const int &i);
+        F& p_spinrateyz(const int &i);
+        int& p_grid_idx(const int &i);
         
     };
 
