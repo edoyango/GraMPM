@@ -11,27 +11,37 @@ namespace GraMPM {
 
             const F D0 {self.m_E/((1.+self.m_v)*(1.-2.*self.m_v))};
 
+            std::vector<F> dsigmaxx(self.p_size), dsigmayy(self.p_size), dsigmazz(self.p_size), dsigmaxy(self.p_size), 
+                dsigmaxz(self.p_size), dsigmayz(self.p_size);
+
             // DE*dstrain
             #pragma omp for
             for (int i = 0; i < self.p_size; ++i) {
                 // jaumann stress rate (applied first, as it depends on current stress state)
-                self.p_sigmaxx[i] -= dt*2.*(self.p_spinratexy[i]*self.p_sigmaxy[i] + self.p_spinratexz[i]*self.p_sigmaxz[i]);
-                self.p_sigmayy[i] -= dt*2.*(-self.p_spinratexy[i]*self.p_sigmaxy[i] + self.p_spinrateyz[i]*self.p_sigmayz[i]);
-                self.p_sigmazz[i] += dt*2.*(self.p_spinratexz[i]*self.p_sigmaxz[i] + self.p_spinrateyz[i]*self.p_sigmayz[i]);
-                self.p_sigmaxy[i] += dt*(self.p_sigmaxx[i]*self.p_spinratexy[i] - self.p_sigmaxz[i]*self.p_spinrateyz[i] -
-                    self.p_spinratexy[i]*self.p_sigmayy[i] - self.p_spinratexz[i]*self.p_sigmayz[i]);
-                self.p_sigmaxz[i] += dt*(self.p_sigmaxx[i]*self.p_spinratexz[i] + self.p_sigmaxy[i]*self.p_spinrateyz[i] -
-                    self.p_spinratexy[i]*self.p_sigmayz[i] - self.p_spinratexz[i]*self.p_sigmazz[i]);
-                self.p_sigmayz[i] += dt*(self.p_sigmaxy[i]*self.p_spinratexz[i] + self.p_sigmayy[i]*self.p_spinrateyz[i] +
-                    self.p_spinratexy[i]*self.p_sigmaxz[i] - self.p_spinrateyz[i]*self.p_sigmazz[i]);
+                dsigmaxx[i] -= 2.*(self.p_spinratexy[i]*self.p_sigmaxy[i] + self.p_spinratexz[i]*self.p_sigmaxz[i]);
+                dsigmayy[i] -= 2.*(-self.p_spinratexy[i]*self.p_sigmaxy[i] + self.p_spinrateyz[i]*self.p_sigmayz[i]);
+                dsigmazz[i] += 2.*(self.p_spinratexz[i]*self.p_sigmaxz[i] + self.p_spinrateyz[i]*self.p_sigmayz[i]);
+                dsigmaxy[i] += self.p_sigmaxx[i]*self.p_spinratexy[i] - self.p_sigmaxz[i]*self.p_spinrateyz[i] -
+                    self.p_spinratexy[i]*self.p_sigmayy[i] - self.p_spinratexz[i]*self.p_sigmayz[i];
+                dsigmaxz[i] += self.p_sigmaxx[i]*self.p_spinratexz[i] + self.p_sigmaxy[i]*self.p_spinrateyz[i] -
+                    self.p_spinratexy[i]*self.p_sigmayz[i] - self.p_spinratexz[i]*self.p_sigmazz[i];
+                dsigmayz[i] += self.p_sigmaxy[i]*self.p_spinratexz[i] + self.p_sigmayy[i]*self.p_spinrateyz[i] +
+                    self.p_spinratexy[i]*self.p_sigmaxz[i] - self.p_spinrateyz[i]*self.p_sigmazz[i];
 
                 // update stress state with elastic increment
-                self.p_sigmaxx[i] += dt*D0*((1.-self.m_v)*self.p_strainratexx[i] + self.m_v*self.p_strainrateyy[i] + self.m_v*self.p_strainratezz[i]);
-                self.p_sigmayy[i] += dt*D0*(self.m_v*self.p_strainratexx[i] + (1.-self.m_v)*self.p_strainrateyy[i] + self.m_v*self.p_strainratezz[i]);
-                self.p_sigmazz[i] += dt*D0*(self.m_v*self.p_strainratexx[i] + self.m_v*self.p_strainrateyy[i] + (1.-self.m_v)*self.p_strainratezz[i]);
-                self.p_sigmaxy[i] += dt*D0*self.p_strainratexy[i]*(1.-2.*self.m_v);
-                self.p_sigmaxz[i] += dt*D0*self.p_strainratexz[i]*(1.-2.*self.m_v);
-                self.p_sigmayz[i] += dt*D0*self.p_strainrateyz[i]*(1.-2.*self.m_v);
+                dsigmaxx[i] += D0*((1.-self.m_v)*self.p_strainratexx[i] + self.m_v*self.p_strainrateyy[i] + self.m_v*self.p_strainratezz[i]);
+                dsigmayy[i] += D0*(self.m_v*self.p_strainratexx[i] + (1.-self.m_v)*self.p_strainrateyy[i] + self.m_v*self.p_strainratezz[i]);
+                dsigmazz[i] += D0*(self.m_v*self.p_strainratexx[i] + self.m_v*self.p_strainrateyy[i] + (1.-self.m_v)*self.p_strainratezz[i]);
+                dsigmaxy[i] += D0*self.p_strainratexy[i]*(1.-2.*self.m_v);
+                dsigmaxz[i] += D0*self.p_strainratexz[i]*(1.-2.*self.m_v);
+                dsigmayz[i] += D0*self.p_strainrateyz[i]*(1.-2.*self.m_v);
+
+                self.p_sigmaxx[i] += dt*dsigmaxx[i];
+                self.p_sigmayy[i] += dt*dsigmayy[i];
+                self.p_sigmazz[i] += dt*dsigmazz[i];
+                self.p_sigmaxy[i] += dt*dsigmaxy[i];
+                self.p_sigmaxz[i] += dt*dsigmaxz[i];
+                self.p_sigmayz[i] += dt*dsigmayz[i];
             }
 
         }
