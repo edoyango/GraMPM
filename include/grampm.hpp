@@ -13,6 +13,7 @@
 #include <functional>
 
 namespace GraMPM {
+
     template<typename F>
     struct particle {
         F x, y, z, vx, vy, vz, ax, ay, az, dxdt, dydt, dzdt, mass, rho, sigmaxx, sigmayy, sigmazz, sigmaxy, sigmaxz, 
@@ -31,102 +32,117 @@ namespace GraMPM {
     };
 
     template<typename F>
-    struct grid {
+    struct MPM_system {
 
-        grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc, 
-            std::function<void(grid<F> &self, const int&, const F&)> momentum_boundary_func, 
-            std::function<void(grid<F> &self, const int&, const F&)> force_boundary_func);
-        grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc, 
-            std::function<void(grid<F> &self, const int&, const F&)> momentum_boundary_func, 
-            std::function<void(grid<F> &self, const int&, const F&)> force_boundary_func);
-        grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc);
-        grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc);
-
-        int calc_idxx(const F &x) const;
-        int calc_idxy(const F &y) const;
-        int calc_idxz(const F &z) const;
-
-        std::array<F, 3> mingrid() const;
-        std::array<F, 3> maxgrid() const;
-        std::array<int, 3> ngrid() const;
-        const F& mass(const int &i, const int &j, const int &k) const;
-        const F& momentumx(const int &i, const int &j, const int &k) const;
-        const F& momentumy(const int &i, const int &j, const int &k) const;
-        const F& momentumz(const int &i, const int &j, const int &k) const;
-        const F& forcex(const int &i, const int &j, const int &k) const;
-        const F& forcey(const int &i, const int &j, const int &k) const;
-        const F& forcez(const int &i, const int &j, const int &k) const;
-
-        // low level setters
-        void set_mass(const int &i, const int &j, const int &k, const F &m);
-        void set_momentumx(const int &i, const int &j, const int &k, const F &mx);
-        void set_momentumy(const int &i, const int &j, const int &k, const F &my);
-        void set_momentumz(const int &i, const int &j, const int &k, const F &mz);
-        void set_forcex(const int &i, const int &j, const int &k, const F &fx);
-        void set_forcey(const int &i, const int &j, const int &k, const F &fy);
-        void set_forcez(const int &i, const int &j, const int &k, const F &fz);
-        void set_momentum_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f);
-        void set_force_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f);
-
-        void update_momentum(const F &dt); 
-        void apply_momentum_boundary_conditions(const int &timestep, const F dt);
-        void apply_force_boundary_conditions(const int &timestep, const F dt);
-
-        // access geometry of underlying grid
-        const int m_ngridx, m_ngridy, m_ngridz, m_ncells;
-        const F m_mingridx, m_mingridy, m_mingridz, m_maxgridx, m_maxgridy, m_maxgridz, m_dcell;
-        std::vector<F> m_mass, m_momentumx, m_momentumy, m_momentumz, m_forcex, m_forcey, m_forcez;
-        std::function<void(grid<F>&, const int&, const F&)> m_momentum_boundary_function, 
-            m_force_boundary_function;
-
-        int calc_ngrid(const F &maxx, const F &minx, const F &dc) const;
-        
-    };
-
-    template<typename F>
-    struct particle_system {
-
-        long unsigned int m_size, m_capacity, m_neighbour_nodes_size;
-        const int m_nneighbour_nodes_perp;
-        std::vector<F> m_x, m_y, m_z, m_vx, m_vy, m_vz, m_ax, m_ay, m_az, m_dxdt, m_dydt, m_dzdt, m_mass, m_rho, 
-            m_sigmaxx, m_sigmayy, m_sigmazz, m_sigmaxy, m_sigmaxz, m_sigmayz, m_strainratexx, m_strainrateyy, 
-            m_strainratezz, m_strainratexy, m_strainratexz, m_strainrateyz, m_spinratexy, m_spinratexz,
-            m_spinrateyz, m_ps_nns_dx, m_ps_nns_dy, m_ps_nns_dz, 
-            m_ps_nns_w, m_ps_nns_dwdx, m_ps_nns_dwdy, 
-            m_ps_nns_dwdz;
-        std::vector<F> m_tmpgmass, m_tmpgmomentumx, m_tmpgmomentumy, m_tmpgmomentumz, m_tmpgforcex, m_tmpgforcey, m_tmpgforcez;
+        // constructors
+        MPM_system(std::array<F, 3> bf, kernel_base<F> knl, std::array<F, 3> g_mingrid_in, 
+            std::array<F, 3> g_maxgrid_in, F cell_size_in)
+            : p_size(0)
+            , knl(knl)
+            , p_body_force(bf)
+            , g_mingridx(g_mingrid_in[0])
+            , g_mingridy(g_mingrid_in[1])
+            , g_mingridz(g_mingrid_in[2])
+            , g_maxgridx(g_maxgrid_in[0])
+            , g_maxgridy(g_maxgrid_in[1])
+            , g_maxgridz(g_maxgrid_in[2])
+            , g_dcell(cell_size_in)
+            , g_ngridx(static_cast<int>((g_maxgrid_in[0]-g_mingrid_in[0])/cell_size_in))
+            , g_ngridy(static_cast<int>((g_maxgrid_in[0]-g_mingrid_in[0])/cell_size_in))
+            , g_ngridz(static_cast<int>((g_maxgrid_in[0]-g_mingrid_in[0])/cell_size_in))
+            , g_size(g_ngridx*g_ngridy*g_ngridz)
+            , pg_nns_pp(static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius)))
             
+        {
+        }; // empty object (everything to be defined later)
+
+        // // initalize empty (no size)
+        // template<typename F>
+        // particle_system<F>::particle_system(std::string fname, grid<F> &ingrid, kernel_base<F> &knl)
+        //     : background_grid(ingrid)
+        //     , m_capacity {0}
+        //     , m_size {0}
+        //     , m_body_force {0., 0., 0.}
+        //     , m_knl {knl}
+        //     , m_nneighbour_nodes_perp {static_cast<int>(8*std::ceil(knl.radius)*std::ceil(knl.radius)*std::ceil(knl.radius))}
+        // {
+        //     std::ifstream file(fname);
+        //     std::string line, header;
+
+        //     // pull out header
+        //     std::getline(file, header);
+
+        //     while (std::getline(file, line)) {
+        //         std::istringstream iss(line);
+        //         GraMPM::particle<F> p;
+        //         iss >> p.x >> p.y >> p.z >> p.vx >> p.vy >> p.vz >> p.mass >> p.rho >> p.sigmaxx >> p.sigmayy >> 
+        //             p.sigmazz >> p.sigmaxy >> p.sigmaxz >> p.sigmayz >> p.ax >> p.ay >> p.az >> p.dxdt >> p.dydt >>
+        //             p.dzdt >> p.strainratexx >> p.strainrateyy >> p.strainratezz >> p.strainratexy >> p.strainratexz >>
+        //             p.strainrateyz >> p.spinratexy >> p.spinratexz >> p.spinrateyz;
+                    
+        //         push_back(p);
+                
+        //     }
+        // }
+
+        // grid data and functions
+        const int g_ngridx, g_ngridy, g_ngridz, g_size;
+        const F g_mingridx, g_mingridy, g_mingridz, g_maxgridx, g_maxgridy, g_maxgridz, g_dcell;
+        std::vector<F> g_mass, g_momentumx, g_momentumy, g_momentumz, g_forcex, g_forcey, g_forcez;
+        std::function<void(MPM_system<F>&, const int&, const F&)> g_momentum_boundary_function, 
+            g_force_boundary_function;
+        const F& g_get_mass(const int &i, const int &j, const int &k) const;
+        const F& g_get_momentumx(const int &i, const int &j, const int &k) const;
+        const F& g_get_momentumy(const int &i, const int &j, const int &k) const;
+        const F& g_get_momentumz(const int &i, const int &j, const int &k) const;
+        const F& g_get_forcex(const int &i, const int &j, const int &k) const;
+        const F& g_get_forcey(const int &i, const int &j, const int &k) const;
+        const F& g_get_forcez(const int &i, const int &j, const int &k) const;
+        std::array<F, 3> g_get_mingrid() const;
+        std::array<F, 3> g_get_maxgrid() const;
+        std::array<int, 3> g_get_ngrid() const;
+        void g_set_mass(const int &i, const int &j, const int &k, const F &m);
+        void g_set_momentumx(const int &i, const int &j, const int &k, const F &mx);
+        void g_set_momentumy(const int &i, const int &j, const int &k, const F &my);
+        void g_set_momentumz(const int &i, const int &j, const int &k, const F &mz);
+        void g_set_forcex(const int &i, const int &j, const int &k, const F &fx);
+        void g_set_forcey(const int &i, const int &j, const int &k, const F &fy);
+        void g_set_forcez(const int &i, const int &j, const int &k, const F &fz);
+        void g_set_momentum_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f);
+        void g_set_force_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f);
+        void g_update_momentum(const F &dt); 
+        void g_apply_momentum_boundary_conditions(const int &timestep, const F dt);
+        void g_apply_force_boundary_conditions(const int &timestep, const F dt);
+
+        // particle data and functions
+        long unsigned int p_size, p_neighbour_nodes_size;
+        std::vector<F> p_x, p_y, p_z, p_vx, p_vy, p_vz, p_ax, p_ay, p_az, p_dxdt, p_dydt, p_dzdt, p_mass, p_rho, 
+            p_sigmaxx, p_sigmayy, p_sigmazz, p_sigmaxy, p_sigmaxz, p_sigmayz, p_strainratexx, p_strainrateyy, 
+            p_strainratezz, p_strainratexy, p_strainratexz, p_strainrateyz, p_spinratexy, p_spinratexz,
+            p_spinrateyz;
+        std::vector<int> p_grid_idx;
         F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
-        std::vector<int> m_grid_idx, m_ps_nns;
-        std::array<F, 3> m_body_force;
-        std::function<void(particle_system<F>&, const F&)> m_stress_update_function;
-
-        int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;
-
-        std::array<int, 3> unravel_grid_idx(const int &idx) const;
-
-        void unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const;
-
-        // variables
-        grid<F> &background_grid;
-        const kernel_base<F> &m_knl;
-
-        // set size of vectors, for manual population later
-        particle_system(const long unsigned int size, std::array<F, 3> bf, grid<F> &ingrid, kernel_base<F> &knl);
-
-        // populate class using vector of particle
-        particle_system(const std::vector<particle<F>> &pv, std::array<F, 3> bf, grid<F> &ingrid, kernel_base<F> &knl);
-
-        particle_system(grid<F> &ingrid, kernel_base<F> &knl);
-
-        particle_system(std::string fname, grid<F> &ingrid, kernel_base<F> &knl);
-        
-        const grid<F>* grid_address();
-
-        // "low level getterfunctions"
+        std::function<void(MPM_system<F>&, const F&)> p_stress_update_function;
+        std::array<F, 3> p_body_force;
+        particle<F> p_at(const int &i);
+        void p_push_back(const particle<F> &p);
+        void p_clear();
+        bool p_empty();
+        void p_resize(const int n);
         void DP_params(F& phi, F& psi, F& coh) const;
         void DP_params(F& phi, F& psi, F& coh, F& alpha_phi, F& alpha_psi, F& k_c) const;
-        std::array<int, 3> grid_idx(const int &i) const;
+        void set_stress_update_function(std::function<void(MPM_system<F>&, const F&)>);
+        void set_DP_params(const F &phi, const F &psi, const F &coh);
+        void p_update_stress(const F &dt);
+        void p_update_velocity(const F &dt);
+        void p_update_position(const F &dt);
+        void p_update_density(const F &dt);
+        std::array<int, 3> p_unravelled_grid_idx(const int &i) const;
+            
+        // particle-node pair data and functions
+        const int pg_nns_pp;
+        std::vector<F> pg_nns_dx, pg_nns_dy, pg_nns_dz, pg_nns_w, pg_nns_dwdx, pg_nns_dwdy, pg_nns_dwdz;
+        std::vector<int> pg_nns;
         const int& ps_nn(const int i, const int j) const ;
         const F& ps_nn_dx(const int i, const int j) const ;
         const F& ps_nn_dy(const int i, const int j) const ;
@@ -135,44 +151,26 @@ namespace GraMPM {
         const F& ps_nn_dwdx(const int i, const int j) const ;
         const F& ps_nn_dwdy(const int i, const int j) const ;
         const F& ps_nn_dwdz(const int i, const int j) const ;
-        const long unsigned int& capacity() const;
-
-        // "low level" setter functions
-        void set_stress_update_function(std::function<void(particle_system<F>&, const F&)>);
-        void set_DP_params(const F &phi, const F &psi, const F &coh);
-
-        // get particle i in "particle" aggregate class
-        particle<F> at(const int &i);
-
-        // uses vector push_back to add particle
-        void push_back(const particle<F> &p);
-
-        void reserve(const long unsigned int &n);
-
-        void clear();
-
-        bool empty();
-
-        void resize(const int n);
-
-        void resize(const int n, const particle<F> p);
-
         void update_particle_to_cell_map(const int &start, const int &end);
         void update_particle_to_cell_map();
-
         // NTS this could be faster
         void map_particles_to_grid();
-
-        void map_mass_to_grid();
-        void map_momentum_to_grid();
-        void map_force_to_grid();
-        void map_acceleration_to_particles();
-        void map_strainrate_to_particles();
-        void update_stress(const F &dt);
-        void update_velocity(const F &dt);
-        void update_position(const F &dt);
-        void update_density(const F &dt);
-
+        void map_p2g_mass();
+        void map_p2g_momentum();
+        void map_p2g_force();
+        void map_g2p_acceleration();
+        void map_g2p_strainrate();
+        
+        // global data
+        const kernel_base<F> knl;
+        
+        // utility functions
+        int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;
+        std::array<int, 3> unravel_grid_idx(const int &idx) const;
+        void unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const;
+        int calc_idxx(const F &x) const;
+        int calc_idxy(const F &y) const;
+        int calc_idxz(const F &z) const;
         void save_to_file(const std::string &prefix, const int &timestep) const;
     };
 
@@ -181,5 +179,7 @@ namespace GraMPM {
 #include <grampm_particle.ipp>
 #include <grampm_grid.ipp>
 #include <grampm_particlesystem.ipp>
+#include <grampm_pair.ipp>
+#include <grampm_utility.ipp>
 
 #endif

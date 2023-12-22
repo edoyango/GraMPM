@@ -5,182 +5,96 @@
 
 namespace GraMPM {
     
-    template<typename F>
-    grid<F>::grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc, 
-        std::function<void(grid<F>&, const int&, const F&)> momentum_boundary_func, 
-        std::function<void(grid<F>&, const int&, const F&)> force_boundary_func)
-        : m_mingridx {minx}
-        , m_mingridy {miny}
-        , m_mingridz {minz}
-        , m_maxgridx {maxx}
-        , m_maxgridy {maxy}
-        , m_maxgridz {maxz}
-        , m_ngridx {calc_ngrid(maxx, minx, dc)}
-        , m_ngridy {calc_ngrid(maxy, miny, dc)}
-        , m_ngridz {calc_ngrid(maxz, minz, dc)}
-        , m_ncells {m_ngridx*m_ngridy*m_ngridz}
-        , m_dcell {dc}
-        , m_mass(m_ncells, 0.)
-        , m_momentumx(m_ncells, 0.)
-        , m_momentumy(m_ncells, 0.)
-        , m_momentumz(m_ncells, 0.)
-        , m_forcex(m_ncells, 0.)
-        , m_forcey(m_ncells, 0.)
-        , m_forcez(m_ncells, 0.)
-        , m_momentum_boundary_function(momentum_boundary_func)
-        , m_force_boundary_function(force_boundary_func)
-    {
-    }
-
-    template<typename F>
-    grid<F>::grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc, 
-        std::function<void(grid<F>&, const int&, const F&)> momentum_boundary_func, 
-        std::function<void(grid<F>&, const int&, const F&)> force_boundary_func)
-        : m_mingridx {minx[0]}
-        , m_mingridy {minx[1]}
-        , m_mingridz {minx[2]}
-        , m_maxgridx {maxx[0]}
-        , m_maxgridy {maxx[1]}
-        , m_maxgridz {maxx[2]}
-        , m_ngridx {calc_ngrid(maxx[0], minx[0], dc)}
-        , m_ngridy {calc_ngrid(maxx[1], minx[1], dc)}
-        , m_ngridz {calc_ngrid(maxx[2], minx[2], dc)}
-        , m_ncells {m_ngridx*m_ngridy*m_ngridz}
-        , m_dcell {dc}
-        , m_mass(m_ncells, 0.)
-        , m_momentumx(m_ncells, 0.)
-        , m_momentumy(m_ncells, 0.)
-        , m_momentumz(m_ncells, 0.)
-        , m_forcex(m_ncells, 0.)
-        , m_forcey(m_ncells, 0.)
-        , m_forcez(m_ncells, 0.)
-        , m_momentum_boundary_function(momentum_boundary_func)
-        , m_force_boundary_function(force_boundary_func)
-    {
-    }
-    template<typename F>
-    grid<F>::grid(const F minx, const F miny, const F minz, const F maxx, const F maxy, const F maxz, const F dc)
-        : m_mingridx {minx}
-        , m_mingridy {miny}
-        , m_mingridz {minz}
-        , m_maxgridx {maxx}
-        , m_maxgridy {maxy}
-        , m_maxgridz {maxz}
-        , m_ngridx {calc_ngrid(maxx, minx, dc)}
-        , m_ngridy {calc_ngrid(maxy, miny, dc)}
-        , m_ngridz {calc_ngrid(maxz, minz, dc)}
-        , m_ncells {m_ngridx*m_ngridy*m_ngridz}
-        , m_dcell {dc}
-        , m_mass(m_ncells, 0.)
-        , m_momentumx(m_ncells, 0.)
-        , m_momentumy(m_ncells, 0.)
-        , m_momentumz(m_ncells, 0.)
-        , m_forcex(m_ncells, 0.)
-        , m_forcey(m_ncells, 0.)
-        , m_forcez(m_ncells, 0.)
-    {
-    }
-
-    template<typename F>
-    grid<F>::grid(const std::array<F, 3> minx, const std::array<F, 3> maxx, const F dc)
-        : m_mingridx {minx[0]}
-        , m_mingridy {minx[1]}
-        , m_mingridz {minx[2]}
-        , m_maxgridx {maxx[0]}
-        , m_maxgridy {maxx[1]}
-        , m_maxgridz {maxx[2]}
-        , m_ngridx {calc_ngrid(maxx[0], minx[0], dc)}
-        , m_ngridy {calc_ngrid(maxx[1], minx[1], dc)}
-        , m_ngridz {calc_ngrid(maxx[2], minx[2], dc)}
-        , m_ncells {m_ngridx*m_ngridy*m_ngridz}
-        , m_dcell {dc}
-        , m_mass(m_ncells, 0.)
-        , m_momentumx(m_ncells, 0.)
-        , m_momentumy(m_ncells, 0.)
-        , m_momentumz(m_ncells, 0.)
-        , m_forcex(m_ncells, 0.)
-        , m_forcey(m_ncells, 0.)
-        , m_forcez(m_ncells, 0.)
-    {
-    }
-    
     // getters
-    template<typename F> int grid<F>::calc_idxx(const F &x) const { return static_cast<int>((x-m_mingridx)/m_dcell); }
-    template<typename F> int grid<F>::calc_idxy(const F &y) const { return static_cast<int>((y-m_mingridy)/m_dcell); }
-    template<typename F> int grid<F>::calc_idxz(const F &z) const { return static_cast<int>((z-m_mingridz)/m_dcell); }
-    template<typename F> std::array<F, 3> grid<F>::mingrid() const { return {m_mingridx, m_mingridy, m_mingridz}; }
-    template<typename F> std::array<F, 3> grid<F>::maxgrid() const { return {m_maxgridx, m_maxgridy, m_maxgridz}; }
-    template<typename F> std::array<int, 3> grid<F>::ngrid() const { return {m_ngridx, m_ngridy, m_ngridz}; }
-    template<typename F> const F& grid<F>::mass(const int &i, const int &j, const int &k) const { 
-        return m_mass[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    template<typename F> 
+    std::array<F, 3> MPM_system<F>::g_get_mingrid() const { return {g_mingridx, g_mingridy, g_mingridz}; }
+    template<typename F>
+    std::array<F, 3> MPM_system<F>::g_get_maxgrid() const { return {g_maxgridx, g_maxgridy, g_maxgridz}; }
+    template<typename F> 
+    std::array<int, 3> MPM_system<F>::g_get_ngrid() const { return {g_ngridx, g_ngridy, g_ngridz}; }
+    template<typename F> 
+    const F& MPM_system<F>::g_get_mass(const int &i, const int &j, const int &k) const { 
+        return g_mass[ravel_grid_idx(i, j, k)];
     }
-    template<typename F> const F& grid<F>::momentumx(const int &i, const int &j, const int &k) const { 
-        return m_momentumx[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    template<typename F> 
+    const F& MPM_system<F>::g_get_momentumx(const int &i, const int &j, const int &k) const { 
+        return g_momentumx[ravel_grid_idx(i, j, k)];
     }
-    template<typename F> const F& grid<F>::momentumy(const int &i, const int &j, const int &k) const { 
-        return m_momentumy[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    template<typename F> 
+    const F& MPM_system<F>::g_get_momentumy(const int &i, const int &j, const int &k) const { 
+        return g_momentumy[ravel_grid_idx(i, j, k)];
     }
-    template<typename F> const F& grid<F>::momentumz(const int &i, const int &j, const int &k) const { 
-        return m_momentumz[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    template<typename F> 
+    const F& MPM_system<F>::g_get_momentumz(const int &i, const int &j, const int &k) const { 
+        return g_momentumz[ravel_grid_idx(i, j, k)];
     }
-    template<typename F> const F& grid<F>::forcex(const int &i, const int &j, const int &k) const { 
-        return m_forcex[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    template<typename F> 
+    const F& MPM_system<F>::g_get_forcex(const int &i, const int &j, const int &k) const { 
+        return g_forcex[ravel_grid_idx(i, j, k)];
     }
-    template<typename F> const F& grid<F>::forcey(const int &i, const int &j, const int &k) const { 
-        return m_forcey[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    template<typename F> 
+    const F& MPM_system<F>::g_get_forcey(const int &i, const int &j, const int &k) const { 
+        return g_forcey[ravel_grid_idx(i, j, k)];
     }
-    template<typename F> const F& grid<F>::forcez(const int &i, const int &j, const int &k) const { 
-        return m_forcez[i*m_ngridy*m_ngridz+j*m_ngridz+k];
+    template<typename F> 
+    const F& MPM_system<F>::g_get_forcez(const int &i, const int &j, const int &k) const { 
+        return g_forcez[ravel_grid_idx(i, j, k)];
     }
 
     // setters
-    template<typename F> void grid<F>::set_mass(const int &i, const int &j, const int &k, const F &m) { 
-        m_mass[i*m_ngridy*m_ngridz+j*m_ngridz+k] = m;
+    template<typename F>
+    void MPM_system<F>::g_set_mass(const int &i, const int &j, const int &k, const F &m) { 
+        g_mass[ravel_grid_idx(i, j, k)] = m;
     }
-    template<typename F> void grid<F>::set_momentumx(const int &i, const int &j, const int &k, const F &mx) { 
-        m_momentumx[i*m_ngridy*m_ngridz+j*m_ngridz+k] = mx;
+    template<typename F>
+    void MPM_system<F>::g_set_momentumx(const int &i, const int &j, const int &k, const F &mx) { 
+        g_momentumx[ravel_grid_idx(i, j, k)] = mx;
     }
-    template<typename F> void grid<F>::set_momentumy(const int &i, const int &j, const int &k, const F &my) { 
-        m_momentumy[i*m_ngridy*m_ngridz+j*m_ngridz+k] = my;
+    template<typename F> 
+    void MPM_system<F>::g_set_momentumy(const int &i, const int &j, const int &k, const F &my) { 
+        g_momentumy[ravel_grid_idx(i, j, k)] = my;
     }
-    template<typename F> void grid<F>::set_momentumz(const int &i, const int &j, const int &k, const F &mz) { 
-        m_momentumz[i*m_ngridy*m_ngridz+j*m_ngridz+k] = mz;
+    template<typename F> 
+    void MPM_system<F>::g_set_momentumz(const int &i, const int &j, const int &k, const F &mz) { 
+        g_momentumz[ravel_grid_idx(i, j, k)] = mz;
     }
-    template<typename F> void grid<F>::set_forcex(const int &i, const int &j, const int &k, const F &fx) { 
-        m_forcex[i*m_ngridy*m_ngridz+j*m_ngridz+k] = fx;
+    template<typename F> 
+    void MPM_system<F>::g_set_forcex(const int &i, const int &j, const int &k, const F &fx) { 
+        g_forcex[ravel_grid_idx(i, j, k)] = fx;
     }
-    template<typename F> void grid<F>::set_forcey(const int &i, const int &j, const int &k, const F &fy) { 
-        m_forcey[i*m_ngridy*m_ngridz+j*m_ngridz+k] = fy;
+    template<typename F> 
+    void MPM_system<F>::g_set_forcey(const int &i, const int &j, const int &k, const F &fy) { 
+        g_forcey[ravel_grid_idx(i, j, k)] = fy;
     }
-    template<typename F> void grid<F>::set_forcez(const int &i, const int &j, const int &k, const F &fz) { 
-        m_forcez[i*m_ngridy*m_ngridz+j*m_ngridz+k] = fz;
+    template<typename F> 
+    void MPM_system<F>::g_set_forcez(const int &i, const int &j, const int &k, const F &fz) { 
+        g_forcez[ravel_grid_idx(i, j, k)] = fz;
     }
-    template<typename F> void grid<F>::set_momentum_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f)
-            { m_momentum_boundary_function = f; }
-    template<typename F> void grid<F>::set_force_boundary_function(std::function<void(grid<F>&, const int&, const F&)> f)
-            { m_force_boundary_function = f; }
+    template<typename F> 
+    void MPM_system<F>::g_set_momentum_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f)
+            { g_momentum_boundary_function = f; }
+    template<typename F> 
+    void MPM_system<F>::g_set_force_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f)
+            { g_force_boundary_function = f; }
     
-    template<typename F> void grid<F>::update_momentum(const F &dt) {
+    template<typename F> 
+    void MPM_system<F>::g_update_momentum(const F &dt) {
         #pragma omp for
-        for (int i = 0; i < m_ncells; ++i) {
-            m_momentumx[i] += dt*m_forcex[i];
-            m_momentumy[i] += dt*m_forcey[i];
-            m_momentumz[i] += dt*m_forcez[i];
+        for (int i = 0; i < g_size; ++i) {
+            g_momentumx[i] += dt*g_forcex[i];
+            g_momentumy[i] += dt*g_forcey[i];
+            g_momentumz[i] += dt*g_forcez[i];
         }
     }
 
-    template<typename F> void grid<F>::apply_momentum_boundary_conditions(const int &timestep, const F dt) {
-        m_momentum_boundary_function(*this, timestep, dt);
+    template<typename F> 
+    void MPM_system<F>::g_apply_momentum_boundary_conditions(const int &timestep, const F dt) {
+        g_momentum_boundary_function(*this, timestep, dt);
     }
 
-    template<typename F> void grid<F>::apply_force_boundary_conditions(const int &timestep, const F dt) {
-        m_force_boundary_function(*this, timestep, dt);
-    }
-
-    // helper function to calculate number of grid cells in each dimension
-    template<typename F>
-    int grid<F>::calc_ngrid(const F &maxx, const F &minx, const F &dc) const {
-        return std::ceil((maxx-minx)/dc)+1;
+    template<typename F> 
+    void MPM_system<F>::g_apply_force_boundary_conditions(const int &timestep, const F dt) {
+        g_force_boundary_function(*this, timestep, dt);
     }
 }
 
