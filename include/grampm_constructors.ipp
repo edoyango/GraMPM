@@ -12,28 +12,28 @@ namespace GraMPM {
     template<typename F>
     MPM_system<F>::MPM_system(std::array<F, 3> bf, kernel_base<F> &knl_in, std::array<F, 3> g_mingrid_in, 
         std::array<F, 3> g_maxgrid_in, F cell_size_in)
-        : p_size(0)
-        , knl(knl_in)
-        , p_body_force(bf)
-        , g_mingridx(g_mingrid_in[0])
-        , g_mingridy(g_mingrid_in[1])
-        , g_mingridz(g_mingrid_in[2])
-        , g_maxgridx(g_maxgrid_in[0])
-        , g_maxgridy(g_maxgrid_in[1])
-        , g_maxgridz(g_maxgrid_in[2])
-        , g_dcell(cell_size_in)
-        , g_ngridx(calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in))
-        , g_ngridy(calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in))
-        , g_ngridz(calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in))
-        , g_size(g_ngridx*g_ngridy*g_ngridz)
-        , pg_nns_pp(static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)))
-        , g_mass(g_size)
-        , g_momentumx(g_size)
-        , g_momentumy(g_size)
-        , g_momentumz(g_size)
-        , g_forcex(g_size)
-        , g_forcey(g_size)
-        , g_forcez(g_size)
+        : p_size {0}
+        , knl {knl_in}
+        , p_body_force {bf}
+        , g_mingridx {g_mingrid_in[0]}
+        , g_mingridy {g_mingrid_in[1]}
+        , g_mingridz {g_mingrid_in[2]}
+        , g_maxgridx {g_maxgrid_in[0]}
+        , g_maxgridy {g_maxgrid_in[1]}
+        , g_maxgridz {g_maxgrid_in[2]}
+        , g_dcell {cell_size_in}
+        , g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
+        , g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
+        , g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
+        , g_size {g_ngridx*g_ngridy*g_ngridz}
+        , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
+        , g_mass(g_size, 0.)
+        , g_momentumx(g_size, 0.)
+        , g_momentumy(g_size, 0.)
+        , g_momentumz(g_size, 0.)
+        , g_forcex(g_size, 0.)
+        , g_forcey(g_size, 0.)
+        , g_forcez(g_size, 0.)
         {
         }; // empty object (everything to be defined later)
 
@@ -41,7 +41,7 @@ namespace GraMPM {
     template<typename F>
     MPM_system<F>::MPM_system(int p_size_in, std::array<F, 3> bf, kernel_base<F> &knl_in, std::array<F, 3> g_mingrid_in, 
         std::array<F, 3> g_maxgrid_in, F cell_size_in)
-        : p_size(p_size_in)
+        : p_size {p_size_in}
         , p_x(p_size_in, 0.)
         , p_y(p_size_in, 0.)
         , p_z(p_size_in, 0.)
@@ -71,27 +71,27 @@ namespace GraMPM {
         , p_spinratexy(p_size_in, 0.)
         , p_spinratexz(p_size_in, 0.)
         , p_spinrateyz(p_size_in, 0.)
-        , knl(knl_in)
-        , p_body_force(bf)
-        , g_mingridx(g_mingrid_in[0])
-        , g_mingridy(g_mingrid_in[1])
-        , g_mingridz(g_mingrid_in[2])
-        , g_maxgridx(g_maxgrid_in[0])
-        , g_maxgridy(g_maxgrid_in[1])
-        , g_maxgridz(g_maxgrid_in[2])
-        , g_dcell(cell_size_in)
-        , g_ngridx(calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in))
-        , g_ngridy(calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in))
-        , g_ngridz(calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in))
-        , g_size(g_ngridx*g_ngridy*g_ngridz)
-        , pg_nns_pp(static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)))
-        , g_mass(g_size)
-        , g_momentumx(g_size)
-        , g_momentumy(g_size)
-        , g_momentumz(g_size)
-        , g_forcex(g_size)
-        , g_forcey(g_size)
-        , g_forcez(g_size)
+        , knl {knl_in}
+        , p_body_force {bf}
+        , g_mingridx {g_mingrid_in[0]}
+        , g_mingridy {g_mingrid_in[1]}
+        , g_mingridz {g_mingrid_in[2]}
+        , g_maxgridx {g_maxgrid_in[0]}
+        , g_maxgridy {g_maxgrid_in[1]}
+        , g_maxgridz {g_maxgrid_in[2]}
+        , g_dcell {cell_size_in}
+        , g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
+        , g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
+        , g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
+        , g_size {g_ngridx*g_ngridy*g_ngridz}
+        , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
+        , g_mass(g_size, 0.)
+        , g_momentumx(g_size, 0.)
+        , g_momentumy(g_size, 0.)
+        , g_momentumz(g_size, 0.)
+        , g_forcex(g_size, 0.)
+        , g_forcey(g_size, 0.)
+        , g_forcez(g_size, 0.)
         {
         }; // empty object (everything to be defined later)
 
@@ -99,27 +99,27 @@ namespace GraMPM {
     template<typename F>
     MPM_system<F>::MPM_system(std::vector<particle<F>> pv, std::array<F, 3> bf, kernel_base<F> &knl_in, 
         std::array<F, 3> g_mingrid_in, std::array<F, 3> g_maxgrid_in, F cell_size_in)
-        : knl(knl_in)
-        , p_body_force(bf)
-        , g_mingridx(g_mingrid_in[0])
-        , g_mingridy(g_mingrid_in[1])
-        , g_mingridz(g_mingrid_in[2])
-        , g_maxgridx(g_maxgrid_in[0])
-        , g_maxgridy(g_maxgrid_in[1])
-        , g_maxgridz(g_maxgrid_in[2])
-        , g_dcell(cell_size_in)
-        , g_ngridx(calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in))
-        , g_ngridy(calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in))
-        , g_ngridz(calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in))
-        , g_size(g_ngridx*g_ngridy*g_ngridz)
-        , pg_nns_pp(static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)))
-        , g_mass(g_size)
-        , g_momentumx(g_size)
-        , g_momentumy(g_size)
-        , g_momentumz(g_size)
-        , g_forcex(g_size)
-        , g_forcey(g_size)
-        , g_forcez(g_size)
+        : knl {knl_in}
+        , p_body_force {bf}
+        , g_mingridx {g_mingrid_in[0]}
+        , g_mingridy {g_mingrid_in[1]}
+        , g_mingridz {g_mingrid_in[2]}
+        , g_maxgridx {g_maxgrid_in[0]}
+        , g_maxgridy {g_maxgrid_in[1]}
+        , g_maxgridz {g_maxgrid_in[2]}
+        , g_dcell {cell_size_in}
+        , g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
+        , g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
+        , g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
+        , g_size {g_ngridx*g_ngridy*g_ngridz}
+        , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
+        , g_mass(g_size, 0.)
+        , g_momentumx(g_size, 0.)
+        , g_momentumy(g_size, 0.)
+        , g_momentumz(g_size, 0.)
+        , g_forcex(g_size, 0.)
+        , g_forcey(g_size, 0.)
+        , g_forcez(g_size, 0.)
         {
             p_clear();
             for (int i = 0; i < pv.size(); ++i) p_push_back(pv[i]);
@@ -130,28 +130,28 @@ namespace GraMPM {
     template<typename F>
     MPM_system<F>::MPM_system(std::string fname, std::array<F, 3> bf, kernel_base<F> &knl_in, 
         std::array<F, 3> g_mingrid_in, std::array<F, 3> g_maxgrid_in, F cell_size_in)
-        : knl(knl_in)
-        , p_body_force(bf)
-        , g_mingridx(g_mingrid_in[0])
-        , g_mingridy(g_mingrid_in[1])
-        , g_mingridz(g_mingrid_in[2])
-        , g_maxgridx(g_maxgrid_in[0])
-        , g_maxgridy(g_maxgrid_in[1])
-        , g_maxgridz(g_maxgrid_in[2])
-        , g_dcell(cell_size_in)
-        , g_ngridx(calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in))
-        , g_ngridy(calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in))
-        , g_ngridz(calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in))
-        , g_size(g_ngridx*g_ngridy*g_ngridz)
-        , pg_nns_pp(static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)))
-        , g_mass(g_size)
-        , g_momentumx(g_size)
-        , g_momentumy(g_size)
-        , g_momentumz(g_size)
-        , g_forcex(g_size)
-        , g_forcey(g_size)
-        , g_forcez(g_size)
-        , p_size(0)
+        : knl {knl_in}
+        , p_body_force {bf}
+        , g_mingridx {g_mingrid_in[0]}
+        , g_mingridy {g_mingrid_in[1]}
+        , g_mingridz {g_mingrid_in[2]}
+        , g_maxgridx {g_maxgrid_in[0]}
+        , g_maxgridy {g_maxgrid_in[1]}
+        , g_maxgridz {g_maxgrid_in[2]}
+        , g_dcell {cell_size_in}
+        , g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
+        , g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
+        , g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
+        , g_size {g_ngridx*g_ngridy*g_ngridz}
+        , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
+        , g_mass(g_size, 0.)
+        , g_momentumx(g_size, 0.)
+        , g_momentumy(g_size, 0.)
+        , g_momentumz(g_size, 0.)
+        , g_forcex(g_size, 0.)
+        , g_forcey(g_size, 0.)
+        , g_forcez(g_size, 0.)
+        , p_size {0}
     {
         std::ifstream file(fname);
         std::string line, header;
