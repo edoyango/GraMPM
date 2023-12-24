@@ -27,22 +27,22 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
 
     GraMPM::MPM_system<double> p(bf, knl, mingrid, maxgrid, dcell);
 
-    CHECK(p.g_ngridx==6);
-    CHECK(p.g_ngridy==11);
-    CHECK(p.g_ngridz==16);
+    CHECK(p.g_ngridx()==6);
+    CHECK(p.g_ngridy()==11);
+    CHECK(p.g_ngridz()==16);
 
     generate_particles(p);
 
     // setup grid
-    for (int i = 0 ; i < p.g_ngridx; ++i) 
-        for (int j = 0; j < p.g_ngridy; ++j)
-            for (int k = 0; k < p.g_ngridz; ++k) {
-                p.g_set_momentumx(i, j, k, 0.1*(i+j+k));
-                p.g_set_momentumy(i, j, k, 0.2*(i+j+k));
-                p.g_set_momentumz(i, j, k, 0.3*(i+j+k));
-                p.g_set_forcex(i, j, k, 0.4*(i+j+k));
-                p.g_set_forcey(i, j, k, 0.5*(i+j+k));
-                p.g_set_forcez(i, j, k, 0.6*(i+j+k));
+    for (int i = 0 ; i < p.g_ngridx(); ++i) 
+        for (int j = 0; j < p.g_ngridy(); ++j)
+            for (int k = 0; k < p.g_ngridz(); ++k) {
+                p.g_momentumx(i, j, k) = 0.1*(i+j+k);
+                p.g_momentumy(i, j, k) = 0.2*(i+j+k);
+                p.g_momentumz(i, j, k) = 0.3*(i+j+k);
+                p.g_forcex(i, j, k) = 0.4*(i+j+k);
+                p.g_forcey(i, j, k) = 0.5*(i+j+k);
+                p.g_forcez(i, j, k) = 0.6*(i+j+k);
             }
 
     p.map_particles_to_grid();
@@ -52,21 +52,21 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
     // check conservation
     // sum particles' force (m*a) and momentum (dxdt*m)
     double psum[6] {0., 0., 0., 0., 0., 0.}, gsum[6] {0., 0., 0., 0., 0., 0.};
-    for (int i = 0; i < p.p_size; ++i) {
-        psum[0] += p.p_ax[i]*p.p_mass[i];
-        psum[1] += p.p_ay[i]*p.p_mass[i];
-        psum[2] += p.p_az[i]*p.p_mass[i];
-        psum[3] += p.p_dxdt[i]*p.p_mass[i];
-        psum[4] += p.p_dydt[i]*p.p_mass[i];
-        psum[5] += p.p_dzdt[i]*p.p_mass[i];
+    for (int i = 0; i < p.p_size(); ++i) {
+        psum[0] += p.p_ax(i)*p.p_mass(i);
+        psum[1] += p.p_ay(i)*p.p_mass(i);
+        psum[2] += p.p_az(i)*p.p_mass(i);
+        psum[3] += p.p_dxdt(i)*p.p_mass(i);
+        psum[4] += p.p_dydt(i)*p.p_mass(i);
+        psum[5] += p.p_dzdt(i)*p.p_mass(i);
     }
-    for (int i = 0; i < p.g_size; ++i) {
-        gsum[0] += p.g_forcex[i];
-        gsum[1] += p.g_forcey[i];
-        gsum[2] += p.g_forcez[i];
-        gsum[3] += p.g_momentumx[i];
-        gsum[4] += p.g_momentumy[i];
-        gsum[5] += p.g_momentumz[i];
+    for (int i = 0; i < p.g_size(); ++i) {
+        gsum[0] += p.g_forcex(i);
+        gsum[1] += p.g_forcey(i);
+        gsum[2] += p.g_forcez(i);
+        gsum[3] += p.g_momentumx(i);
+        gsum[4] += p.g_momentumy(i);
+        gsum[5] += p.g_momentumz(i);
     }
 
     // test
@@ -83,22 +83,22 @@ TEST_CASE("Calculate particles' accelerations (cubic bspline)") {
     GraMPM::kernel_cubic_bspline<double> knl(dcell);
 
     GraMPM::MPM_system<double> p(bf, knl, mingrid, maxgrid, dcell);
-    CHECK(p.g_ngridx==8);
-    CHECK(p.g_ngridy==13);
-    CHECK(p.g_ngridz==18);
+    CHECK(p.g_ngridx()==8);
+    CHECK(p.g_ngridy()==13);
+    CHECK(p.g_ngridz()==18);
 
     generate_particles(p);
 
     // setup grid
-    for (int i = 0 ; i < p.g_ngridx; ++i) 
-        for (int j = 0; j < p.g_ngridy; ++j)
-            for (int k = 0; k < p.g_ngridz; ++k) {
-                p.g_set_momentumx(i, j, k, 0.1*(i+j+k));
-                p.g_set_momentumy(i, j, k, 0.2*(i+j+k));
-                p.g_set_momentumz(i, j, k, 0.3*(i+j+k));
-                p.g_set_forcex(i, j, k, 0.4*(i+j+k));
-                p.g_set_forcey(i, j, k, 0.5*(i+j+k));
-                p.g_set_forcez(i, j, k, 0.6*(i+j+k));
+    for (int i = 0 ; i < p.g_ngridx(); ++i) 
+        for (int j = 0; j < p.g_ngridy(); ++j)
+            for (int k = 0; k < p.g_ngridz(); ++k) {
+                p.g_momentumx(i, j, k) = 0.1*(i+j+k);
+                p.g_momentumy(i, j, k) = 0.2*(i+j+k);
+                p.g_momentumz(i, j, k) = 0.3*(i+j+k);
+                p.g_forcex(i, j, k) = 0.4*(i+j+k);
+                p.g_forcey(i, j, k) = 0.5*(i+j+k);
+                p.g_forcez(i, j, k) = 0.6*(i+j+k);
             }
 
     p.map_particles_to_grid();
@@ -108,21 +108,21 @@ TEST_CASE("Calculate particles' accelerations (cubic bspline)") {
     // check conservation
     // sum particles' force (m*a) and momentum (dxdt*m)
     double psum[6] {0., 0., 0., 0., 0., 0.}, gsum[6] {0., 0., 0., 0., 0., 0.};
-    for (int i = 0; i < p.p_size; ++i) {
-        psum[0] += p.p_ax[i]*p.p_mass[i];
-        psum[1] += p.p_ay[i]*p.p_mass[i];
-        psum[2] += p.p_az[i]*p.p_mass[i];
-        psum[3] += p.p_dxdt[i]*p.p_mass[i];
-        psum[4] += p.p_dydt[i]*p.p_mass[i];
-        psum[5] += p.p_dzdt[i]*p.p_mass[i];
+    for (int i = 0; i < p.p_size(); ++i) {
+        psum[0] += p.p_ax(i)*p.p_mass(i);
+        psum[1] += p.p_ay(i)*p.p_mass(i);
+        psum[2] += p.p_az(i)*p.p_mass(i);
+        psum[3] += p.p_dxdt(i)*p.p_mass(i);
+        psum[4] += p.p_dydt(i)*p.p_mass(i);
+        psum[5] += p.p_dzdt(i)*p.p_mass(i);
     }
-    for (int i = 0; i < p.g_size; ++i) {
-        gsum[0] += p.g_forcex[i];
-        gsum[1] += p.g_forcey[i];
-        gsum[2] += p.g_forcez[i];
-        gsum[3] += p.g_momentumx[i];
-        gsum[4] += p.g_momentumy[i];
-        gsum[5] += p.g_momentumz[i];
+    for (int i = 0; i < p.g_size(); ++i) {
+        gsum[0] += p.g_forcex(i);
+        gsum[1] += p.g_forcey(i);
+        gsum[2] += p.g_forcez(i);
+        gsum[3] += p.g_momentumx(i);
+        gsum[4] += p.g_momentumy(i);
+        gsum[5] += p.g_momentumz(i);
     }
 
     // test
@@ -140,47 +140,47 @@ TEST_CASE("Calculate particles' strain/spin rates (linear bspline)") {
 
     GraMPM::MPM_system<double> p(bf, knl, mingrid, maxgrid, dcell);
 
-    CHECK(p.g_ngridx==6);
-    CHECK(p.g_ngridy==11);
-    CHECK(p.g_ngridz==16);
+    CHECK(p.g_ngridx()==6);
+    CHECK(p.g_ngridy()==11);
+    CHECK(p.g_ngridz()==16);
 
     generate_particles(p);
 
     // setup grid
-    for (int i = 0; i < p.g_ngridx; ++i)
-        for (int j = 0; j < p.g_ngridy; ++j) 
-            for (int k = 0; k < p.g_ngridz; ++k) {
-                const double x = i*0.2 + p.g_mingridx;
-                const double y = j*0.2 + p.g_mingridy;
-                const double z = k*0.2 + p.g_mingridz;
-                p.g_set_momentumx(i, j, k, 0.1*(x-y-z));
-                p.g_set_momentumy(i, j, k, 0.2*(y-x-z));
-                p.g_set_momentumz(i, j, k, 0.3*(z-x-y));
-                p.g_set_mass(i, j, k, 1.);
+    for (int i = 0; i < p.g_ngridx(); ++i)
+        for (int j = 0; j < p.g_ngridy(); ++j) 
+            for (int k = 0; k < p.g_ngridz(); ++k) {
+                const double x = i*0.2 + p.g_mingridx();
+                const double y = j*0.2 + p.g_mingridy();
+                const double z = k*0.2 + p.g_mingridz();
+                p.g_momentumx(i, j, k) = 0.1*(x-y-z);
+                p.g_momentumy(i, j, k) = 0.2*(y-x-z);
+                p.g_momentumz(i, j, k) = 0.3*(z-x-y);
+                p.g_mass(i, j, k) = 1.;
             }
     
     p.map_particles_to_grid();
     p.map_g2p_strainrate();
 
-    REQUIRE(std::round(p.p_strainratexx[0]*100.)==10.);
-    REQUIRE(std::round(p.p_strainrateyy[0]*100.)==20.);
-    REQUIRE(std::round(p.p_strainratezz[0]*100.)==30.);
-    REQUIRE(std::round(p.p_strainratexy[0]*100.)==-15.);
-    REQUIRE(std::round(p.p_strainratexz[0]*100.)==-20.);
-    REQUIRE(std::round(p.p_strainrateyz[0]*100.)==-25.);
-    REQUIRE(std::round(p.p_spinratexy[0]*100.)==5.);
-    REQUIRE(std::round(p.p_spinratexz[0]*100.)==10.);
-    REQUIRE(std::round(p.p_spinrateyz[0]*100.)==5.);
+    REQUIRE(std::round(p.p_strainratexx(0)*100.)==10.);
+    REQUIRE(std::round(p.p_strainrateyy(0)*100.)==20.);
+    REQUIRE(std::round(p.p_strainratezz(0)*100.)==30.);
+    REQUIRE(std::round(p.p_strainratexy(0)*100.)==-15.);
+    REQUIRE(std::round(p.p_strainratexz(0)*100.)==-20.);
+    REQUIRE(std::round(p.p_strainrateyz(0)*100.)==-25.);
+    REQUIRE(std::round(p.p_spinratexy(0)*100.)==5.);
+    REQUIRE(std::round(p.p_spinratexz(0)*100.)==10.);
+    REQUIRE(std::round(p.p_spinrateyz(0)*100.)==5.);
 
-    REQUIRE(std::round(p.p_strainratexx[p.p_size-1]*100.)==10.);
-    REQUIRE(std::round(p.p_strainrateyy[p.p_size-1]*100.)==20.);
-    REQUIRE(std::round(p.p_strainratezz[p.p_size-1]*100.)==30.);
-    REQUIRE(std::round(p.p_strainratexy[p.p_size-1]*100.)==-15.);
-    REQUIRE(std::round(p.p_strainratexz[p.p_size-1]*100.)==-20.);
-    REQUIRE(std::round(p.p_strainrateyz[p.p_size-1]*100.)==-25.);
-    REQUIRE(std::round(p.p_spinratexy[p.p_size-1]*100.)==5.);
-    REQUIRE(std::round(p.p_spinratexz[p.p_size-1]*100.)==10.);
-    REQUIRE(std::round(p.p_spinrateyz[p.p_size-1]*100.)==5.);
+    REQUIRE(std::round(p.p_strainratexx(p.p_size()-1)*100.)==10.);
+    REQUIRE(std::round(p.p_strainrateyy(p.p_size()-1)*100.)==20.);
+    REQUIRE(std::round(p.p_strainratezz(p.p_size()-1)*100.)==30.);
+    REQUIRE(std::round(p.p_strainratexy(p.p_size()-1)*100.)==-15.);
+    REQUIRE(std::round(p.p_strainratexz(p.p_size()-1)*100.)==-20.);
+    REQUIRE(std::round(p.p_strainrateyz(p.p_size()-1)*100.)==-25.);
+    REQUIRE(std::round(p.p_spinratexy(p.p_size()-1)*100.)==5.);
+    REQUIRE(std::round(p.p_spinratexz(p.p_size()-1)*100.)==10.);
+    REQUIRE(std::round(p.p_spinrateyz(p.p_size()-1)*100.)==5.);
 }
 
 TEST_CASE("Calculate particles' strain/spin rates (cubic bspline)") {
@@ -192,45 +192,45 @@ TEST_CASE("Calculate particles' strain/spin rates (cubic bspline)") {
 
     GraMPM::MPM_system<double> p(bf, knl, mingrid, maxgrid, dcell);
 
-    CHECK(p.g_ngridx==8);
-    CHECK(p.g_ngridy==13);
-    CHECK(p.g_ngridz==18);
+    CHECK(p.g_ngridx()==8);
+    CHECK(p.g_ngridy()==13);
+    CHECK(p.g_ngridz()==18);
 
     generate_particles(p);
 
     // setup grid
-    for (int i = 0; i < p.g_ngridx; ++i)
-        for (int j = 0; j < p.g_ngridy; ++j) 
-            for (int k = 0; k < p.g_ngridz; ++k) {
-                const double x = i*0.2 + p.g_mingridx;
-                const double y = j*0.2 + p.g_mingridy;
-                const double z = k*0.2 + p.g_mingridz;
-                p.g_set_momentumx(i, j, k, 0.1*(x-y-z));
-                p.g_set_momentumy(i, j, k, 0.2*(y-x-z));
-                p.g_set_momentumz(i, j, k, 0.3*(z-x-y));
-                p.g_set_mass(i, j, k, 1.);
+    for (int i = 0; i < p.g_ngridx(); ++i)
+        for (int j = 0; j < p.g_ngridy(); ++j) 
+            for (int k = 0; k < p.g_ngridz(); ++k) {
+                const double x = i*0.2 + p.g_mingridx();
+                const double y = j*0.2 + p.g_mingridy();
+                const double z = k*0.2 + p.g_mingridz();
+                p.g_momentumx(i, j, k) = 0.1*(x-y-z);
+                p.g_momentumy(i, j, k) = 0.2*(y-x-z);
+                p.g_momentumz(i, j, k) = 0.3*(z-x-y);
+                p.g_mass(i, j, k) = 1.;
             }
     
     p.map_particles_to_grid();
     p.map_g2p_strainrate();
 
-    REQUIRE(std::round(p.p_strainratexx[0]*100.)==10.);
-    REQUIRE(std::round(p.p_strainrateyy[0]*100.)==20.);
-    REQUIRE(std::round(p.p_strainratezz[0]*100.)==30.);
-    REQUIRE(std::round(p.p_strainratexy[0]*100.)==-15.);
-    REQUIRE(std::round(p.p_strainratexz[0]*100.)==-20.);
-    REQUIRE(std::round(p.p_strainrateyz[0]*100.)==-25.);
-    REQUIRE(std::round(p.p_spinratexy[0]*100.)==5.);
-    REQUIRE(std::round(p.p_spinratexz[0]*100.)==10.);
-    REQUIRE(std::round(p.p_spinrateyz[0]*100.)==5.);
+    REQUIRE(std::round(p.p_strainratexx(0)*100.)==10.);
+    REQUIRE(std::round(p.p_strainrateyy(0)*100.)==20.);
+    REQUIRE(std::round(p.p_strainratezz(0)*100.)==30.);
+    REQUIRE(std::round(p.p_strainratexy(0)*100.)==-15.);
+    REQUIRE(std::round(p.p_strainratexz(0)*100.)==-20.);
+    REQUIRE(std::round(p.p_strainrateyz(0)*100.)==-25.);
+    REQUIRE(std::round(p.p_spinratexy(0)*100.)==5.);
+    REQUIRE(std::round(p.p_spinratexz(0)*100.)==10.);
+    REQUIRE(std::round(p.p_spinrateyz(0)*100.)==5.);
 
-    REQUIRE(std::round(p.p_strainratexx[p.p_size-1]*100.)==10.);
-    REQUIRE(std::round(p.p_strainrateyy[p.p_size-1]*100.)==20.);
-    REQUIRE(std::round(p.p_strainratezz[p.p_size-1]*100.)==30.);
-    REQUIRE(std::round(p.p_strainratexy[p.p_size-1]*100.)==-15.);
-    REQUIRE(std::round(p.p_strainratexz[p.p_size-1]*100.)==-20.);
-    REQUIRE(std::round(p.p_strainrateyz[p.p_size-1]*100.)==-25.);
-    REQUIRE(std::round(p.p_spinratexy[p.p_size-1]*100.)==5.);
-    REQUIRE(std::round(p.p_spinratexz[p.p_size-1]*100.)==10.);
-    REQUIRE(std::round(p.p_spinrateyz[p.p_size-1]*100.)==5.);
+    REQUIRE(std::round(p.p_strainratexx(p.p_size()-1)*100.)==10.);
+    REQUIRE(std::round(p.p_strainrateyy(p.p_size()-1)*100.)==20.);
+    REQUIRE(std::round(p.p_strainratezz(p.p_size()-1)*100.)==30.);
+    REQUIRE(std::round(p.p_strainratexy(p.p_size()-1)*100.)==-15.);
+    REQUIRE(std::round(p.p_strainratexz(p.p_size()-1)*100.)==-20.);
+    REQUIRE(std::round(p.p_strainrateyz(p.p_size()-1)*100.)==-25.);
+    REQUIRE(std::round(p.p_spinratexy(p.p_size()-1)*100.)==5.);
+    REQUIRE(std::round(p.p_spinratexz(p.p_size()-1)*100.)==10.);
+    REQUIRE(std::round(p.p_spinrateyz(p.p_size()-1)*100.)==5.);
 }
