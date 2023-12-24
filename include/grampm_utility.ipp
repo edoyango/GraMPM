@@ -9,38 +9,47 @@ namespace GraMPM {
     
     // helper function to ravel idx
     template<typename F>
-    int MPM_system<F>::ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const {
+    size_t MPM_system<F>::ravel_grid_idx(const size_t &idxx, const size_t &idxy, const size_t &idxz) const {
         return idxx*m_g_ngridy*m_g_ngridz + idxy*m_g_ngridz + idxz;
     }
     
     // helper function to unravel index (return std::array)
     template<typename F>
-    std::array<int, 3> MPM_system<F>::unravel_grid_idx(const int &idx) const {
-        std::array<int, 3> unravelled_idx;
-        div_t tmp = std::div(idx, m_g_ngridy*m_g_ngridz);
-        unravelled_idx[0] = tmp.quot;
-        tmp = std::div(tmp.rem, m_g_ngridz);
-        unravelled_idx[1] = tmp.quot;
-        unravelled_idx[2] = tmp.rem;
+    std::array<size_t, 3> MPM_system<F>::unravel_grid_idx(const size_t &idx) const {
+        std::array<size_t, 3> unravelled_idx;
+        // div_t tmp = std::div(idx, m_g_ngridy*m_g_ngridz);
+        // unravelled_idx[0] = tmp.quot;
+        // tmp = std::div(tmp.rem, m_g_ngridz);
+        // unravelled_idx[1] = tmp.quot;
+        // unravelled_idx[2] = tmp.rem;
+        // return unravelled_idx;
+        unravelled_idx[0] = idx / (m_g_ngridy*m_g_ngridz);
+        size_t rem = idx % (m_g_ngridy*m_g_ngridz);
+        unravelled_idx[1] = rem / m_g_ngridz;
+        unravelled_idx[2] = rem % m_g_ngridz;
         return unravelled_idx;
     }
 
     // helper function to unravel index (modify args)
     template<typename F>
-    void MPM_system<F>::unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const {
-        div_t tmp = std::div(idx, m_g_ngridy*m_g_ngridz);
-        idxx = tmp.quot;
-        tmp = std::div(tmp.rem, m_g_ngridz);
-        idxy = tmp.quot;
-        idxz = tmp.rem;
+    void MPM_system<F>::unravel_grid_idx(const size_t &idx, size_t &idxx, size_t &idxy, size_t &idxz) const {
+        // div_t tmp = std::div(idx, m_g_ngridy*m_g_ngridz);
+        // idxx = tmp.quot;
+        // tmp = std::div(tmp.rem, m_g_ngridz);
+        // idxy = tmp.quot;
+        // idxz = tmp.rem;
+        idxx = idx / (m_g_ngridy*m_g_ngridz);
+        size_t rem = idx % (m_g_ngridy*m_g_ngridz);
+        idxy = rem / m_g_ngridz;
+        idxz = rem % m_g_ngridz;
     }
 
     template<typename F> 
-    int MPM_system<F>::calc_idxx(const F &x) const { return static_cast<int>((x-m_g_mingridx)/g_dcell); }
+    size_t MPM_system<F>::calc_idxx(const F &x) const { return static_cast<size_t>((x-m_g_mingridx)/g_dcell); }
     template<typename F> 
-    int MPM_system<F>::calc_idxy(const F &y) const { return static_cast<int>((y-m_g_mingridy)/g_dcell); }
+    size_t MPM_system<F>::calc_idxy(const F &y) const { return static_cast<size_t>((y-m_g_mingridy)/g_dcell); }
     template<typename F> 
-    int MPM_system<F>::calc_idxz(const F &z) const { return static_cast<int>((z-m_g_mingridz)/g_dcell); }
+    size_t MPM_system<F>::calc_idxz(const F &z) const { return static_cast<size_t>((z-m_g_mingridz)/g_dcell); }
 
     template<typename F> void MPM_system<F>::save_to_file(const std::string &prefix, const int &timestep) const {
 

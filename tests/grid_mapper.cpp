@@ -30,8 +30,8 @@ TEST_CASE( "Correct ravelling of particles' grid indices upon initialization", "
             0., 0., 0.);
         p.p_push_back(pi);
         // test that the assigned index is correct
-        REQUIRE(p.p_grid_idx[i]==correct_ravelled_idx[i]);
-        std::array<int, 3> idx = p.p_unravelled_grid_idx(i);
+        REQUIRE(p.p_grid_idx(i)==correct_ravelled_idx[i]);
+        std::array<size_t, 3> idx = p.p_unravelled_grid_idx(i);
         REQUIRE(idx[0]==correct_idxx[i]);
         REQUIRE(idx[1]==correct_idxy[i]);
         REQUIRE(idx[2]==correct_idxz[i]);
@@ -46,16 +46,16 @@ TEST_CASE( "Correct dynamic assignment and unravelling of particle grid indices"
     p.p_resize(5);
 
     for (int i = 0; i < 5; ++i) {
-        p.p_x[i] = i*dx+mingrid[0];
-        p.p_y[i] = i*dy+mingrid[1];
-        p.p_z[i] = i*dz+mingrid[2];
-        CHECK(p.p_grid_idx[i]==0);
+        p.p_x(i) = i*dx+mingrid[0];
+        p.p_y(i) = i*dy+mingrid[1];
+        p.p_z(i) = i*dz+mingrid[2];
+        CHECK(p.p_grid_idx(i)==0);
     }
 
     p.update_particle_to_cell_map(0, 5);
 
     for (int i = 0; i < 5; ++i) {
-        std::array<int, 3> idx = p.p_unravelled_grid_idx(i);
+        std::array<size_t, 3> idx = p.p_unravelled_grid_idx(i);
         REQUIRE(idx[0]==correct_idxx[i]);
         REQUIRE(idx[1]==correct_idxy[i]);
         REQUIRE(idx[2]==correct_idxz[i]);
@@ -73,10 +73,10 @@ TEST_CASE("Correct determination of grid node neighbours (radius=1)", "[p]") {
             for (int dk = 0; dk <=1; ++dk) {
                 for (int i = 0; i < 5; i+=4) {
                     REQUIRE(p.pg_nn(i, n)==correct_ravelled_idx[i] + di*5*4 + dj*5 + dk);
-                    std::array<int, 3> idx = p.p_unravelled_grid_idx(i);
-                    REQUIRE(p.pg_nn_dx(i, n)==p.p_x[i]-((idx[0]+di)*dcell+mingrid[0]));
-                    REQUIRE(p.pg_nn_dy(i, n)==p.p_y[i]-((idx[1]+dj)*dcell+mingrid[1]));
-                    REQUIRE(p.pg_nn_dz(i, n)==p.p_z[i]-((idx[2]+dk)*dcell+mingrid[2]));
+                    std::array<size_t, 3> idx = p.p_unravelled_grid_idx(i);
+                    REQUIRE(p.pg_nn_dx(i, n)==p.p_x(i)-((idx[0]+di)*dcell+mingrid[0]));
+                    REQUIRE(p.pg_nn_dy(i, n)==p.p_y(i)-((idx[1]+dj)*dcell+mingrid[1]));
+                    REQUIRE(p.pg_nn_dz(i, n)==p.p_z(i)-((idx[2]+dk)*dcell+mingrid[2]));
                     double w, dwdx, dwdy, dwdz;
                     knl.w_dwdx(
                         p.pg_nn_dx(i, n), 
@@ -100,17 +100,17 @@ TEST_CASE("Correct determination of grid node neighbours (radius=2)") {
     GraMPM::kernel_cubic_bspline<double> knlc(dcell);
     GraMPM::MPM_system<double> p(bf, knlc, mingrid, maxgrid, dcell);
 
-    CHECK(p.g_ngridx==4);
-    CHECK(p.g_ngridy==5);
-    CHECK(p.g_ngridz==6);
+    CHECK(p.g_ngridx()==4);
+    CHECK(p.g_ngridy()==5);
+    CHECK(p.g_ngridz()==6);
 
     p.p_push_back(GraMPM::particle<double>(0.01, 0.16, 0.26, 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0.));
     p.p_push_back(GraMPM::particle<double>(0.01, 0.3, 0.5, 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0.));
 
     int correct_ravelled_idx[2] {37, 45};
 
-    CHECK(p.p_grid_idx[0]==correct_ravelled_idx[0]);
-    CHECK(p.p_grid_idx[1]==correct_ravelled_idx[1]);
+    CHECK(p.p_grid_idx(0)==correct_ravelled_idx[0]);
+    CHECK(p.p_grid_idx(1)==correct_ravelled_idx[1]);
 
     p.map_particles_to_grid();
 
@@ -120,10 +120,10 @@ TEST_CASE("Correct determination of grid node neighbours (radius=2)") {
             for (int dk = -1; dk <=2; ++dk) {
                 for (int i = 0; i < 2; ++i) {
                     REQUIRE(p.pg_nn(i, n)==correct_ravelled_idx[i] + di*6*5 + dj*6 + dk);
-                    std::array<int, 3> idx = p.p_unravelled_grid_idx(i);
-                    REQUIRE(p.pg_nn_dx(i, n)==p.p_x[i]-((idx[0]+di)*dcell+mingrid[0]));
-                    REQUIRE(p.pg_nn_dy(i, n)==p.p_y[i]-((idx[1]+dj)*dcell+mingrid[1]));
-                    REQUIRE(p.pg_nn_dz(i, n)==p.p_z[i]-((idx[2]+dk)*dcell+mingrid[2]));
+                    std::array<size_t, 3> idx = p.p_unravelled_grid_idx(i);
+                    REQUIRE(p.pg_nn_dx(i, n)==p.p_x(i)-((idx[0]+di)*dcell+mingrid[0]));
+                    REQUIRE(p.pg_nn_dy(i, n)==p.p_y(i)-((idx[1]+dj)*dcell+mingrid[1]));
+                    REQUIRE(p.pg_nn_dz(i, n)==p.p_z(i)-((idx[2]+dk)*dcell+mingrid[2]));
                     double w, dwdx, dwdy, dwdz;
                     knlc.w_dwdx(
                         p.pg_nn_dx(i, n), 

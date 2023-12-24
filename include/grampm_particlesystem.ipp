@@ -207,7 +207,7 @@ namespace GraMPM {
     }
 
     template<typename F>
-    std::array<int, 3> MPM_system<F>::p_unravelled_grid_idx(const int &i) const { 
+    std::array<size_t, 3> MPM_system<F>::p_unravelled_grid_idx(const size_t &i) const { 
         return unravel_grid_idx(m_p_grid_idx[i]); 
     }
 }

@@ -50,7 +50,7 @@ namespace GraMPM {
             m_p_dzdt, m_p_mass, m_p_rho, m_p_sigmaxx, m_p_sigmayy, m_p_sigmazz, m_p_sigmaxy, m_p_sigmaxz, m_p_sigmayz, 
             m_p_strainratexx, m_p_strainrateyy, m_p_strainratezz, m_p_strainratexy, m_p_strainratexz, m_p_strainrateyz, 
             m_p_spinratexy, m_p_spinratexz, m_p_spinrateyz;
-        std::vector<int> m_p_grid_idx;
+        std::vector<size_t> m_p_grid_idx;
         F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
         std::function<void(MPM_system<F>&, const F&)> p_stress_update_function;
         std::array<F, 3> m_body_force;
@@ -67,7 +67,7 @@ namespace GraMPM {
         void p_update_velocity(const F &dt);
         void p_update_position(const F &dt);
         void p_update_density(const F &dt);
-        std::array<int, 3> p_unravelled_grid_idx(const int &i) const;
+        std::array<size_t, 3> p_unravelled_grid_idx(const size_t &i) const;
         
         // global data
         const kernel_base<F> &knl;
@@ -76,15 +76,15 @@ namespace GraMPM {
         const int pg_nns_pp;
         std::vector<F> pg_nns_dx, pg_nns_dy, pg_nns_dz, pg_nns_w, pg_nns_dwdx, pg_nns_dwdy, pg_nns_dwdz;
         std::vector<int> pg_nns;
-        const int& pg_nn(const int i, const int j) const ;
-        const F& pg_nn_dx(const int i, const int j) const ;
-        const F& pg_nn_dy(const int i, const int j) const ;
-        const F& pg_nn_dz(const int i, const int j) const ;
-        const F& pg_nn_w(const int i, const int j) const ;
-        const F& pg_nn_dwdx(const int i, const int j) const ;
-        const F& pg_nn_dwdy(const int i, const int j) const ;
-        const F& pg_nn_dwdz(const int i, const int j) const ;
-        void update_particle_to_cell_map(const int &start, const int &end);
+        const int& pg_nn(const size_t i, const size_t j) const ;
+        const F& pg_nn_dx(const size_t i, const size_t j) const ;
+        const F& pg_nn_dy(const size_t i, const size_t j) const ;
+        const F& pg_nn_dz(const size_t i, const size_t j) const ;
+        const F& pg_nn_w(const size_t i, const size_t j) const ;
+        const F& pg_nn_dwdx(const size_t i, const size_t j) const ;
+        const F& pg_nn_dwdy(const size_t i, const size_t j) const ;
+        const F& pg_nn_dwdz(const size_t i, const size_t j) const ;
+        void update_particle_to_cell_map(const size_t start, const size_t end);
         void update_particle_to_cell_map();
         // NTS this could be faster
         void map_particles_to_grid();
@@ -107,12 +107,12 @@ namespace GraMPM {
         void g_apply_force_boundary_conditions(const int &timestep, const F dt);
         
         // utility functions -------------------------------------------------------------------------------------------
-        int ravel_grid_idx(const int &idxx, const int &idxy, const int &idxz) const;
-        std::array<int, 3> unravel_grid_idx(const int &idx) const;
-        void unravel_grid_idx(const int &idx, int &idxx, int &idxy, int &idxz) const;
-        int calc_idxx(const F &x) const;
-        int calc_idxy(const F &y) const;
-        int calc_idxz(const F &z) const;
+        size_t ravel_grid_idx(const size_t &idxx, const size_t &idxy, const size_t &idxz) const;
+        std::array<size_t, 3> unravel_grid_idx(const size_t &idx) const;
+        void unravel_grid_idx(const size_t &idx, size_t &idxx, size_t &idxy, size_t &idxz) const;
+        size_t calc_idxx(const F &x) const;
+        size_t calc_idxy(const F &y) const;
+        size_t calc_idxz(const F &z) const;
         size_t calc_ngrid(const F &maxx, const F &minx, const F &dc) { return std::ceil((maxx-minx)/dc)+1; }
         void save_to_file(const std::string &prefix, const int &timestep) const;
         
@@ -181,7 +181,7 @@ namespace GraMPM {
         F& p_spinratexy(const int &i);
         F& p_spinratexz(const int &i);
         F& p_spinrateyz(const int &i);
-        size_t p_grid_idx(const size_t &i);
+        size_t& p_grid_idx(const size_t &i);
 
         const size_t& p_size() const;
         
