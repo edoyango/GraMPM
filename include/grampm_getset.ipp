@@ -92,9 +92,9 @@ namespace GraMPM {
     template<typename F> F& MPM_system<F>::p_ax(const int &i) { return m_p_axyz[0][i]; }
     template<typename F> F& MPM_system<F>::p_ay(const int &i) { return m_p_axyz[1][i]; }
     template<typename F> F& MPM_system<F>::p_az(const int &i) { return m_p_axyz[2][i]; }
-    template<typename F> F& MPM_system<F>::p_dxdt(const int &i) { return m_p_dxdt[i]; }
-    template<typename F> F& MPM_system<F>::p_dydt(const int &i) { return m_p_dydt[i]; }
-    template<typename F> F& MPM_system<F>::p_dzdt(const int &i) { return m_p_dzdt[i]; }
+    template<typename F> F& MPM_system<F>::p_dxdt(const int &i) { return m_p_dxyzdt[0][i]; }
+    template<typename F> F& MPM_system<F>::p_dydt(const int &i) { return m_p_dxyzdt[1][i]; }
+    template<typename F> F& MPM_system<F>::p_dzdt(const int &i) { return m_p_dxyzdt[2][i]; }
     template<typename F> F& MPM_system<F>::p_mass(const int &i) { return m_p_mass[i]; }
     template<typename F> F& MPM_system<F>::p_rho(const int &i) { return m_p_rho[i]; }
     template<typename F> F& MPM_system<F>::p_sigmaxx(const int &i) { return m_p_sigmaxx[i]; }

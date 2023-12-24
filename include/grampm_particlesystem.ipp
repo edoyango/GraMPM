@@ -15,7 +15,7 @@ namespace GraMPM {
     particle<F> MPM_system<F>::p_at(const int &i) { 
         particle<F> p(m_p_xyz[0][i], m_p_xyz[1][i], m_p_xyz[2][i], m_p_vxyz[0][i], m_p_vxyz[1][i], m_p_vxyz[2][i], m_p_mass[i], m_p_rho[i], 
             m_p_sigmaxx[i], m_p_sigmayy[i], m_p_sigmazz[i], m_p_sigmaxy[i], m_p_sigmaxz[i], m_p_sigmayz[i], m_p_axyz[0][i], 
-            m_p_axyz[1][i], m_p_axyz[2][i], m_p_dxdt[i], m_p_dydt[i], m_p_dzdt[i], m_p_strainratexx[i], m_p_strainrateyy[i], 
+            m_p_axyz[1][i], m_p_axyz[2][i], m_p_dxyzdt[0][i], m_p_dxyzdt[1][i], m_p_dxyzdt[2][i], m_p_strainratexx[i], m_p_strainrateyy[i], 
             m_p_strainratezz[i], m_p_strainratexy[i], m_p_strainratexz[i], m_p_strainrateyz[i], m_p_spinratexy[i], 
             m_p_spinratexz[i], m_p_spinrateyz[i]);
         return p; 
@@ -33,9 +33,9 @@ namespace GraMPM {
         m_p_axyz[0].push_back(p.ax);
         m_p_axyz[1].push_back(p.ay);
         m_p_axyz[2].push_back(p.az);
-        m_p_dxdt.push_back(p.dxdt);
-        m_p_dydt.push_back(p.dydt);
-        m_p_dzdt.push_back(p.dzdt);
+        m_p_dxyzdt[0].push_back(p.dxdt);
+        m_p_dxyzdt[1].push_back(p.dydt);
+        m_p_dxyzdt[2].push_back(p.dzdt);
         m_p_mass.push_back(p.mass);
         m_p_rho.push_back(p.rho);
         m_p_sigmaxx.push_back(p.sigmaxx);
@@ -75,9 +75,9 @@ namespace GraMPM {
         m_p_axyz[0].clear();
         m_p_axyz[1].clear();
         m_p_axyz[2].clear();
-        m_p_dxdt.clear();
-        m_p_dydt.clear();
-        m_p_dzdt.clear();
+        m_p_dxyzdt[0].clear();
+        m_p_dxyzdt[1].clear();
+        m_p_dxyzdt[2].clear();
         m_p_mass.clear();
         m_p_rho.clear();
         m_p_sigmaxx.clear();
@@ -102,9 +102,9 @@ namespace GraMPM {
     // vector-like api: empty. Checks whether all member vectors are empty. Also checks the m_size member
     template<typename F>
     bool MPM_system<F>::p_empty() {
-        return m_p_xyz[0].empty() && m_p_xyz[1].empty() && m_p_xyz[2].empty() && m_p_vxyz[0].empty() && m_p_vxyz[0].empty() && m_p_vxyz[0].empty() && 
-            m_p_axyz[0].empty() && m_p_axyz[1].empty() && m_p_axyz[2].empty() && m_p_dxdt.empty() && m_p_dydt.empty() && 
-            m_p_dzdt.empty() && m_p_mass.empty() && m_p_rho.empty() && m_p_sigmaxx.empty() && m_p_sigmayy.empty() && 
+        return m_p_xyz[0].empty() && m_p_xyz[1].empty() && m_p_xyz[2].empty() && m_p_vxyz[0].empty() && m_p_vxyz[1].empty() && m_p_vxyz[0].empty() && 
+            m_p_axyz[0].empty() && m_p_axyz[1].empty() && m_p_axyz[2].empty() && m_p_dxyzdt[0].empty() && m_p_dxyzdt[1].empty() && 
+            m_p_dxyzdt[2].empty() && m_p_mass.empty() && m_p_rho.empty() && m_p_sigmaxx.empty() && m_p_sigmayy.empty() && 
             m_p_sigmazz.empty() && m_p_sigmaxy.empty() && m_p_sigmaxz.empty() && m_p_sigmayz.empty() && 
             m_p_strainratexx.empty() && m_p_strainrateyy.empty() && m_p_strainratezz.empty() && 
             m_p_strainratexy.empty() && m_p_strainratexz.empty() && m_p_strainrateyz.empty() && 
@@ -124,9 +124,9 @@ namespace GraMPM {
         m_p_axyz[0].resize(n, 0.);
         m_p_axyz[1].resize(n, 0.);
         m_p_axyz[2].resize(n, 0.);
-        m_p_dxdt.resize(n, 0.);
-        m_p_dydt.resize(n, 0.);
-        m_p_dzdt.resize(n, 0.);
+        m_p_dxyzdt[0].resize(n, 0.);
+        m_p_dxyzdt[1].resize(n, 0.);
+        m_p_dxyzdt[2].resize(n, 0.);
         m_p_mass.resize(n, 0.);
         m_p_rho.resize(n, 0.);
         m_p_sigmaxx.resize(n, 0.);
@@ -166,9 +166,9 @@ namespace GraMPM {
     void MPM_system<F>::p_update_position(const F &dt) {
         #pragma omp for
         for (size_t i = 0; i < m_p_size; ++i) {
-            m_p_xyz[0][i] += dt*m_p_dxdt[i];
-            m_p_xyz[1][i] += dt*m_p_dydt[i];
-            m_p_xyz[2][i] += dt*m_p_dzdt[i];
+            m_p_xyz[0][i] += dt*m_p_dxyzdt[0][i];
+            m_p_xyz[1][i] += dt*m_p_dxyzdt[1][i];
+            m_p_xyz[2][i] += dt*m_p_dxyzdt[2][i];
         }
     }
     template<typename F> 

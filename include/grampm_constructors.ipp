@@ -45,9 +45,7 @@ namespace GraMPM {
         , m_p_xyz {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_vxyz {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_axyz {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
-        , m_p_dxdt(p_size_in, 0.)
-        , m_p_dydt(p_size_in, 0.)
-        , m_p_dzdt(p_size_in, 0.)
+        , m_p_dxyzdt {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_mass(p_size_in, 0.)
         , m_p_rho(p_size_in, 0.)
         , m_p_sigmaxx(p_size_in, 0.)
