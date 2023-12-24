@@ -163,9 +163,9 @@ namespace GraMPM {
         for (size_t i = 0; i < m_p_size; ++i) {
             for (size_t j = 0; j < pg_nns_pp; ++j) {
                 const size_t node_idx = pg_nn(i, j);
-                m_g_momentumx[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vx[i];
-                m_g_momentumy[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vy[i];
-                m_g_momentumz[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vz[i];
+                m_g_momentumx[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vxyz[0][i];
+                m_g_momentumy[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vxyz[1][i];
+                m_g_momentumz[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vxyz[2][i];
             }
         }
     }

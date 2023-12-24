@@ -43,9 +43,7 @@ namespace GraMPM {
         std::array<F, 3> g_mingrid_in, std::array<F, 3> g_maxgrid_in, F cell_size_in)
         : m_p_size {p_size_in}
         , m_p_xyz {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
-        , m_p_vx(p_size_in, 0.)
-        , m_p_vy(p_size_in, 0.)
-        , m_p_vz(p_size_in, 0.)
+        , m_p_vxyz {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_ax(p_size_in, 0.)
         , m_p_ay(p_size_in, 0.)
         , m_p_az(p_size_in, 0.)
