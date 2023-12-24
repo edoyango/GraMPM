@@ -9,7 +9,7 @@ namespace GraMPM {
         template<typename F>
         void hookes_law(GraMPM::MPM_system<F> &self, const F &dt) {
 
-            const F E = self.p_E(), v = self.p_v();
+            const F E = self.get_stress_update_param("E"), v = self.get_stress_update_param("v");
 
             const F D0 {E/((1.+v)*(1.-2.*v))};
 
@@ -53,11 +53,14 @@ namespace GraMPM {
             hookes_law(self, dt);
 
             // setting up for plastic corrector step (duplicated code, would like to remove this somehow)
-            const F E = self.p_E(), v = self.p_v();
+            const F E = self.get_stress_update_param("E"), v = self.get_stress_update_param("v");
             const F D0 {E/((1.+v)*(1.-2.*v))};
 
-            F phi, psi, coh, alpha_phi, alpha_psi, k_c;
-            self.DP_params(phi, psi, coh, alpha_phi, alpha_psi, k_c);
+            const F phi = self.get_stress_update_param("phi"), psi = self.get_stress_update_param("psi"), 
+                coh = self.get_stress_update_param("cohesion");
+            const F alpha_phi = 2.*std::sin(phi)/(std::sqrt(3.)*(3.-std::sin(phi))), 
+                alpha_psi = 2.*std::sin(psi)/(std::sqrt(3.)*(3.-std::sin(phi))), 
+                k_c = 6.*coh*std::cos(phi)/(std::sqrt(3.)*(3.-std::sin(phi)));
 
             // begin plastic correction
             #pragma omp for

@@ -116,7 +116,15 @@ namespace GraMPM {
     
     template<typename F> const size_t& MPM_system<F>::p_size() const { return m_p_size; }
 
-    template<typename F> F& MPM_system<F>::p_E() { return m_E; }
-    template<typename F> F& MPM_system<F>::p_v() { return m_v; }
+    template<typename F> 
+    F MPM_system<F>::get_stress_update_param(std::string key) const { return m_stress_update_params.find(key)->second; }
+    template<typename F> 
+    void MPM_system<F>::set_stress_update_param(std::string key, F val) { 
+        m_stress_update_params[key] = val; 
+    }
+    template<typename F> 
+    void MPM_system<F>::set_stress_update_function(std::function<void(MPM_system<F>&, const F&)> f) { 
+        p_stress_update_function = f; 
+    }
 }
 #endif

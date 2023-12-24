@@ -118,10 +118,12 @@ int main() {
     const double c = std::sqrt((K+4./3.*G)/rho_ini);
     const double dt = dcell/c;
 
-    myMPM.p_E() = E;
-    myMPM.p_v() = v;
     const double pi = std::acos(-1.);
-    myMPM.set_DP_params(pi/9., 0., 0.);
+    myMPM.set_stress_update_param("E", E);
+    myMPM.set_stress_update_param("v", v);
+    myMPM.set_stress_update_param("phi", pi/9.);
+    myMPM.set_stress_update_param("psi", 0.);
+    myMPM.set_stress_update_param("cohesion", 0.);
 
     myMPM.save_to_file("outputdata/p_", 0);
 

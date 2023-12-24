@@ -11,6 +11,7 @@
 #include <cassert>
 #include <string>
 #include <functional>
+#include <unordered_map>
 
 namespace GraMPM {
 
@@ -56,16 +57,13 @@ namespace GraMPM {
             F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
             std::function<void(MPM_system<F>&, const F&)> p_stress_update_function;
             std::array<F, 3> m_body_force;
+            std::unordered_map<std::string, F> m_stress_update_params;
         public:
             particle<F> p_at(const int &i);
             void p_push_back(const particle<F> &p);
             void p_clear();
             bool p_empty();
             void p_resize(const int n);
-            void DP_params(F& phi, F& psi, F& coh) const;
-            void DP_params(F& phi, F& psi, F& coh, F& alpha_phi, F& alpha_psi, F& k_c) const;
-            void set_stress_update_function(std::function<void(MPM_system<F>&, const F&)>);
-            void set_DP_params(const F &phi, const F &psi, const F &coh);
             void p_update_stress(const F &dt);
             void p_update_velocity(const F &dt);
             void p_update_position(const F &dt);
@@ -196,8 +194,9 @@ namespace GraMPM {
 
             const size_t& p_size() const;
 
-            F& p_E();
-            F& p_v();
+            F get_stress_update_param(std::string key) const;
+            void set_stress_update_param(std::string key, F val);
+            void set_stress_update_function(std::function<void(MPM_system<F>&, const F&)>);
         
     };
 

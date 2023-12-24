@@ -148,32 +148,6 @@ namespace GraMPM {
         m_p_size = n;
     }
 
-    // property getters
-    template<typename F> 
-    void MPM_system<F>::DP_params(F& phi, F& psi, F& coh) const { phi = m_phi; psi = m_psi; coh = m_coh; }
-    template<typename F> 
-    void MPM_system<F>::DP_params(F& phi, F& psi, F& coh, F& alpha_phi, F& alpha_psi, F& k_c) const {
-         phi = m_phi; psi = m_psi; coh = m_coh; 
-         alpha_phi = m_alphaphi; alpha_psi = m_alphapsi; k_c = m_kc;
-    }
-
-    template<typename F> 
-    void MPM_system<F>::set_stress_update_function(std::function<void(MPM_system<F>&, const F&)> f) { 
-        p_stress_update_function = f; 
-    }
-    
-    template<typename F> void MPM_system<F>::set_DP_params(const F &phi, const F &psi, const F &coh) {
-        m_phi = phi; m_psi = psi; m_coh = coh;
-        // const F denom = std::sqrt(9.+12.*std::tan(phi)*std::tan(phi));
-        // m_alphaphi = 3.*std::tan(phi)/denom;
-        // m_alphapsi = 3.*std::tan(psi)/denom;
-        // m_kc = 3.*coh/denom;
-        const F denom = std::sqrt(3.)*(3.-std::sin(phi));
-        m_alphaphi = 2.*std::sin(phi)/denom;
-        m_alphapsi = 2.*std::sin(psi)/denom;
-        m_kc = 6.*coh*std::cos(phi)/denom;
-    }
-
     template<typename F> 
     void MPM_system<F>::p_update_stress(const F &dt) {
         p_stress_update_function(*this, dt);

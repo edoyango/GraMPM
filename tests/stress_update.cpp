@@ -25,8 +25,8 @@ TEST_CASE("Check correct Hooke's law") {
     p.p_strainratexz(0) = 5.;
     p.p_strainrateyz(0) = 6.;
 
-    p.p_E() = 100.;
-    p.p_v() = 0.25;
+    p.set_stress_update_param("E", 100.);
+    p.set_stress_update_param("v", 0.25);
 
     p.p_update_stress(0.1);
 
@@ -41,7 +41,6 @@ TEST_CASE("Check correct Hooke's law") {
 TEST_CASE("Check correct Jaumann stress rate") {
     
     const double dcell = 0.2;
-    // GraMPM::grid<double> g(0., 0., 0., 0.99, 1.99, 2.99, dcell);
     GraMPM::kernel_linear_bspline<double> knl(dcell);
 
     std::array<double, 3> bf {0., 0., 0.};
@@ -49,6 +48,9 @@ TEST_CASE("Check correct Jaumann stress rate") {
     p.set_stress_update_function(
         GraMPM::stress_update::hookes_law<double>
     );
+
+    p.set_stress_update_param("E", 0.);
+    p.set_stress_update_param("v", 0.);
 
     p.p_spinratexy(0)= -0.8;
     p.p_spinratexz(0)= -0.9;
@@ -83,23 +85,19 @@ TEST_CASE("Check correct Jaumann stress rate") {
 
 TEST_CASE("Check DP elasto-plasticity") {
     const double dcell = 0.2;
-    // GraMPM::grid<double> g(0., 0., 0., 0.99, 1.99, 2.99, dcell);
     GraMPM::kernel_linear_bspline<double> knl(dcell);
 
     std::array<double, 3> bf {0., 0., 0.};
     GraMPM::MPM_system<double> p(1, bf, knl, std::array<double, 3>{0.}, std::array<double, 3>{0.99, 1.99, 2.99}, dcell);
     p.set_stress_update_function(GraMPM::stress_update::drucker_prager_elastoplastic<double>);
     const double pi = std::acos(-1.);
-    p.set_DP_params(pi/4., pi/36., 0.);
+    p.set_stress_update_param("phi", pi/4.);
+    p.set_stress_update_param("psi", pi/36.);
+    p.set_stress_update_param("cohesion", 0.);
 
-    double phi, psi, cohesion, alpha_phi, alpha_psi, k_c;
-    p.DP_params(phi, psi, cohesion, alpha_phi, alpha_psi, k_c);
-    REQUIRE(phi==pi/4.);
-    REQUIRE(alpha_phi==2.*std::sin(phi)/(std::sqrt(3.)*(3.-std::sin(phi))));
-    REQUIRE(psi==pi/36.);
-    REQUIRE(alpha_psi==2.*std::sin(psi)/(std::sqrt(3.)*(3.-std::sin(phi))));
-    REQUIRE(cohesion==0.);
-    REQUIRE(k_c==0.);
+    REQUIRE(p.get_stress_update_param("phi")==pi/4.);
+    REQUIRE(p.get_stress_update_param("psi")==pi/36.);
+    REQUIRE(p.get_stress_update_param("cohesion")==0.);
 
     // check elasto-plastic compression
     p.p_strainratexx(0) = -1.;
@@ -109,8 +107,8 @@ TEST_CASE("Check DP elasto-plasticity") {
     p.p_strainratexz(0) = -5.;
     p.p_strainrateyz(0) = -6.;
 
-    p.p_E() = 100.;
-    p.p_v() = 0.25;
+    p.set_stress_update_param("E", 100.);
+    p.set_stress_update_param("v", 0.25);
 
     p.p_update_stress(0.1);
 
