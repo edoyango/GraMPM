@@ -130,7 +130,8 @@ namespace GraMPM {
     template<typename F>
     MPM_system<F>::MPM_system(std::string fname, std::array<F, 3> bf, kernel_base<F> &knl_in, 
         std::array<F, 3> g_mingrid_in, std::array<F, 3> g_maxgrid_in, F cell_size_in)
-        : m_body_force {bf}
+        : m_p_size {0}
+        , m_body_force {bf}
         , knl {knl_in}
         , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
         , m_g_mingridx {g_mingrid_in[0]}
@@ -151,7 +152,6 @@ namespace GraMPM {
         , m_g_forcex(m_g_size, 0.)
         , m_g_forcey(m_g_size, 0.)
         , m_g_forcez(m_g_size, 0.)
-        , m_p_size {0}
     {
         std::ifstream file(fname);
         std::string line, header;
