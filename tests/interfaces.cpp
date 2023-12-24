@@ -49,7 +49,7 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(myMPM.g_ngridz()==5);
     REQUIRE(myMPM.g_size()==60);
 
-    for (int i = 0; i < myMPM.g_size(); ++i) {
+    for (size_t i = 0; i < myMPM.g_size(); ++i) {
         REQUIRE(myMPM.g_mass(i)==0.);
         REQUIRE(myMPM.g_momentumx(i)==0.);
         REQUIRE(myMPM.g_momentumy(i)==0.);
@@ -59,9 +59,9 @@ TEST_CASE("grid intialized correctly", "[grid]") {
         REQUIRE(myMPM.g_forcez(i)==0.);
     }
 
-    for (int i = 0; i < myMPM.g_ngridx(); ++i) 
-        for (int j = 0; j < myMPM.g_ngridy(); ++j)
-            for (int k = 0; k < myMPM.g_ngridz(); ++k) {
+    for (size_t i = 0; i < myMPM.g_ngridx(); ++i) 
+        for (size_t j = 0; j < myMPM.g_ngridy(); ++j)
+            for (size_t k = 0; k < myMPM.g_ngridz(); ++k) {
                 myMPM.g_mass(i, j, k) = (i+j+k)*1.;
                 REQUIRE(myMPM.g_mass(i, j, k)==(i+j+k)*1.);
                 myMPM.g_momentumx(i, j, k) = (i+j+k)*2.;

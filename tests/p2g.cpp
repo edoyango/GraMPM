@@ -38,10 +38,10 @@ TEST_CASE("Map particles masses to grid (linear bspline)") {
     // check total mass conservation
     // sum particles' mass
     double psum = 0., gsum = 0.;
-    for (int i = 0; i < p.p_size(); ++i)
+    for (size_t i = 0; i < p.p_size(); ++i)
         psum += p.p_mass(i);
     // sum grid's mass
-    for (int i = 0; i < p.g_size(); ++i)
+    for (size_t i = 0; i < p.g_size(); ++i)
         gsum += p.g_mass(i);
 
     REQUIRE(psum==gsum);
@@ -72,10 +72,10 @@ TEST_CASE("Map particles masses to grid (cubic bspline)") {
     // check total mass conservation
     // sum particles' mass
     double psum = 0., gsum = 0.;
-    for (int i = 0; i < p.p_size(); ++i)
+    for (size_t i = 0; i < p.p_size(); ++i)
         psum += p.p_mass(i);
     // sum grid's mass
-    for (int i = 0; i < p.g_size(); ++i)
+    for (size_t i = 0; i < p.g_size(); ++i)
         gsum += p.g_mass(i);
 
     // should be correct to 14 sigfigs
@@ -107,14 +107,14 @@ TEST_CASE("Map particles momentums to grid (linear bspline)") {
     // check momentum conservation
     // sum particles' momentum
     double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
-    for (int i = 0; i < p.p_size(); ++i) {
+    for (size_t i = 0; i < p.p_size(); ++i) {
         psum[0] += p.p_mass(i)*p.p_vx(i);
         psum[1] += p.p_mass(i)*p.p_vy(i);
         psum[2] += p.p_mass(i)*p.p_vz(i);
     }
 
     // sum grid's momentum
-    for (int i = 0; i < p.g_size(); ++i) {
+    for (size_t i = 0; i < p.g_size(); ++i) {
         gsum[0] += p.g_momentumx(i);
         gsum[1] += p.g_momentumy(i);
         gsum[2] += p.g_momentumz(i);
@@ -156,12 +156,12 @@ TEST_CASE("Map particles momentums to grid (cubic bspline)") {
 
     // check conservation
     double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
-    for (int i = 0; i < p.p_size(); ++i) {
+    for (size_t i = 0; i < p.p_size(); ++i) {
         psum[0] += p.m_p_mass[i]*p.m_p_vx[i];
         psum[1] += p.m_p_mass[i]*p.m_p_vy[i];
         psum[2] += p.m_p_mass[i]*p.m_p_vz[i];
     }
-    for (int i = 0; i < p.g_size(); ++i) {
+    for (size_t i = 0; i < p.g_size(); ++i) {
         gsum[0] += p.g_momentumx(i);
         gsum[1] += p.g_momentumy(i);
         gsum[2] += p.g_momentumz(i);
@@ -203,12 +203,12 @@ TEST_CASE("Calculate force on grid (linear bspline)") {
 
     // check conservation
     double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
-    for (int i = 0; i < p.p_size(); ++i) {
+    for (size_t i = 0; i < p.p_size(); ++i) {
         psum[0] += p.p_mass(i)*p.body_force(0);
         psum[1] += p.p_mass(i)*p.body_force(1);
         psum[2] += p.p_mass(i)*p.body_force(2);
     }
-    for (int i = 0; i < p.g_size(); ++i) {
+    for (size_t i = 0; i < p.g_size(); ++i) {
         gsum[0] += p.g_forcex(i);
         gsum[1] += p.g_forcey(i);
         gsum[2] += p.g_forcez(i);
@@ -230,7 +230,7 @@ TEST_CASE("Calculate force on grid (linear bspline)") {
     REQUIRE(std::round(p.g_forcez(5, 10, 15)*10.)==16875.);
 
     // try with non-zero stresses
-    for (int i = 0; i < p.p_size(); ++i) {
+    for (size_t i = 0; i < p.p_size(); ++i) {
         p.p_sigmaxx(i) = p.p_x(i);
         p.p_sigmayy(i) = p.p_y(i);
         p.p_sigmazz(i) = p.p_z(i);
@@ -274,12 +274,12 @@ TEST_CASE("Calculate force on grid (cubic bspline)") {
 
     // check conservation
     double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
-    for (int i = 0; i < p.p_size(); ++i) {
+    for (size_t i = 0; i < p.p_size(); ++i) {
         psum[0] += p.p_mass(i)*p.body_force(0);
         psum[1] += p.p_mass(i)*p.body_force(1);
         psum[2] += p.p_mass(i)*p.body_force(2);
     }
-    for (int i = 0; i < p.g_size(); ++i) {
+    for (size_t i = 0; i < p.g_size(); ++i) {
         gsum[0] += p.g_forcex(i);
         gsum[1] += p.g_forcey(i);
         gsum[2] += p.g_forcez(i);
@@ -301,7 +301,7 @@ TEST_CASE("Calculate force on grid (cubic bspline)") {
     REQUIRE(std::round(p.g_forcez(6, 11, 16)*1e6)==1668281250.);
 
     // try with non-zero stresses
-    for (int i = 0; i < p.p_size(); ++i) {
+    for (size_t i = 0; i < p.p_size(); ++i) {
         p.p_sigmaxx(i) = p.p_x(i);
         p.p_sigmayy(i) = p.p_y(i);
         p.p_sigmazz(i) = p.p_z(i);

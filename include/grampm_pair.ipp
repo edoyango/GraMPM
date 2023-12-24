@@ -3,7 +3,7 @@
 
 namespace GraMPM {
     template<typename F>
-    const int& MPM_system<F>::pg_nn(const size_t i, const size_t j) const { 
+    const size_t& MPM_system<F>::pg_nn(const size_t i, const size_t j) const { 
         assert(j < pg_nns_pp); 
         return pg_nns[i*pg_nns_pp+j];
     }
@@ -53,7 +53,7 @@ namespace GraMPM {
     template<typename F>
     void MPM_system<F>::update_particle_to_cell_map(const size_t start, const size_t end) {
         #pragma omp for
-        for (int i = start; i < end; ++i) {
+        for (size_t i = start; i < end; ++i) {
             m_p_grid_idx[i] = ravel_grid_idx(
                 calc_idxx(m_p_x[i]),
                 calc_idxy(m_p_y[i]),
@@ -93,7 +93,7 @@ namespace GraMPM {
 
         // update neighbour indices
         #pragma omp for
-        for (int i = 0; i < m_p_size; ++i) {
+        for (size_t i = 0; i < m_p_size; ++i) {
             const int idx = m_p_grid_idx[i];
             int n = 0;
             for (int di=1-knl.radius; di <= knl.radius; ++di) {
@@ -136,13 +136,13 @@ namespace GraMPM {
 
         // initialize grid data.
         #pragma omp for
-        for (int i = 0; i < m_g_size; ++i) m_g_mass[i] = 0.;
+        for (size_t i = 0; i < m_g_size; ++i) m_g_mass[i] = 0.;
 
         // map mass to grid
         #pragma omp for reduction(vec_plus:m_g_mass)
-        for (int i = 0; i < m_p_size; ++i) {
-            for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = pg_nn(i, j);
+        for (size_t i = 0; i < m_p_size; ++i) {
+            for (size_t j = 0; j < pg_nns_pp; ++j) {
+                const size_t node_idx = pg_nn(i, j);
                 m_g_mass[node_idx] += pg_nn_w(i, j)*m_p_mass[i];
             }
         }
@@ -152,7 +152,7 @@ namespace GraMPM {
         
         // initialize grid data.
         #pragma omp for
-        for (int i = 0; i < m_g_size; ++i) {
+        for (size_t i = 0; i < m_g_size; ++i) {
             m_g_momentumx[i] = 0.;
             m_g_momentumy[i] = 0.;
             m_g_momentumz[i] = 0.;
@@ -160,9 +160,9 @@ namespace GraMPM {
 
         // map momentum to grid
         #pragma omp for reduction(vec_plus:m_g_momentumx,m_g_momentumy,m_g_momentumz)
-        for (int i = 0; i < m_p_size; ++i) {
-            for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = pg_nn(i, j);
+        for (size_t i = 0; i < m_p_size; ++i) {
+            for (size_t j = 0; j < pg_nns_pp; ++j) {
+                const size_t node_idx = pg_nn(i, j);
                 m_g_momentumx[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vx[i];
                 m_g_momentumy[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vy[i];
                 m_g_momentumz[node_idx] += pg_nn_w(i, j)*m_p_mass[i]*m_p_vz[i];
@@ -174,7 +174,7 @@ namespace GraMPM {
 
         // initialize grid data.
         #pragma omp for
-        for (int i = 0; i < m_g_size; ++i) {
+        for (size_t i = 0; i < m_g_size; ++i) {
             m_g_forcex[i] = 0.;
             m_g_forcey[i] = 0.;
             m_g_forcez[i] = 0.;
@@ -182,9 +182,9 @@ namespace GraMPM {
 
         // map force to grid (div sigma and body force together)
         #pragma omp for reduction (vec_plus:m_g_forcex,m_g_forcey,m_g_forcez)
-        for (int i = 0; i < m_p_size; ++i) {
-            for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = pg_nn(i, j);
+        for (size_t i = 0; i < m_p_size; ++i) {
+            for (size_t j = 0; j < pg_nns_pp; ++j) {
+                const size_t node_idx = pg_nn(i, j);
                 m_g_forcex[node_idx] += -m_p_mass[i]/m_p_rho[i]*(
                     m_p_sigmaxx[i]*pg_nn_dwdx(i, j) +
                     m_p_sigmaxy[i]*pg_nn_dwdy(i, j) +
@@ -209,15 +209,15 @@ namespace GraMPM {
 
         // map acceleration and velocity to particles
         #pragma omp for
-        for (int i = 0; i < m_p_size; ++i) {
+        for (size_t i = 0; i < m_p_size; ++i) {
             m_p_ax[i] = 0.;
             m_p_ay[i] = 0.;
             m_p_az[i] = 0.;
             m_p_dxdt[i] = 0.;
             m_p_dydt[i] = 0.;
             m_p_dzdt[i] = 0.;
-            for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = pg_nn(i, j);
+            for (size_t j = 0; j < pg_nns_pp; ++j) {
+                const size_t node_idx = pg_nn(i, j);
                 m_p_ax[i] += pg_nn_w(i, j)*m_g_forcex[node_idx]/m_g_mass[node_idx];
                 m_p_ay[i] += pg_nn_w(i, j)*m_g_forcey[node_idx]/m_g_mass[node_idx];
                 m_p_az[i] += pg_nn_w(i, j)*m_g_forcez[node_idx]/m_g_mass[node_idx];
@@ -232,7 +232,7 @@ namespace GraMPM {
 
         // map strainrates to particles
         #pragma omp for
-        for (int i = 0; i < m_p_size; ++i) {
+        for (size_t i = 0; i < m_p_size; ++i) {
             m_p_strainratexx[i] = 0.;
             m_p_strainrateyy[i] = 0.;
             m_p_strainratezz[i] = 0.;
@@ -242,8 +242,8 @@ namespace GraMPM {
             m_p_spinratexy[i] = 0.;
             m_p_spinratexz[i] = 0.;
             m_p_spinrateyz[i] = 0.;
-            for (int j = 0; j < pg_nns_pp; ++j) {
-                const int node_idx = pg_nn(i, j);
+            for (size_t j = 0; j < pg_nns_pp; ++j) {
+                const size_t node_idx = pg_nn(i, j);
                 m_p_strainratexx[i] += pg_nn_dwdx(i, j)*m_g_momentumx[node_idx]/m_g_mass[node_idx];
                 m_p_strainrateyy[i] += pg_nn_dwdy(i, j)*m_g_momentumy[node_idx]/m_g_mass[node_idx];
                 m_p_strainratezz[i] += pg_nn_dwdz(i, j)*m_g_momentumz[node_idx]/m_g_mass[node_idx];

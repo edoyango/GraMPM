@@ -5,38 +5,38 @@
 #include <grampm_kernels.hpp>
 
 void apply_lower_momentum(GraMPM::MPM_system<double> &self, const int &timestep, const double &dt) {
-    for (int i = 0; i < self.g_ngridx; ++i)
-        for (int j = 0; j < self.g_ngridy; ++j) {
-            self.g_set_momentumx(i, j, 0, -1.);
-            self.g_set_momentumy(i, j, 0, -1.);
-            self.g_set_momentumz(i, j, 0, -1.);
+    for (size_t i = 0; i < self.g_ngridx(); ++i)
+        for (size_t j = 0; j < self.g_ngridy(); ++j) {
+            self.g_momentumx(i, j, 0) = -1.;
+            self.g_momentumy(i, j, 0) = -1.;
+            self.g_momentumz(i, j, 0) = -1.;
         }
 }
 
 void apply_lower_force(GraMPM::MPM_system<double> &self, const int &timestep, const double &dt) {
-    for (int i = 0; i < self.g_ngridx; ++i)
-        for (int j = 0; j < self.g_ngridy; ++j) {
-            self.g_set_forcex(i, j, 0, -2.);
-            self.g_set_forcey(i, j, 0, -2.);
-            self.g_set_forcez(i, j, 0, -2.);
+    for (size_t i = 0; i < self.g_ngridx(); ++i)
+        for (size_t j = 0; j < self.g_ngridy(); ++j) {
+            self.g_forcex(i, j, 0) = -2.;
+            self.g_forcey(i, j, 0) = -2.;
+            self.g_forcez(i, j, 0) = -2.;
         }
 }
 
 void apply_west_momentum(GraMPM::MPM_system<double> &self, const int &timestep, const double &dt) {
-    for (int j = 0; j < self.g_ngridy; ++j)
-        for (int k = 0; k < self.g_ngridz; ++k) {
-            self.g_set_momentumx(0, j, k, -3.);
-            self.g_set_momentumy(0, j, k, -3.);
-            self.g_set_momentumz(0, j, k, -3.);
+    for (size_t j = 0; j < self.g_ngridy(); ++j)
+        for (size_t k = 0; k < self.g_ngridz(); ++k) {
+            self.g_momentumx(0, j, k) = -3.;
+            self.g_momentumy(0, j, k) = -3.;
+            self.g_momentumz(0, j, k) = -3.;
         }
 }
 
 void apply_west_force(GraMPM::MPM_system<double> &self, const int &timestep, const double &dt) {
-    for (int j = 0; j < self.g_ngridy; ++j)
-        for (int k = 0; k < self.g_ngridz; ++k) {
-            self.g_set_forcex(0, j, k, -4.);
-            self.g_set_forcey(0, j, k, -4.);
-            self.g_set_forcez(0, j, k, -4.);
+    for (size_t j = 0; j < self.g_ngridy(); ++j)
+        for (size_t k = 0; k < self.g_ngridz(); ++k) {
+            self.g_forcex(0, j, k) = -4.;
+            self.g_forcey(0, j, k) = -4.;
+            self.g_forcez(0, j, k) = -4.;
         }
 }
 
@@ -51,44 +51,44 @@ TEST_CASE("Check that grid momentum and force boundary conditions have been appl
     myMPM.g_set_momentum_boundary_function(apply_lower_momentum);
     myMPM.g_set_force_boundary_function(apply_lower_force);
 
-    for (int i = 0; i < myMPM.g_size; ++i) {
-        myMPM.g_momentumx[i] = 1.;
-        myMPM.g_momentumy[i] = 1.;
-        myMPM.g_momentumz[i] = 1.;
-        myMPM.g_forcex[i] = 2.;
-        myMPM.g_forcey[i] = 2.;
-        myMPM.g_forcez[i] = 2.;
+    for (size_t i = 0; i < myMPM.g_size(); ++i) {
+        myMPM.g_momentumx(i) = 1.;
+        myMPM.g_momentumy(i) = 1.;
+        myMPM.g_momentumz(i) = 1.;
+        myMPM.g_forcex(i) = 2.;
+        myMPM.g_forcey(i) = 2.;
+        myMPM.g_forcez(i) = 2.;
     }
 
     myMPM.g_apply_momentum_boundary_conditions(1, 0.);
 
-    for (int i = 0; i < myMPM.g_ngridx; ++i)
-        for (int j = 0; j < myMPM.g_ngridy; ++j)
-            for (int k = 0; k < myMPM.g_ngridz; ++k) {
+    for (size_t i = 0; i < myMPM.g_ngridx(); ++i)
+        for (size_t j = 0; j < myMPM.g_ngridy(); ++j)
+            for (size_t k = 0; k < myMPM.g_ngridz(); ++k) {
                 if (k == 0) {
-                    REQUIRE(myMPM.g_get_momentumx(i, j, k)==-1.);
-                    REQUIRE(myMPM.g_get_momentumy(i, j, k)==-1.);
-                    REQUIRE(myMPM.g_get_momentumz(i, j, k)==-1.);
+                    REQUIRE(myMPM.g_momentumx(i, j, k)==-1.);
+                    REQUIRE(myMPM.g_momentumy(i, j, k)==-1.);
+                    REQUIRE(myMPM.g_momentumz(i, j, k)==-1.);
                 } else {
-                    REQUIRE(myMPM.g_get_momentumx(i, j, k)==1.);
-                    REQUIRE(myMPM.g_get_momentumy(i, j, k)==1.);
-                    REQUIRE(myMPM.g_get_momentumz(i, j, k)==1.);
+                    REQUIRE(myMPM.g_momentumx(i, j, k)==1.);
+                    REQUIRE(myMPM.g_momentumy(i, j, k)==1.);
+                    REQUIRE(myMPM.g_momentumz(i, j, k)==1.);
                 }
             }
 
     myMPM.g_apply_force_boundary_conditions(1, 0.);
 
-    for (int i = 0; i < myMPM.g_ngridx; ++i)
-        for (int j = 0; j < myMPM.g_ngridy; ++j)
-            for (int k = 0; k < myMPM.g_ngridz; ++k) {
+    for (size_t i = 0; i < myMPM.g_ngridx(); ++i)
+        for (size_t j = 0; j < myMPM.g_ngridy(); ++j)
+            for (size_t k = 0; k < myMPM.g_ngridz(); ++k) {
                 if (k == 0) {
-                    REQUIRE(myMPM.g_get_forcex(i, j, k)==-2.);
-                    REQUIRE(myMPM.g_get_forcey(i, j, k)==-2.);
-                    REQUIRE(myMPM.g_get_forcez(i, j, k)==-2.);
+                    REQUIRE(myMPM.g_forcex(i, j, k)==-2.);
+                    REQUIRE(myMPM.g_forcey(i, j, k)==-2.);
+                    REQUIRE(myMPM.g_forcez(i, j, k)==-2.);
                 } else {
-                    REQUIRE(myMPM.g_get_forcex(i, j, k)==2.);
-                    REQUIRE(myMPM.g_get_forcey(i, j, k)==2.);
-                    REQUIRE(myMPM.g_get_forcez(i, j, k)==2.);
+                    REQUIRE(myMPM.g_forcex(i, j, k)==2.);
+                    REQUIRE(myMPM.g_forcey(i, j, k)==2.);
+                    REQUIRE(myMPM.g_forcez(i, j, k)==2.);
                 }
             }
 
@@ -96,21 +96,21 @@ TEST_CASE("Check that grid momentum and force boundary conditions have been appl
     myMPM.g_set_momentum_boundary_function(apply_west_momentum);
     myMPM.g_apply_momentum_boundary_conditions(1, 0.);
 
-    for (int i = 0; i < myMPM.g_ngridx; ++i)
-        for (int j = 0; j < myMPM.g_ngridy; ++j)
-            for (int k = 0; k < myMPM.g_ngridz; ++k) {
+    for (size_t i = 0; i < myMPM.g_ngridx(); ++i)
+        for (size_t j = 0; j < myMPM.g_ngridy(); ++j)
+            for (size_t k = 0; k < myMPM.g_ngridz(); ++k) {
                 if (i == 0) {
-                    REQUIRE(myMPM.g_get_momentumx(i, j, k)==-3.);
-                    REQUIRE(myMPM.g_get_momentumy(i, j, k)==-3.);
-                    REQUIRE(myMPM.g_get_momentumz(i, j, k)==-3.);
+                    REQUIRE(myMPM.g_momentumx(i, j, k)==-3.);
+                    REQUIRE(myMPM.g_momentumy(i, j, k)==-3.);
+                    REQUIRE(myMPM.g_momentumz(i, j, k)==-3.);
                 } else if (k == 0) {
-                    REQUIRE(myMPM.g_get_momentumx(i, j, k)==-1.);
-                    REQUIRE(myMPM.g_get_momentumy(i, j, k)==-1.);
-                    REQUIRE(myMPM.g_get_momentumz(i, j, k)==-1.);
+                    REQUIRE(myMPM.g_momentumx(i, j, k)==-1.);
+                    REQUIRE(myMPM.g_momentumy(i, j, k)==-1.);
+                    REQUIRE(myMPM.g_momentumz(i, j, k)==-1.);
                 } else {
-                    REQUIRE(myMPM.g_get_momentumx(i, j, k)==1.);
-                    REQUIRE(myMPM.g_get_momentumy(i, j, k)==1.);
-                    REQUIRE(myMPM.g_get_momentumz(i, j, k)==1.);
+                    REQUIRE(myMPM.g_momentumx(i, j, k)==1.);
+                    REQUIRE(myMPM.g_momentumy(i, j, k)==1.);
+                    REQUIRE(myMPM.g_momentumz(i, j, k)==1.);
                 }
             }
 
@@ -118,21 +118,21 @@ TEST_CASE("Check that grid momentum and force boundary conditions have been appl
     myMPM.g_set_force_boundary_function(apply_west_force);
     myMPM.g_apply_force_boundary_conditions(1, 0.);
 
-    for (int i = 0; i < myMPM.g_ngridx; ++i)
-        for (int j = 0; j < myMPM.g_ngridy; ++j)
-            for (int k = 0; k < myMPM.g_ngridz; ++k) {
+    for (size_t i = 0; i < myMPM.g_ngridx(); ++i)
+        for (size_t j = 0; j < myMPM.g_ngridy(); ++j)
+            for (size_t k = 0; k < myMPM.g_ngridz(); ++k) {
                 if (i == 0) {
-                    REQUIRE(myMPM.g_get_forcex(i, j, k)==-4.);
-                    REQUIRE(myMPM.g_get_forcey(i, j, k)==-4.);
-                    REQUIRE(myMPM.g_get_forcez(i, j, k)==-4.);
+                    REQUIRE(myMPM.g_forcex(i, j, k)==-4.);
+                    REQUIRE(myMPM.g_forcey(i, j, k)==-4.);
+                    REQUIRE(myMPM.g_forcez(i, j, k)==-4.);
                 } else if (k == 0) {
-                    REQUIRE(myMPM.g_get_forcex(i, j, k)==-2.);
-                    REQUIRE(myMPM.g_get_forcey(i, j, k)==-2.);
-                    REQUIRE(myMPM.g_get_forcez(i, j, k)==-2.);
+                    REQUIRE(myMPM.g_forcex(i, j, k)==-2.);
+                    REQUIRE(myMPM.g_forcey(i, j, k)==-2.);
+                    REQUIRE(myMPM.g_forcez(i, j, k)==-2.);
                 } else {
-                    REQUIRE(myMPM.g_get_forcex(i, j, k)==2.);
-                    REQUIRE(myMPM.g_get_forcey(i, j, k)==2.);
-                    REQUIRE(myMPM.g_get_forcez(i, j, k)==2.);
+                    REQUIRE(myMPM.g_forcex(i, j, k)==2.);
+                    REQUIRE(myMPM.g_forcey(i, j, k)==2.);
+                    REQUIRE(myMPM.g_forcez(i, j, k)==2.);
                 }
             }
 

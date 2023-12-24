@@ -95,7 +95,7 @@ namespace GraMPM {
                 << std::setw(f_width) << "spinrateyz" << ' '
                 << '\n';
 
-        for (int i = 0; i < m_p_size; ++i) {
+        for (size_t i = 0; i < m_p_size; ++i) {
             outfile << std::setw(i_width) << i << ' ' << std::setprecision(f_precision)
                     << std::setw(f_width) << std::fixed << m_p_x[i] << ' '
                     << std::setw(f_width) << std::fixed << m_p_y[i] << ' '

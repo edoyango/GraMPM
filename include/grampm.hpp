@@ -73,10 +73,10 @@ namespace GraMPM {
         const kernel_base<F> &knl;
             
         // particle-node pair data and functions -----------------------------------------------------------------------
-        const int pg_nns_pp;
+        const size_t pg_nns_pp;
         std::vector<F> pg_nns_dx, pg_nns_dy, pg_nns_dz, pg_nns_w, pg_nns_dwdx, pg_nns_dwdy, pg_nns_dwdz;
-        std::vector<int> pg_nns;
-        const int& pg_nn(const size_t i, const size_t j) const ;
+        std::vector<size_t> pg_nns;
+        const size_t& pg_nn(const size_t i, const size_t j) const ;
         const F& pg_nn_dx(const size_t i, const size_t j) const ;
         const F& pg_nn_dy(const size_t i, const size_t j) const ;
         const F& pg_nn_dz(const size_t i, const size_t j) const ;

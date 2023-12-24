@@ -15,7 +15,7 @@ namespace GraMPM {
         : m_p_size {0}
         , m_body_force {bf}
         , knl {knl_in}
-        , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
+        , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
         , m_g_mingridx {g_mingrid_in[0]}
         , m_g_mingridy {g_mingrid_in[1]}
         , m_g_mingridz {g_mingrid_in[2]}
@@ -73,7 +73,7 @@ namespace GraMPM {
         , m_p_spinrateyz(p_size_in, 0.)
         , m_body_force {bf}
         , knl {knl_in}
-        , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
+        , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
         , m_g_mingridx {g_mingrid_in[0]}
         , m_g_mingridy {g_mingrid_in[1]}
         , m_g_mingridz {g_mingrid_in[2]}
@@ -101,7 +101,7 @@ namespace GraMPM {
         std::array<F, 3> g_mingrid_in, std::array<F, 3> g_maxgrid_in, F cell_size_in)
         : m_body_force {bf}
         , knl {knl_in}
-        , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
+        , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
         , m_g_mingridx {g_mingrid_in[0]}
         , m_g_mingridy {g_mingrid_in[1]}
         , m_g_mingridz {g_mingrid_in[2]}
@@ -122,7 +122,7 @@ namespace GraMPM {
         , m_g_forcez(m_g_size, 0.)
         {
             p_clear();
-            for (int i = 0; i < pv.size(); ++i) p_push_back(pv[i]);
+            for (size_t i = 0; i < pv.size(); ++i) p_push_back(pv[i]);
             m_p_size = pv.size();
         }; // empty object (everything to be defined later)
 
@@ -133,7 +133,7 @@ namespace GraMPM {
         : m_p_size {0}
         , m_body_force {bf}
         , knl {knl_in}
-        , pg_nns_pp {static_cast<int>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
+        , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
         , m_g_mingridx {g_mingrid_in[0]}
         , m_g_mingridy {g_mingrid_in[1]}
         , m_g_mingridz {g_mingrid_in[2]}

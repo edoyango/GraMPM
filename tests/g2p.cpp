@@ -34,9 +34,9 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
     generate_particles(p);
 
     // setup grid
-    for (int i = 0 ; i < p.g_ngridx(); ++i) 
-        for (int j = 0; j < p.g_ngridy(); ++j)
-            for (int k = 0; k < p.g_ngridz(); ++k) {
+    for (size_t i = 0 ; i < p.g_ngridx(); ++i) 
+        for (size_t j = 0; j < p.g_ngridy(); ++j)
+            for (size_t k = 0; k < p.g_ngridz(); ++k) {
                 p.g_momentumx(i, j, k) = 0.1*(i+j+k);
                 p.g_momentumy(i, j, k) = 0.2*(i+j+k);
                 p.g_momentumz(i, j, k) = 0.3*(i+j+k);
@@ -52,7 +52,7 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
     // check conservation
     // sum particles' force (m*a) and momentum (dxdt*m)
     double psum[6] {0., 0., 0., 0., 0., 0.}, gsum[6] {0., 0., 0., 0., 0., 0.};
-    for (int i = 0; i < p.p_size(); ++i) {
+    for (size_t i = 0; i < p.p_size(); ++i) {
         psum[0] += p.p_ax(i)*p.p_mass(i);
         psum[1] += p.p_ay(i)*p.p_mass(i);
         psum[2] += p.p_az(i)*p.p_mass(i);
@@ -60,7 +60,7 @@ TEST_CASE("Calculate particles' accelerations (linear bspline)") {
         psum[4] += p.p_dydt(i)*p.p_mass(i);
         psum[5] += p.p_dzdt(i)*p.p_mass(i);
     }
-    for (int i = 0; i < p.g_size(); ++i) {
+    for (size_t i = 0; i < p.g_size(); ++i) {
         gsum[0] += p.g_forcex(i);
         gsum[1] += p.g_forcey(i);
         gsum[2] += p.g_forcez(i);
@@ -90,9 +90,9 @@ TEST_CASE("Calculate particles' accelerations (cubic bspline)") {
     generate_particles(p);
 
     // setup grid
-    for (int i = 0 ; i < p.g_ngridx(); ++i) 
-        for (int j = 0; j < p.g_ngridy(); ++j)
-            for (int k = 0; k < p.g_ngridz(); ++k) {
+    for (size_t i = 0 ; i < p.g_ngridx(); ++i) 
+        for (size_t j = 0; j < p.g_ngridy(); ++j)
+            for (size_t k = 0; k < p.g_ngridz(); ++k) {
                 p.g_momentumx(i, j, k) = 0.1*(i+j+k);
                 p.g_momentumy(i, j, k) = 0.2*(i+j+k);
                 p.g_momentumz(i, j, k) = 0.3*(i+j+k);
@@ -108,7 +108,7 @@ TEST_CASE("Calculate particles' accelerations (cubic bspline)") {
     // check conservation
     // sum particles' force (m*a) and momentum (dxdt*m)
     double psum[6] {0., 0., 0., 0., 0., 0.}, gsum[6] {0., 0., 0., 0., 0., 0.};
-    for (int i = 0; i < p.p_size(); ++i) {
+    for (size_t i = 0; i < p.p_size(); ++i) {
         psum[0] += p.p_ax(i)*p.p_mass(i);
         psum[1] += p.p_ay(i)*p.p_mass(i);
         psum[2] += p.p_az(i)*p.p_mass(i);
@@ -116,7 +116,7 @@ TEST_CASE("Calculate particles' accelerations (cubic bspline)") {
         psum[4] += p.p_dydt(i)*p.p_mass(i);
         psum[5] += p.p_dzdt(i)*p.p_mass(i);
     }
-    for (int i = 0; i < p.g_size(); ++i) {
+    for (size_t i = 0; i < p.g_size(); ++i) {
         gsum[0] += p.g_forcex(i);
         gsum[1] += p.g_forcey(i);
         gsum[2] += p.g_forcez(i);
@@ -147,9 +147,9 @@ TEST_CASE("Calculate particles' strain/spin rates (linear bspline)") {
     generate_particles(p);
 
     // setup grid
-    for (int i = 0; i < p.g_ngridx(); ++i)
-        for (int j = 0; j < p.g_ngridy(); ++j) 
-            for (int k = 0; k < p.g_ngridz(); ++k) {
+    for (size_t i = 0; i < p.g_ngridx(); ++i)
+        for (size_t j = 0; j < p.g_ngridy(); ++j) 
+            for (size_t k = 0; k < p.g_ngridz(); ++k) {
                 const double x = i*0.2 + p.g_mingridx();
                 const double y = j*0.2 + p.g_mingridy();
                 const double z = k*0.2 + p.g_mingridz();
@@ -199,9 +199,9 @@ TEST_CASE("Calculate particles' strain/spin rates (cubic bspline)") {
     generate_particles(p);
 
     // setup grid
-    for (int i = 0; i < p.g_ngridx(); ++i)
-        for (int j = 0; j < p.g_ngridy(); ++j) 
-            for (int k = 0; k < p.g_ngridz(); ++k) {
+    for (size_t i = 0; i < p.g_ngridx(); ++i)
+        for (size_t j = 0; j < p.g_ngridy(); ++j) 
+            for (size_t k = 0; k < p.g_ngridz(); ++k) {
                 const double x = i*0.2 + p.g_mingridx();
                 const double y = j*0.2 + p.g_mingridy();
                 const double z = k*0.2 + p.g_mingridz();

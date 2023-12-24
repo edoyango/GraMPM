@@ -18,10 +18,10 @@ const double dx = (maxgrid[0]-mingrid[0])/4;
 const double dy = (maxgrid[1]-mingrid[1])/4;
 const double dz = (maxgrid[2]-mingrid[2])/4;
 
-const int correct_idxx[5] {0, 0, 1, 1, 2};
-const int correct_idxy[5] {0, 0, 1, 1, 2};
-const int correct_idxz[5] {0, 0, 1, 2, 3};
-const int correct_ravelled_idx[5] {0, 0, 1*4*5+1*5+1, 1*4*5+1*5+2, 2*4*5+2*5+3};
+const size_t correct_idxx[5] {0, 0, 1, 1, 2};
+const size_t correct_idxy[5] {0, 0, 1, 1, 2};
+const size_t correct_idxz[5] {0, 0, 1, 2, 3};
+const size_t correct_ravelled_idx[5] {0, 0, 1*4*5+1*5+1, 1*4*5+1*5+2, 2*4*5+2*5+3};
 
 TEST_CASE( "Correct ravelling of particles' grid indices upon initialization", "[p]") {
     // create the particlesystem instance
@@ -107,7 +107,7 @@ TEST_CASE("Correct determination of grid node neighbours (radius=2)") {
     p.p_push_back(GraMPM::particle<double>(0.01, 0.16, 0.26, 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0.));
     p.p_push_back(GraMPM::particle<double>(0.01, 0.3, 0.5, 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0.));
 
-    int correct_ravelled_idx[2] {37, 45};
+    size_t correct_ravelled_idx[2] {37, 45};
 
     CHECK(p.p_grid_idx(0)==correct_ravelled_idx[0]);
     CHECK(p.p_grid_idx(1)==correct_ravelled_idx[1]);
