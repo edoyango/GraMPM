@@ -17,7 +17,7 @@ GraMPM::MPM_system<double> myMPM(5, bf, knl, mingridx_in, maxgridx_in, dcell_in)
 
 TEST_CASE("grid intialized correctly", "[grid]") {
 
-    REQUIRE(myMPM.g_dcell==dcell_in);
+    REQUIRE(myMPM.g_cell_size()==dcell_in);
 
     // test array get interface
     std::array<double, 3> mingridx_out {myMPM.g_mingrid()}, maxgridx_out {myMPM.g_maxgrid()};

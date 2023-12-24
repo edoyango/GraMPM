@@ -157,9 +157,9 @@ TEST_CASE("Map particles momentums to grid (cubic bspline)") {
     // check conservation
     double psum[3] {0., 0., 0.}, gsum[3] {0., 0., 0.};
     for (size_t i = 0; i < p.p_size(); ++i) {
-        psum[0] += p.m_p_mass[i]*p.m_p_vx[i];
-        psum[1] += p.m_p_mass[i]*p.m_p_vy[i];
-        psum[2] += p.m_p_mass[i]*p.m_p_vz[i];
+        psum[0] += p.p_mass(i)*p.p_vx(i);
+        psum[1] += p.p_mass(i)*p.p_vy(i);
+        psum[2] += p.p_mass(i)*p.p_vz(i);
     }
     for (size_t i = 0; i < p.g_size(); ++i) {
         gsum[0] += p.g_momentumx(i);

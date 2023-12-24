@@ -38,7 +38,8 @@ namespace GraMPM {
         ngridy = m_g_ngridy;
         ngridz = m_g_ngridz;
     }
-    template<typename F> const size_t MPM_system<F>::g_size() const { return m_g_size; };
+    template<typename F> const F& MPM_system<F>::g_cell_size() const { return g_dcell; }
+    template<typename F> const size_t MPM_system<F>::g_size() const { return m_g_size; }
     
     template<typename F> F& MPM_system<F>::g_mass(const int &i) { return m_g_mass[i]; }
     template<typename F> F& MPM_system<F>::g_momentumx(const int &i) { return m_g_momentumx[i]; }
@@ -114,5 +115,8 @@ namespace GraMPM {
     template<typename F> size_t& MPM_system<F>::p_grid_idx(const size_t &i) { return m_p_grid_idx[i]; }
     
     template<typename F> const size_t& MPM_system<F>::p_size() const { return m_p_size; }
+
+    template<typename F> F& MPM_system<F>::p_E() { return m_E; }
+    template<typename F> F& MPM_system<F>::p_v() { return m_v; }
 }
 #endif

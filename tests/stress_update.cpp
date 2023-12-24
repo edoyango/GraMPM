@@ -25,8 +25,8 @@ TEST_CASE("Check correct Hooke's law") {
     p.p_strainratexz(0) = 5.;
     p.p_strainrateyz(0) = 6.;
 
-    p.m_E = 100.;
-    p.m_v = 0.25;
+    p.p_E() = 100.;
+    p.p_v() = 0.25;
 
     p.p_update_stress(0.1);
 
@@ -109,8 +109,8 @@ TEST_CASE("Check DP elasto-plasticity") {
     p.p_strainratexz(0) = -5.;
     p.p_strainrateyz(0) = -6.;
 
-    p.m_E = 100.;
-    p.m_v = 0.25;
+    p.p_E() = 100.;
+    p.p_v() = 0.25;
 
     p.p_update_stress(0.1);
 

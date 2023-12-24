@@ -118,8 +118,8 @@ int main() {
     const double c = std::sqrt((K+4./3.*G)/rho_ini);
     const double dt = dcell/c;
 
-    myMPM.m_E = E;
-    myMPM.m_v = v;
+    myMPM.p_E() = E;
+    myMPM.p_v() = v;
     const double pi = std::acos(-1.);
     myMPM.set_DP_params(pi/9., 0., 0.);
 

@@ -9,19 +9,21 @@ namespace GraMPM {
         template<typename F>
         void hookes_law(GraMPM::MPM_system<F> &self, const F &dt) {
 
-            const F D0 {self.m_E/((1.+self.m_v)*(1.-2.*self.m_v))};
+            const F E = self.p_E(), v = self.p_v();
+
+            const F D0 {E/((1.+v)*(1.-2.*v))};
 
             // DE*dstrain
             #pragma omp for
             for (size_t i = 0; i < self.p_size(); ++i) {
 
                 // update stress state with elastic increment
-                double dsigmaxx = D0*((1.-self.m_v)*self.p_strainratexx(i) + self.m_v*self.p_strainrateyy(i) + self.m_v*self.p_strainratezz(i));
-                double dsigmayy = D0*(self.m_v*self.p_strainratexx(i) + (1.-self.m_v)*self.p_strainrateyy(i) + self.m_v*self.p_strainratezz(i));
-                double dsigmazz = D0*(self.m_v*self.p_strainratexx(i) + self.m_v*self.p_strainrateyy(i) + (1.-self.m_v)*self.p_strainratezz(i));
-                double dsigmaxy = D0*self.p_strainratexy(i)*(1.-2.*self.m_v);
-                double dsigmaxz = D0*self.p_strainratexz(i)*(1.-2.*self.m_v);
-                double dsigmayz = D0*self.p_strainrateyz(i)*(1.-2.*self.m_v);
+                double dsigmaxx = D0*((1.-v)*self.p_strainratexx(i) + v*self.p_strainrateyy(i) + v*self.p_strainratezz(i));
+                double dsigmayy = D0*(v*self.p_strainratexx(i) + (1.-v)*self.p_strainrateyy(i) + v*self.p_strainratezz(i));
+                double dsigmazz = D0*(v*self.p_strainratexx(i) + v*self.p_strainrateyy(i) + (1.-v)*self.p_strainratezz(i));
+                double dsigmaxy = D0*self.p_strainratexy(i)*(1.-2.*v);
+                double dsigmaxz = D0*self.p_strainratexz(i)*(1.-2.*v);
+                double dsigmayz = D0*self.p_strainrateyz(i)*(1.-2.*v);
 
                 // jaumann stress rate
                 dsigmaxx -= 2.*(self.p_spinratexy(i)*self.p_sigmaxy(i) + self.p_spinratexz(i)*self.p_sigmaxz(i));
@@ -51,7 +53,8 @@ namespace GraMPM {
             hookes_law(self, dt);
 
             // setting up for plastic corrector step (duplicated code, would like to remove this somehow)
-            const F D0 {self.m_E/((1.+self.m_v)*(1.-2.*self.m_v))};
+            const F E = self.p_E(), v = self.p_v();
+            const F D0 {E/((1.+v)*(1.-2.*v))};
 
             F phi, psi, coh, alpha_phi, alpha_psi, k_c;
             self.DP_params(phi, psi, coh, alpha_phi, alpha_psi, k_c);
@@ -109,20 +112,20 @@ namespace GraMPM {
                         shat[5],
                     };
                     const F dlambda {f/(
-                        dfdsig[0]*D0*((1.-self.m_v)*dgdsig[0] + self.m_v*dgdsig[1] + self.m_v*dgdsig[2]) +
-                        dfdsig[1]*D0*(self.m_v*dgdsig[0] + (1.-self.m_v)*dgdsig[1] + self.m_v*dgdsig[2]) +
-                        dfdsig[2]*D0*(self.m_v*dgdsig[0] + self.m_v*dgdsig[1] + (1.-self.m_v)*dgdsig[2]) +
-                        2.*dfdsig[3]*D0*dgdsig[3]*(1.-2.*self.m_v) +
-                        2.*dfdsig[4]*D0*dgdsig[4]*(1.-2.*self.m_v) +
-                        2.*dfdsig[5]*D0*dgdsig[5]*(1.-2.*self.m_v)
+                        dfdsig[0]*D0*((1.-v)*dgdsig[0] + v*dgdsig[1] + v*dgdsig[2]) +
+                        dfdsig[1]*D0*(v*dgdsig[0] + (1.-v)*dgdsig[1] + v*dgdsig[2]) +
+                        dfdsig[2]*D0*(v*dgdsig[0] + v*dgdsig[1] + (1.-v)*dgdsig[2]) +
+                        2.*dfdsig[3]*D0*dgdsig[3]*(1.-2.*v) +
+                        2.*dfdsig[4]*D0*dgdsig[4]*(1.-2.*v) +
+                        2.*dfdsig[5]*D0*dgdsig[5]*(1.-2.*v)
                     )};
                     
-                    self.p_sigmaxx(i) -= dlambda*D0*((1.-self.m_v)*dgdsig[0] + self.m_v*dgdsig[1] + self.m_v*dgdsig[2]);
-                    self.p_sigmayy(i) -= dlambda*D0*(self.m_v*dgdsig[0] + (1.-self.m_v)*dgdsig[1] + self.m_v*dgdsig[2]);
-                    self.p_sigmazz(i) -= dlambda*D0*(self.m_v*dgdsig[0] + self.m_v*dgdsig[1] + (1.-self.m_v)*dgdsig[2]);
-                    self.p_sigmaxy(i) -= dlambda*D0*dgdsig[3]*(1.-2.*self.m_v);
-                    self.p_sigmaxz(i) -= dlambda*D0*dgdsig[4]*(1.-2.*self.m_v);
-                    self.p_sigmayz(i) -= dlambda*D0*dgdsig[5]*(1.-2.*self.m_v);
+                    self.p_sigmaxx(i) -= dlambda*D0*((1.-v)*dgdsig[0] + v*dgdsig[1] + v*dgdsig[2]);
+                    self.p_sigmayy(i) -= dlambda*D0*(v*dgdsig[0] + (1.-v)*dgdsig[1] + v*dgdsig[2]);
+                    self.p_sigmazz(i) -= dlambda*D0*(v*dgdsig[0] + v*dgdsig[1] + (1.-v)*dgdsig[2]);
+                    self.p_sigmaxy(i) -= dlambda*D0*dgdsig[3]*(1.-2.*v);
+                    self.p_sigmaxz(i) -= dlambda*D0*dgdsig[4]*(1.-2.*v);
+                    self.p_sigmayz(i) -= dlambda*D0*dgdsig[5]*(1.-2.*v);
 
                     I1 = self.p_sigmaxx(i) + self.p_sigmayy(i) + self.p_sigmazz(i);
                     if (I1 > k_c/alpha_phi) {
