@@ -6,10 +6,10 @@
 namespace GraMPM {
 
     template<typename F> 
-    void MPM_system<F>::g_set_momentum_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f)
+    void MPM_system<F>::g_set_momentum_boundary_function(std::function<void(MPM_system<F>&, const size_t&, const F&)> f)
             { g_momentum_boundary_function = f; }
     template<typename F> 
-    void MPM_system<F>::g_set_force_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f)
+    void MPM_system<F>::g_set_force_boundary_function(std::function<void(MPM_system<F>&, const size_t&, const F&)> f)
             { g_force_boundary_function = f; }
     
     template<typename F> 
@@ -23,12 +23,12 @@ namespace GraMPM {
     }
 
     template<typename F> 
-    void MPM_system<F>::g_apply_momentum_boundary_conditions(const int &timestep, const F dt) {
+    void MPM_system<F>::g_apply_momentum_boundary_conditions(const size_t &timestep, const F dt) {
         g_momentum_boundary_function(*this, timestep, dt);
     }
 
     template<typename F> 
-    void MPM_system<F>::g_apply_force_boundary_conditions(const int &timestep, const F dt) {
+    void MPM_system<F>::g_apply_force_boundary_conditions(const size_t &timestep, const F dt) {
         g_force_boundary_function(*this, timestep, dt);
     }
 }

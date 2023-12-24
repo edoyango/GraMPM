@@ -5,7 +5,7 @@
 #include <cmath>
 #include <grampm_stress_update_functions.hpp>
 
-static void momentum_boundary(GraMPM::MPM_system<double> &self, const int &timestep, const double &dt) {
+static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &timestep, const double &dt) {
 
     // floor
     #pragma omp for collapse(2)
@@ -45,7 +45,7 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const int &times
     }
 }
 
-static void force_boundary(GraMPM::MPM_system<double> &self, const int &timestep, const double &dt) {
+static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &timestep, const double &dt) {
     // floor
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {

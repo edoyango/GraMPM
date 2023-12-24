@@ -100,11 +100,11 @@ namespace GraMPM {
         std::vector<F> m_g_mass, m_g_momentumx, m_g_momentumy, m_g_momentumz, m_g_forcex, m_g_forcey, m_g_forcez;
         std::function<void(MPM_system<F>&, const int&, const F&)> g_momentum_boundary_function, 
             g_force_boundary_function;
-        void g_set_momentum_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f);
-        void g_set_force_boundary_function(std::function<void(MPM_system<F>&, const int&, const F&)> f);
+        void g_set_momentum_boundary_function(std::function<void(MPM_system<F>&, const size_t&, const F&)> f);
+        void g_set_force_boundary_function(std::function<void(MPM_system<F>&, const size_t&, const F&)> f);
         void g_update_momentum(const F &dt); 
-        void g_apply_momentum_boundary_conditions(const int &timestep, const F dt);
-        void g_apply_force_boundary_conditions(const int &timestep, const F dt);
+        void g_apply_momentum_boundary_conditions(const size_t &timestep, const F dt);
+        void g_apply_force_boundary_conditions(const size_t &timestep, const F dt);
         
         // utility functions -------------------------------------------------------------------------------------------
         size_t ravel_grid_idx(const size_t &idxx, const size_t &idxy, const size_t &idxz) const;
