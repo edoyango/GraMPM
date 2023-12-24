@@ -30,7 +30,7 @@ TEST_CASE("grid intialized correctly", "[grid]") {
     REQUIRE(maxgridx_out[1]==maxgridx_in[1]);
     REQUIRE(maxgridx_out[2]==maxgridx_in[2]);
 
-    std::array<int, 3> ngridx_out = myMPM.g_ngrid();
+    std::array<size_t, 3> ngridx_out = myMPM.g_ngrid();
     REQUIRE(ngridx_out[0]==3);
     REQUIRE(ngridx_out[1]==4);
     REQUIRE(ngridx_out[2]==5);

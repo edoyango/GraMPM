@@ -27,18 +27,18 @@ namespace GraMPM {
         maxgridy = m_g_maxgridy;
         maxgridz = m_g_maxgridz;
     }
-    template<typename F> const int& MPM_system<F>::g_ngridx() const { return m_g_ngridx; }
-    template<typename F> const int& MPM_system<F>::g_ngridy() const { return m_g_ngridy; }
-    template<typename F> const int& MPM_system<F>::g_ngridz() const { return m_g_ngridz; }
+    template<typename F> const size_t MPM_system<F>::g_ngridx() const { return m_g_ngridx; }
+    template<typename F> const size_t MPM_system<F>::g_ngridy() const { return m_g_ngridy; }
+    template<typename F> const size_t MPM_system<F>::g_ngridz() const { return m_g_ngridz; }
     template<typename F> 
-    std::array<int, 3> MPM_system<F>::g_ngrid() const { return {m_g_ngridx, m_g_ngridy, m_g_ngridz}; }
+    std::array<size_t, 3> MPM_system<F>::g_ngrid() const { return {m_g_ngridx, m_g_ngridy, m_g_ngridz}; }
     template<typename F>
-    void MPM_system<F>::g_ngrid(int &ngridx, int &ngridy, int &ngridz) const {
+    void MPM_system<F>::g_ngrid(size_t &ngridx, size_t &ngridy, size_t &ngridz) const {
         ngridx = m_g_ngridx;
         ngridy = m_g_ngridy;
         ngridz = m_g_ngridz;
     }
-    template<typename F> const int& MPM_system<F>::g_size() const { return m_g_size; };
+    template<typename F> const size_t MPM_system<F>::g_size() const { return m_g_size; };
     
     template<typename F> F& MPM_system<F>::g_mass(const int &i) { return m_g_mass[i]; }
     template<typename F> F& MPM_system<F>::g_momentumx(const int &i) { return m_g_momentumx[i]; }
@@ -111,7 +111,7 @@ namespace GraMPM {
     template<typename F> F& MPM_system<F>::p_spinratexy(const int &i) { return m_p_spinratexy[i]; }
     template<typename F> F& MPM_system<F>::p_spinratexz(const int &i) { return m_p_spinratexz[i]; }
     template<typename F> F& MPM_system<F>::p_spinrateyz(const int &i) { return m_p_spinrateyz[i]; }
-    template<typename F> int& MPM_system<F>::p_grid_idx(const int &i) { return m_p_grid_idx[i]; }
+    template<typename F> size_t MPM_system<F>::p_grid_idx(const size_t &i) { return m_p_grid_idx[i]; }
     
     template<typename F> const size_t& MPM_system<F>::p_size() const { return m_p_size; }
 }

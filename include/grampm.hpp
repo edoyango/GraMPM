@@ -96,7 +96,7 @@ namespace GraMPM {
 
         // grid data and functions -------------------------------------------------------------------------------------
         const F m_g_mingridx, m_g_mingridy, m_g_mingridz, m_g_maxgridx, m_g_maxgridy, m_g_maxgridz, g_dcell;
-        const int m_g_ngridx, m_g_ngridy, m_g_ngridz, m_g_size;
+        const size_t m_g_ngridx, m_g_ngridy, m_g_ngridz, m_g_size;
         std::vector<F> m_g_mass, m_g_momentumx, m_g_momentumy, m_g_momentumz, m_g_forcex, m_g_forcey, m_g_forcez;
         std::function<void(MPM_system<F>&, const int&, const F&)> g_momentum_boundary_function, 
             g_force_boundary_function;
@@ -113,7 +113,7 @@ namespace GraMPM {
         int calc_idxx(const F &x) const;
         int calc_idxy(const F &y) const;
         int calc_idxz(const F &z) const;
-        int calc_ngrid(const F &maxx, const F &minx, const F &dc) { return std::ceil((maxx-minx)/dc)+1; }
+        size_t calc_ngrid(const F &maxx, const F &minx, const F &dc) { return std::ceil((maxx-minx)/dc)+1; }
         void save_to_file(const std::string &prefix, const int &timestep) const;
         
         // trivial getters and setters ---------------------------------------------------------------------------------
@@ -128,12 +128,12 @@ namespace GraMPM {
         const F& g_maxgridz() const;
         std::array<F, 3> g_maxgrid() const;
         void g_maxgrid(F &maxgridx, F &maxgridy, F &maxgridz) const;
-        const int& g_ngridx() const;
-        const int& g_ngridy() const;
-        const int& g_ngridz() const;
-        std::array<int, 3> g_ngrid() const;
-        void g_ngrid(int &ngridx, int &ngridy, int &ngridz) const;
-        const int& g_size() const;
+        const size_t g_ngridx() const;
+        const size_t g_ngridy() const;
+        const size_t g_ngridz() const;
+        std::array<size_t, 3> g_ngrid() const;
+        void g_ngrid(size_t &ngridx, size_t &ngridy, size_t &ngridz) const;
+        const size_t g_size() const;
         F& g_mass(const int &i);
         F& g_momentumx(const int &i);
         F& g_momentumx(const int &i, const int &j, const int &k);
@@ -181,7 +181,7 @@ namespace GraMPM {
         F& p_spinratexy(const int &i);
         F& p_spinratexz(const int &i);
         F& p_spinrateyz(const int &i);
-        int& p_grid_idx(const int &i);
+        size_t p_grid_idx(const size_t &i);
 
         const size_t& p_size() const;
         
