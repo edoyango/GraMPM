@@ -14,7 +14,7 @@ namespace GraMPM {
     template<typename F>
     particle<F> MPM_system<F>::p_at(const int &i) { 
         particle<F> p(m_p_xyz[0][i], m_p_xyz[1][i], m_p_xyz[2][i], m_p_vxyz[0][i], m_p_vxyz[1][i], m_p_vxyz[2][i], m_p_mass[i], m_p_rho[i], 
-            m_p_sigmaxx[i], m_p_sigmayy[i], m_p_sigmazz[i], m_p_sigmaxy[i], m_p_sigmaxz[i], m_p_sigmayz[i], m_p_axyz[0][i], 
+            m_p_sigmaij[0][i], m_p_sigmaij[1][i], m_p_sigmaij[2][i], m_p_sigmaij[3][i], m_p_sigmaij[4][i], m_p_sigmaij[5][i], m_p_axyz[0][i], 
             m_p_axyz[1][i], m_p_axyz[2][i], m_p_dxyzdt[0][i], m_p_dxyzdt[1][i], m_p_dxyzdt[2][i], m_p_strainratexx[i], m_p_strainrateyy[i], 
             m_p_strainratezz[i], m_p_strainratexy[i], m_p_strainratexz[i], m_p_strainrateyz[i], m_p_spinratexy[i], 
             m_p_spinratexz[i], m_p_spinrateyz[i]);
@@ -38,12 +38,12 @@ namespace GraMPM {
         m_p_dxyzdt[2].push_back(p.dzdt);
         m_p_mass.push_back(p.mass);
         m_p_rho.push_back(p.rho);
-        m_p_sigmaxx.push_back(p.sigmaxx);
-        m_p_sigmayy.push_back(p.sigmayy);
-        m_p_sigmazz.push_back(p.sigmazz);
-        m_p_sigmaxy.push_back(p.sigmaxy);
-        m_p_sigmaxz.push_back(p.sigmaxz);
-        m_p_sigmayz.push_back(p.sigmayz);
+        m_p_sigmaij[0].push_back(p.sigmaxx);
+        m_p_sigmaij[1].push_back(p.sigmayy);
+        m_p_sigmaij[2].push_back(p.sigmazz);
+        m_p_sigmaij[3].push_back(p.sigmaxy);
+        m_p_sigmaij[4].push_back(p.sigmaxz);
+        m_p_sigmaij[5].push_back(p.sigmayz);
         m_p_strainratexx.push_back(p.strainratexx);
         m_p_strainrateyy.push_back(p.strainrateyy);
         m_p_strainratezz.push_back(p.strainratezz);
@@ -80,12 +80,12 @@ namespace GraMPM {
         m_p_dxyzdt[2].clear();
         m_p_mass.clear();
         m_p_rho.clear();
-        m_p_sigmaxx.clear();
-        m_p_sigmayy.clear();
-        m_p_sigmazz.clear();
-        m_p_sigmaxy.clear();
-        m_p_sigmaxz.clear();
-        m_p_sigmayz.clear();
+        m_p_sigmaij[0].clear();
+        m_p_sigmaij[1].clear();
+        m_p_sigmaij[2].clear();
+        m_p_sigmaij[3].clear();
+        m_p_sigmaij[4].clear();
+        m_p_sigmaij[5].clear();
         m_p_strainratexx.clear();
         m_p_strainrateyy.clear();
         m_p_strainratezz.clear();
@@ -104,8 +104,8 @@ namespace GraMPM {
     bool MPM_system<F>::p_empty() {
         return m_p_xyz[0].empty() && m_p_xyz[1].empty() && m_p_xyz[2].empty() && m_p_vxyz[0].empty() && m_p_vxyz[1].empty() && m_p_vxyz[0].empty() && 
             m_p_axyz[0].empty() && m_p_axyz[1].empty() && m_p_axyz[2].empty() && m_p_dxyzdt[0].empty() && m_p_dxyzdt[1].empty() && 
-            m_p_dxyzdt[2].empty() && m_p_mass.empty() && m_p_rho.empty() && m_p_sigmaxx.empty() && m_p_sigmayy.empty() && 
-            m_p_sigmazz.empty() && m_p_sigmaxy.empty() && m_p_sigmaxz.empty() && m_p_sigmayz.empty() && 
+            m_p_dxyzdt[2].empty() && m_p_mass.empty() && m_p_rho.empty() && m_p_sigmaij[0].empty() && m_p_sigmaij[1].empty() && 
+            m_p_sigmaij[2].empty() && m_p_sigmaij[3].empty() && m_p_sigmaij[4].empty() && m_p_sigmaij[5].empty() && 
             m_p_strainratexx.empty() && m_p_strainrateyy.empty() && m_p_strainratezz.empty() && 
             m_p_strainratexy.empty() && m_p_strainratexz.empty() && m_p_strainrateyz.empty() && 
             m_p_spinratexy.empty() && m_p_spinratexz.empty() && m_p_spinrateyz.empty() &&m_p_grid_idx.empty() && 
@@ -129,12 +129,12 @@ namespace GraMPM {
         m_p_dxyzdt[2].resize(n, 0.);
         m_p_mass.resize(n, 0.);
         m_p_rho.resize(n, 0.);
-        m_p_sigmaxx.resize(n, 0.);
-        m_p_sigmayy.resize(n, 0.);
-        m_p_sigmazz.resize(n, 0.);
-        m_p_sigmaxy.resize(n, 0.);
-        m_p_sigmaxz.resize(n, 0.);
-        m_p_sigmayz.resize(n, 0.);
+        m_p_sigmaij[0].resize(n, 0.);
+        m_p_sigmaij[1].resize(n, 0.);
+        m_p_sigmaij[2].resize(n, 0.);
+        m_p_sigmaij[3].resize(n, 0.);
+        m_p_sigmaij[4].resize(n, 0.);
+        m_p_sigmaij[5].resize(n, 0.);
         m_p_strainratexx.resize(n, 0.);
         m_p_strainrateyy.resize(n, 0.);
         m_p_strainratezz.resize(n, 0.);

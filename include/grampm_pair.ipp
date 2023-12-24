@@ -186,19 +186,19 @@ namespace GraMPM {
             for (size_t j = 0; j < pg_nns_pp; ++j) {
                 const size_t node_idx = pg_nn(i, j);
                 m_g_forcex[node_idx] += -m_p_mass[i]/m_p_rho[i]*(
-                    m_p_sigmaxx[i]*pg_nn_dwdx(i, j) +
-                    m_p_sigmaxy[i]*pg_nn_dwdy(i, j) +
-                    m_p_sigmaxz[i]*pg_nn_dwdz(i, j)
+                    m_p_sigmaij[0][i]*pg_nn_dwdx(i, j) +
+                    m_p_sigmaij[3][i]*pg_nn_dwdy(i, j) +
+                    m_p_sigmaij[4][i]*pg_nn_dwdz(i, j)
                 ) + m_body_force[0]*m_p_mass[i]*pg_nn_w(i, j);
                 m_g_forcey[node_idx] += -m_p_mass[i]/m_p_rho[i]*(
-                    m_p_sigmaxy[i]*pg_nn_dwdx(i, j) +
-                    m_p_sigmayy[i]*pg_nn_dwdy(i, j) +
-                    m_p_sigmayz[i]*pg_nn_dwdz(i, j)
+                    m_p_sigmaij[3][i]*pg_nn_dwdx(i, j) +
+                    m_p_sigmaij[1][i]*pg_nn_dwdy(i, j) +
+                    m_p_sigmaij[5][i]*pg_nn_dwdz(i, j)
                 ) + m_body_force[1]*m_p_mass[i]*pg_nn_w(i, j);
                 m_g_forcez[node_idx] += -m_p_mass[i]/m_p_rho[i]*(
-                    m_p_sigmaxz[i]*pg_nn_dwdx(i, j) +
-                    m_p_sigmayz[i]*pg_nn_dwdy(i, j) +
-                    m_p_sigmazz[i]*pg_nn_dwdz(i, j)
+                    m_p_sigmaij[4][i]*pg_nn_dwdx(i, j) +
+                    m_p_sigmaij[5][i]*pg_nn_dwdy(i, j) +
+                    m_p_sigmaij[2][i]*pg_nn_dwdz(i, j)
                 ) + m_body_force[2]*m_p_mass[i]*pg_nn_w(i, j);
             }
         }

@@ -46,14 +46,10 @@ namespace GraMPM {
         , m_p_vxyz {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_axyz {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_dxyzdt {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
+        , m_p_sigmaij {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.),
+            std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_mass(p_size_in, 0.)
         , m_p_rho(p_size_in, 0.)
-        , m_p_sigmaxx(p_size_in, 0.)
-        , m_p_sigmayy(p_size_in, 0.)
-        , m_p_sigmazz(p_size_in, 0.)
-        , m_p_sigmaxy(p_size_in, 0.)
-        , m_p_sigmaxz(p_size_in, 0.)
-        , m_p_sigmayz(p_size_in, 0.)
         , m_p_strainratexx(p_size_in, 0.)
         , m_p_strainrateyy(p_size_in, 0.)
         , m_p_strainratezz(p_size_in, 0.)
