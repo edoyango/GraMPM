@@ -97,9 +97,9 @@ namespace GraMPM {
 
         for (size_t i = 0; i < m_p_size; ++i) {
             outfile << std::setw(i_width) << i << ' ' << std::setprecision(f_precision)
-                    << std::setw(f_width) << std::fixed << m_p_x[i] << ' '
-                    << std::setw(f_width) << std::fixed << m_p_y[i] << ' '
-                    << std::setw(f_width) << std::fixed << m_p_z[i] << ' '
+                    << std::setw(f_width) << std::fixed << m_p_xyz[0][i] << ' '
+                    << std::setw(f_width) << std::fixed << m_p_xyz[1][i] << ' '
+                    << std::setw(f_width) << std::fixed << m_p_xyz[2][i] << ' '
                     << std::setw(f_width) << std::fixed << m_p_vx[i] << ' '
                     << std::setw(f_width) << std::fixed << m_p_vy[i] << ' '
                     << std::setw(f_width) << std::fixed << m_p_vz[i] << ' '

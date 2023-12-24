@@ -42,9 +42,7 @@ namespace GraMPM {
     MPM_system<F>::MPM_system(size_t p_size_in, std::array<F, 3> bf, kernel_base<F> &knl_in, 
         std::array<F, 3> g_mingrid_in, std::array<F, 3> g_maxgrid_in, F cell_size_in)
         : m_p_size {p_size_in}
-        , m_p_x(p_size_in, 0.)
-        , m_p_y(p_size_in, 0.)
-        , m_p_z(p_size_in, 0.)
+        , m_p_xyz {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_vx(p_size_in, 0.)
         , m_p_vy(p_size_in, 0.)
         , m_p_vz(p_size_in, 0.)

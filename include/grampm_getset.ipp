@@ -83,9 +83,9 @@ namespace GraMPM {
     template<typename F> 
     const F& MPM_system<F>::body_force(const int i) const { return m_body_force[i]; }
     
-    template<typename F> F& MPM_system<F>::p_x(const int &i) { return m_p_x[i]; }
-    template<typename F> F& MPM_system<F>::p_y(const int &i) { return m_p_y[i]; }
-    template<typename F> F& MPM_system<F>::p_z(const int &i) { return m_p_z[i]; }
+    template<typename F> F& MPM_system<F>::p_x(const int &i) { return m_p_xyz[0][i]; }
+    template<typename F> F& MPM_system<F>::p_y(const int &i) { return m_p_xyz[1][i]; }
+    template<typename F> F& MPM_system<F>::p_z(const int &i) { return m_p_xyz[2][i]; }
     template<typename F> F& MPM_system<F>::p_vx(const int &i) { return m_p_vx[i]; }
     template<typename F> F& MPM_system<F>::p_vy(const int &i) { return m_p_vy[i]; }
     template<typename F> F& MPM_system<F>::p_vz(const int &i) { return m_p_vz[i]; }

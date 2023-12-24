@@ -13,7 +13,7 @@ namespace GraMPM {
     // vector-like api: at. Returns particle class
     template<typename F>
     particle<F> MPM_system<F>::p_at(const int &i) { 
-        particle<F> p(m_p_x[i], m_p_y[i], m_p_z[i], m_p_vx[i], m_p_vy[i], m_p_vz[i], m_p_mass[i], m_p_rho[i], 
+        particle<F> p(m_p_xyz[0][i], m_p_xyz[1][i], m_p_xyz[2][i], m_p_vx[i], m_p_vy[i], m_p_vz[i], m_p_mass[i], m_p_rho[i], 
             m_p_sigmaxx[i], m_p_sigmayy[i], m_p_sigmazz[i], m_p_sigmaxy[i], m_p_sigmaxz[i], m_p_sigmayz[i], m_p_ax[i], 
             m_p_ay[i], m_p_az[i], m_p_dxdt[i], m_p_dydt[i], m_p_dzdt[i], m_p_strainratexx[i], m_p_strainrateyy[i], 
             m_p_strainratezz[i], m_p_strainratexy[i], m_p_strainratexz[i], m_p_strainrateyz[i], m_p_spinratexy[i], 
@@ -24,9 +24,9 @@ namespace GraMPM {
     // vector-like api: push_back. Takes particle class and appends its properties to particle_system member vectors
     template<typename F>
     void MPM_system<F>::p_push_back(const particle<F> &p) {
-        m_p_x.push_back(p.x);
-        m_p_y.push_back(p.y);
-        m_p_z.push_back(p.z);
+        m_p_xyz[0].push_back(p.x);
+        m_p_xyz[1].push_back(p.y);
+        m_p_xyz[2].push_back(p.z);
         m_p_vx.push_back(p.vx);
         m_p_vy.push_back(p.vy);
         m_p_vz.push_back(p.vz);
@@ -66,9 +66,9 @@ namespace GraMPM {
     // vector-like api: clear. Makes size 0.
     template<typename F>
     void MPM_system<F>::p_clear() {
-        m_p_x.clear();
-        m_p_y.clear();
-        m_p_z.clear();
+        m_p_xyz[0].clear();
+        m_p_xyz[1].clear();
+        m_p_xyz[2].clear();
         m_p_vx.clear();
         m_p_vy.clear();
         m_p_vz.clear();
@@ -102,7 +102,7 @@ namespace GraMPM {
     // vector-like api: empty. Checks whether all member vectors are empty. Also checks the m_size member
     template<typename F>
     bool MPM_system<F>::p_empty() {
-        return m_p_x.empty() && m_p_y.empty() && m_p_z.empty() && m_p_vx.empty() && m_p_vy.empty() && m_p_vz.empty() && 
+        return m_p_xyz[0].empty() && m_p_xyz[1].empty() && m_p_xyz[2].empty() && m_p_vx.empty() && m_p_vy.empty() && m_p_vz.empty() && 
             m_p_ax.empty() && m_p_ay.empty() && m_p_az.empty() && m_p_dxdt.empty() && m_p_dydt.empty() && 
             m_p_dzdt.empty() && m_p_mass.empty() && m_p_rho.empty() && m_p_sigmaxx.empty() && m_p_sigmayy.empty() && 
             m_p_sigmazz.empty() && m_p_sigmaxy.empty() && m_p_sigmaxz.empty() && m_p_sigmayz.empty() && 
@@ -115,9 +115,9 @@ namespace GraMPM {
     // vector-like api: resize. Shrinks/grows the member vectors. zeros the vectors.
     template<typename F>
     void MPM_system<F>::p_resize(const int n) {
-        m_p_x.resize(n, 0.);
-        m_p_y.resize(n, 0.);
-        m_p_z.resize(n, 0.);
+        m_p_xyz[0].resize(n, 0.);
+        m_p_xyz[1].resize(n, 0.);
+        m_p_xyz[2].resize(n, 0.);
         m_p_vx.resize(n, 0.);
         m_p_vy.resize(n, 0.);
         m_p_vz.resize(n, 0.);
@@ -166,9 +166,9 @@ namespace GraMPM {
     void MPM_system<F>::p_update_position(const F &dt) {
         #pragma omp for
         for (size_t i = 0; i < m_p_size; ++i) {
-            m_p_x[i] += dt*m_p_dxdt[i];
-            m_p_y[i] += dt*m_p_dydt[i];
-            m_p_z[i] += dt*m_p_dzdt[i];
+            m_p_xyz[0][i] += dt*m_p_dxdt[i];
+            m_p_xyz[1][i] += dt*m_p_dydt[i];
+            m_p_xyz[2][i] += dt*m_p_dzdt[i];
         }
     }
     template<typename F> 

@@ -49,7 +49,8 @@ namespace GraMPM {
         // particle data and functions ---------------------------------------------------------------------------------
         protected:
             size_t m_p_size, p_neighbour_nodes_size;
-            std::vector<F> m_p_x, m_p_y, m_p_z, m_p_vx, m_p_vy, m_p_vz, m_p_ax, m_p_ay, m_p_az, m_p_dxdt, m_p_dydt, 
+            std::array<std::vector<F>, 3> m_p_xyz;
+            std::vector<F> m_p_vx, m_p_vy, m_p_vz, m_p_ax, m_p_ay, m_p_az, m_p_dxdt, m_p_dydt, 
                 m_p_dzdt, m_p_mass, m_p_rho, m_p_sigmaxx, m_p_sigmayy, m_p_sigmazz, m_p_sigmaxy, m_p_sigmaxz, m_p_sigmayz, 
                 m_p_strainratexx, m_p_strainrateyy, m_p_strainratezz, m_p_strainratexy, m_p_strainratexz, m_p_strainrateyz, 
                 m_p_spinratexy, m_p_spinratexz, m_p_spinrateyz;

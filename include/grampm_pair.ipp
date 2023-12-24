@@ -55,9 +55,9 @@ namespace GraMPM {
         #pragma omp for
         for (size_t i = start; i < end; ++i) {
             m_p_grid_idx[i] = ravel_grid_idx(
-                calc_idxx(m_p_x[i]),
-                calc_idxy(m_p_y[i]),
-                calc_idxz(m_p_z[i])
+                calc_idxx(m_p_xyz[0][i]),
+                calc_idxy(m_p_xyz[1][i]),
+                calc_idxz(m_p_xyz[2][i])
             );
         }
     }
@@ -67,9 +67,9 @@ namespace GraMPM {
         #pragma omp for
         for (size_t i = 0; i < m_p_size; ++i) {
             m_p_grid_idx[i] = ravel_grid_idx(
-                calc_idxx(m_p_x[i]),
-                calc_idxy(m_p_y[i]),
-                calc_idxz(m_p_z[i])
+                calc_idxx(m_p_xyz[0][i]),
+                calc_idxy(m_p_xyz[1][i]),
+                calc_idxz(m_p_xyz[2][i])
             );
         }
     }
@@ -112,9 +112,9 @@ namespace GraMPM {
             size_t jstart = i*pg_nns_pp;
             for (size_t j = jstart; j < jstart+pg_nns_pp; ++j) {
                 const std::array<size_t, 3> idx = unravel_grid_idx(pg_nns[j]);
-                pg_nns_dx[j] = m_p_x[i] - (idx[0]*g_dcell + m_g_mingridx);
-                pg_nns_dy[j] = m_p_y[i] - (idx[1]*g_dcell + m_g_mingridy);
-                pg_nns_dz[j] = m_p_z[i] - (idx[2]*g_dcell + m_g_mingridz);
+                pg_nns_dx[j] = m_p_xyz[0][i] - (idx[0]*g_dcell + m_g_mingridx);
+                pg_nns_dy[j] = m_p_xyz[1][i] - (idx[1]*g_dcell + m_g_mingridy);
+                pg_nns_dz[j] = m_p_xyz[2][i] - (idx[2]*g_dcell + m_g_mingridz);
                 knl.w_dwdx(
                     pg_nns_dx[j],
                     pg_nns_dy[j],
