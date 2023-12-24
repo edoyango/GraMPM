@@ -182,7 +182,7 @@ namespace GraMPM {
     template<typename F> 
     void MPM_system<F>::p_update_velocity(const F &dt) {
         #pragma omp for
-        for (int i = 0; i < m_p_size; ++i) {
+        for (size_t i = 0; i < m_p_size; ++i) {
             m_p_vx[i] += dt*m_p_ax[i];
             m_p_vy[i] += dt*m_p_ay[i];
             m_p_vz[i] += dt*m_p_az[i];
@@ -191,7 +191,7 @@ namespace GraMPM {
     template<typename F> 
     void MPM_system<F>::p_update_position(const F &dt) {
         #pragma omp for
-        for (int i = 0; i < m_p_size; ++i) {
+        for (size_t i = 0; i < m_p_size; ++i) {
             m_p_x[i] += dt*m_p_dxdt[i];
             m_p_y[i] += dt*m_p_dydt[i];
             m_p_z[i] += dt*m_p_dzdt[i];
@@ -201,7 +201,7 @@ namespace GraMPM {
     void MPM_system<F>::p_update_density(const F &dt) {
         // update density using volumentric strain increment
         #pragma omp for
-        for (int i = 0; i < m_p_size; ++i) {
+        for (size_t i = 0; i < m_p_size; ++i) {
             m_p_rho[i] /= 1. + dt*(m_p_strainratexx[i] + m_p_strainrateyy[i] + m_p_strainratezz[i]);
         }
     }

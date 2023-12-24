@@ -9,38 +9,38 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const int &times
 
     // floor
     #pragma omp for collapse(2)
-    for (int i = 0; i < self.g_ngridx; ++i) {
-        for (int j = 0; j < self.g_ngridy; ++j) {
-            self.g_set_momentumx(i, j, 0, 0.);
-            self.g_set_momentumx(i, j, 1, 0.);
-            self.g_set_momentumy(i, j, 0, 0.);
-            self.g_set_momentumy(i, j, 1, 0.);
-            self.g_set_momentumz(i, j, 0, 0.);
-            self.g_set_momentumz(i, j, 1, 0.);
+    for (size_t i = 0; i < self.g_ngridx(); ++i) {
+        for (size_t j = 0; j < self.g_ngridy(); ++j) {
+            self.g_momentumx(i, j, 0) = 0.;
+            self.g_momentumx(i, j, 1) = 0.;
+            self.g_momentumy(i, j, 0) = 0.;
+            self.g_momentumy(i, j, 1) = 0.;
+            self.g_momentumz(i, j, 0) = 0.;
+            self.g_momentumz(i, j, 1) = 0.;
         }
     }
 
     // east/west wall
-    const int xup = self.g_ngridx-1;
+    const size_t xup = self.g_ngridx()-1;
     #pragma omp for collapse(2)
-    for (int j = 0; j < self.g_ngridy; ++j) {
-        for (int k = 0; k < self.g_ngridz; ++k) {
-            self.g_set_momentumx(0, j, k, 0.);
-            self.g_set_momentumx(1, j, k, 0.);
-            self.g_set_momentumx(xup-1, j, k, 0.);
-            self.g_set_momentumx(xup, j, k, 0.);
+    for (size_t j = 0; j < self.g_ngridy(); ++j) {
+        for (size_t k = 0; k < self.g_ngridz(); ++k) {
+            self.g_momentumx(0, j, k) = 0.;
+            self.g_momentumx(1, j, k) = 0.;
+            self.g_momentumx(xup-1, j, k) = 0.;
+            self.g_momentumx(xup, j, k) = 0.;
         }
     }
 
     // north/south wall
-    const int yup = self.g_ngridy-1;
+    const size_t yup = self.g_ngridy()-1;
     #pragma omp for collapse(2)
-    for (int i = 0; i < self.g_ngridx; ++i) {
-        for (int k = 0; k < self.g_ngridz; ++k) {
-            self.g_set_momentumy(i, 0, k, 0.);
-            self.g_set_momentumy(i, 1, k, 0.);
-            self.g_set_momentumy(i, yup-1, k, 0.);
-            self.g_set_momentumy(i, yup, k, 0.);
+    for (size_t i = 0; i < self.g_ngridx(); ++i) {
+        for (size_t k = 0; k < self.g_ngridz(); ++k) {
+            self.g_momentumy(i, 0, k) = 0.;
+            self.g_momentumy(i, 1, k) = 0.;
+            self.g_momentumy(i, yup-1, k) = 0.;
+            self.g_momentumy(i, yup, k) = 0.;
         }
     }
 }
@@ -48,38 +48,38 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const int &times
 static void force_boundary(GraMPM::MPM_system<double> &self, const int &timestep, const double &dt) {
     // floor
     #pragma omp for collapse(2)
-    for (int i = 0; i < self.g_ngridx; ++i) {
-        for (int j = 0; j < self.g_ngridy; ++j) {
-            self.g_set_forcex(i, j, 0, 0.);
-            self.g_set_forcex(i, j, 1, 0.);
-            self.g_set_forcey(i, j, 0, 0.);
-            self.g_set_forcey(i, j, 1, 0.);
-            self.g_set_forcez(i, j, 0, 0.);
-            self.g_set_forcez(i, j, 1, 0.);
+    for (size_t i = 0; i < self.g_ngridx(); ++i) {
+        for (size_t j = 0; j < self.g_ngridy(); ++j) {
+            self.g_forcex(i, j, 0) = 0.;
+            self.g_forcex(i, j, 1) = 0.;
+            self.g_forcey(i, j, 0) = 0.;
+            self.g_forcey(i, j, 1) = 0.;
+            self.g_forcez(i, j, 0) = 0.;
+            self.g_forcez(i, j, 1) = 0.;
         }
     }
 
     // east/west wall
-    const int xup = self.g_ngridx-1;
+    const size_t xup = self.g_ngridx()-1;
     #pragma omp for collapse(2)
-    for (int j = 0; j < self.g_ngridy; ++j) {
-        for (int k = 0; k < self.g_ngridz; ++k) {
-            self.g_set_forcex(0, j, k, 0.);
-            self.g_set_forcex(1, j, k, 0.);
-            self.g_set_forcex(xup-1, j, k, 0.);
-            self.g_set_forcex(xup, j, k, 0.);
+    for (size_t j = 0; j < self.g_ngridy(); ++j) {
+        for (size_t k = 0; k < self.g_ngridz(); ++k) {
+            self.g_forcex(0, j, k) = 0.;
+            self.g_forcex(1, j, k) = 0.;
+            self.g_forcex(xup-1, j, k) = 0.;
+            self.g_forcex(xup, j, k) = 0.;
         }
     }
 
     // north/south wall
-    const int yup = self.g_ngridy-1;
+    const size_t yup = self.g_ngridy()-1;
     #pragma omp for collapse(2)
-    for (int i = 0; i < self.g_ngridx; ++i) {
-        for (int k = 0; k < self.g_ngridz; ++k) {
-            self.g_set_forcey(i, 0, k, 0.);
-            self.g_set_forcey(i, 1, k, 0.);
-            self.g_set_forcey(i, yup-1, k, 0.);
-            self.g_set_forcey(i, yup, k, 0.);
+    for (size_t i = 0; i < self.g_ngridx(); ++i) {
+        for (size_t k = 0; k < self.g_ngridz(); ++k) {
+            self.g_forcey(i, 0, k) = 0.;
+            self.g_forcey(i, 1, k) = 0.;
+            self.g_forcey(i, yup-1, k) = 0.;
+            self.g_forcey(i, yup, k) = 0.;
         }
     }
 }

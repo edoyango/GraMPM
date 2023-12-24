@@ -15,10 +15,10 @@ namespace GraMPM {
     template<typename F> 
     void MPM_system<F>::g_update_momentum(const F &dt) {
         #pragma omp for
-        for (int i = 0; i < g_size; ++i) {
-            g_momentumx[i] += dt*g_forcex[i];
-            g_momentumy[i] += dt*g_forcey[i];
-            g_momentumz[i] += dt*g_forcez[i];
+        for (size_t i = 0; i < g_size(); ++i) {
+            m_g_momentumx[i] += dt*m_g_forcex[i];
+            m_g_momentumy[i] += dt*m_g_forcey[i];
+            m_g_momentumz[i] += dt*m_g_forcez[i];
         }
     }
 
