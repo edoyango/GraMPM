@@ -244,9 +244,55 @@ TEST_CASE("IO", "[myMPM]") {
 TEST_CASE("Check clearing and resizing", "[myMPM]") {
     myMPM.p_clear();
     REQUIRE(myMPM.p_empty());
-    myMPM.p_resize(3);
-    REQUIRE(myMPM.p_size()==3);
     for (int i = 0; i < 3; ++i) {
+        GraMPM::particle<double> p(
+            std::array<double, 3> {-1.*i, -2.*i, -3.*i},
+            std::array<double, 3> {-4.*i, -5.*i, -6.*i},
+            10.*i, 100.*i,
+            std::array<double, 6> {-7.*i, -8.*i, -9.*i, -10.*i, -11.*i, -12.*i},
+            std::array<double, 3> {-13.*i, -14.*i, -15.*i},
+            std::array<double, 3> {-16.*i, -17.*i, -18.*i},
+            std::array<double, 6> {-19.*i, -20.*i, -21.*i, -22.*i, -23.*i, -24.*i},
+            std::array<double, 3> {-25.*i, -26.*i, -27.*i}
+        );
+        myMPM.p_push_back(p);
+    }
+
+    myMPM.p_resize(6);
+    REQUIRE(myMPM.p_size()==6);
+    
+    for (int i = 0; i < 3; ++i) {
+        REQUIRE(myMPM.p_x(i)==-1.*i);
+        REQUIRE(myMPM.p_y(i)==-2.*i);
+        REQUIRE(myMPM.p_z(i)==-3.*i);
+        REQUIRE(myMPM.p_vx(i)==-4.*i);
+        REQUIRE(myMPM.p_vy(i)==-5.*i);
+        REQUIRE(myMPM.p_vz(i)==-6.*i);
+        REQUIRE(myMPM.p_mass(i)==10.*i);
+        REQUIRE(myMPM.p_rho(i)==100.*i);
+        REQUIRE(myMPM.p_sigmaxx(i)==-7*i);
+        REQUIRE(myMPM.p_sigmayy(i)==-8*i);
+        REQUIRE(myMPM.p_sigmazz(i)==-9*i);
+        REQUIRE(myMPM.p_sigmaxy(i)==-10*i);
+        REQUIRE(myMPM.p_sigmaxz(i)==-11*i);
+        REQUIRE(myMPM.p_sigmayz(i)==-12*i);
+        REQUIRE(myMPM.p_ax(i)==-13.*i);
+        REQUIRE(myMPM.p_ay(i)==-14.*i);
+        REQUIRE(myMPM.p_az(i)==-15.*i);
+        REQUIRE(myMPM.p_dxdt(i)==-16.*i);
+        REQUIRE(myMPM.p_dydt(i)==-17.*i);
+        REQUIRE(myMPM.p_dzdt(i)==-18.*i);
+        REQUIRE(myMPM.p_strainratexx(i)==-19.*i);
+        REQUIRE(myMPM.p_strainrateyy(i)==-20.*i);
+        REQUIRE(myMPM.p_strainratezz(i)==-21.*i);
+        REQUIRE(myMPM.p_strainratexy(i)==-22.*i);
+        REQUIRE(myMPM.p_strainratexz(i)==-23.*i);
+        REQUIRE(myMPM.p_strainrateyz(i)==-24.*i);
+        REQUIRE(myMPM.p_spinratexy(i)==-25.*i);
+        REQUIRE(myMPM.p_spinratexz(i)==-26.*i);
+        REQUIRE(myMPM.p_spinrateyz(i)==-27.*i);
+    }
+    for (int i = 3; i < 6; ++i) {
         REQUIRE(myMPM.p_x(i)==0.);
         REQUIRE(myMPM.p_y(i)==0.);
         REQUIRE(myMPM.p_z(i)==0.);
