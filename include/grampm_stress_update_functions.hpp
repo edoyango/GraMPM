@@ -7,102 +7,80 @@ namespace GraMPM {
     namespace stress_update {
 
         template<typename F>
-        void hookes_law(GraMPM::particle_system<F> &self, const F &dt) {
+        void hookes_law(GraMPM::MPM_system<F> &self, const F &dt) {
 
-            const F E {self.E()}, v {self.v()};
-            const int size {static_cast<int>(self.size())};
-            std::vector<F> &sigmaxx {*(self.sigmaxx())}, &sigmayy {*(self.sigmayy())}, 
-                &sigmazz {*(self.sigmazz())}, &sigmaxy {*(self.sigmaxy())}, 
-                &sigmaxz {*(self.sigmaxz())}, &sigmayz {*(self.sigmayz())};
-            std::vector<F> &strainratexx {*(self.strainratexx())}, &strainrateyy {*(self.strainrateyy())}, 
-                &strainratezz {*(self.strainratezz())}, &strainratexy {*(self.strainratexy())}, 
-                &strainratexz {*(self.strainratexz())}, &strainrateyz {*(self.strainrateyz())};
-            std::vector<F> &spinratexy {*(self.spinratexy())}, &spinratexz {*(self.spinratexz())},
-                &spinrateyz {*(self.spinrateyz())};
+            const F E = self.get_stress_update_param("E"), v = self.get_stress_update_param("v");
 
             const F D0 {E/((1.+v)*(1.-2.*v))};
 
-            std::vector<F> dsigmaxx(size), dsigmayy(size), dsigmazz(size), dsigmaxy(size), dsigmaxz(size), 
-                dsigmayz(size);
-
             // DE*dstrain
             #pragma omp for
-            for (int i = 0; i < size; ++i) {
-                dsigmaxx[i] = D0*((1.-v)*strainratexx[i] + v*strainrateyy[i] + v*strainratezz[i]);
-                dsigmayy[i] = D0*(v*strainratexx[i] + (1.-v)*strainrateyy[i] + v*strainratezz[i]);
-                dsigmazz[i] = D0*(v*strainratexx[i] + v*strainrateyy[i] + (1.-v)*strainratezz[i]);
-                dsigmaxy[i] = D0*strainratexy[i]*(1.-2.*v);
-                dsigmaxz[i] = D0*strainratexz[i]*(1.-2.*v);
-                dsigmayz[i] = D0*strainrateyz[i]*(1.-2.*v);
-            // }
-            
-            // jaumann stress rate
-            // for (int i = 0; i < size; ++i) {
-                dsigmaxx[i] -= 2.*(spinratexy[i]*sigmaxy[i] + spinratexz[i]*sigmaxz[i]);
-                dsigmayy[i] -= 2.*(-spinratexy[i]*sigmaxy[i] + spinrateyz[i]*sigmayz[i]);
-                dsigmazz[i] += 2.*(spinratexz[i]*sigmaxz[i] + spinrateyz[i]*sigmayz[i]);
-                dsigmaxy[i] += sigmaxx[i]*spinratexy[i] - sigmaxz[i]*spinrateyz[i] -
-                    spinratexy[i]*sigmayy[i] - spinratexz[i]*sigmayz[i];
-                dsigmaxz[i] += sigmaxx[i]*spinratexz[i] + sigmaxy[i]*spinrateyz[i] -
-                    spinratexy[i]*sigmayz[i] - spinratexz[i]*sigmazz[i];
-                dsigmayz[i] += sigmaxy[i]*spinratexz[i] + sigmayy[i]*spinrateyz[i] +
-                    spinratexy[i]*sigmaxz[i] - spinrateyz[i]*sigmazz[i];
-            // }
+            for (size_t i = 0; i < self.p_size(); ++i) {
 
-            // update original stress states
-            // for (int i = 0; i < size; ++i) {
-                sigmaxx[i] += dt*dsigmaxx[i];
-                sigmayy[i] += dt*dsigmayy[i];
-                sigmazz[i] += dt*dsigmazz[i];
-                sigmaxy[i] += dt*dsigmaxy[i];
-                sigmaxz[i] += dt*dsigmaxz[i];
-                sigmayz[i] += dt*dsigmayz[i];
+                // update stress state with elastic increment
+                double dsigmaxx = D0*((1.-v)*self.p_strainratexx(i) + v*self.p_strainrateyy(i) + v*self.p_strainratezz(i));
+                double dsigmayy = D0*(v*self.p_strainratexx(i) + (1.-v)*self.p_strainrateyy(i) + v*self.p_strainratezz(i));
+                double dsigmazz = D0*(v*self.p_strainratexx(i) + v*self.p_strainrateyy(i) + (1.-v)*self.p_strainratezz(i));
+                double dsigmaxy = D0*self.p_strainratexy(i)*(1.-2.*v);
+                double dsigmaxz = D0*self.p_strainratexz(i)*(1.-2.*v);
+                double dsigmayz = D0*self.p_strainrateyz(i)*(1.-2.*v);
+
+                // jaumann stress rate
+                dsigmaxx -= 2.*(self.p_spinratexy(i)*self.p_sigmaxy(i) + self.p_spinratexz(i)*self.p_sigmaxz(i));
+                dsigmayy -= 2.*(-self.p_spinratexy(i)*self.p_sigmaxy(i) + self.p_spinrateyz(i)*self.p_sigmayz(i));
+                dsigmazz += 2.*(self.p_spinratexz(i)*self.p_sigmaxz(i) + self.p_spinrateyz(i)*self.p_sigmayz(i));
+                dsigmaxy += self.p_sigmaxx(i)*self.p_spinratexy(i) - self.p_sigmaxz(i)*self.p_spinrateyz(i) -
+                    self.p_spinratexy(i)*self.p_sigmayy(i) - self.p_spinratexz(i)*self.p_sigmayz(i);
+                dsigmaxz += self.p_sigmaxx(i)*self.p_spinratexz(i) + self.p_sigmaxy(i)*self.p_spinrateyz(i) -
+                    self.p_spinratexy(i)*self.p_sigmayz(i) - self.p_spinratexz(i)*self.p_sigmazz(i);
+                dsigmayz += self.p_sigmaxy(i)*self.p_spinratexz(i) + self.p_sigmayy(i)*self.p_spinrateyz(i) +
+                    self.p_spinratexy(i)*self.p_sigmaxz(i) - self.p_spinrateyz(i)*self.p_sigmazz(i);
+
+                self.p_sigmaxx(i) += dt*dsigmaxx;
+                self.p_sigmayy(i) += dt*dsigmayy;
+                self.p_sigmazz(i) += dt*dsigmazz;
+                self.p_sigmaxy(i) += dt*dsigmaxy;
+                self.p_sigmaxz(i) += dt*dsigmaxz;
+                self.p_sigmayz(i) += dt*dsigmayz;
             }
 
         }
 
         template<typename F>
-        void drucker_prager_elastoplastic(GraMPM::particle_system<F> &self, const F &dt) {
+        void drucker_prager_elastoplastic(GraMPM::MPM_system<F> &self, const F &dt) {
 
             // performing initial elastic predictor step
             hookes_law(self, dt);
 
             // setting up for plastic corrector step (duplicated code, would like to remove this somehow)
-            const F E {self.E()}, v {self.v()};
-            const int size {static_cast<int>(self.size())};
-            std::vector<F> &sigmaxx {*(self.sigmaxx())}, &sigmayy {*(self.sigmayy())}, 
-                &sigmazz {*(self.sigmazz())}, &sigmaxy {*(self.sigmaxy())}, 
-                &sigmaxz {*(self.sigmaxz())}, &sigmayz {*(self.sigmayz())};
-            std::vector<F> &strainratexx {*(self.strainratexx())}, &strainrateyy {*(self.strainrateyy())}, 
-                &strainratezz {*(self.strainratezz())}, &strainratexy {*(self.strainratexy())}, 
-                &strainratexz {*(self.strainratexz())}, &strainrateyz {*(self.strainrateyz())};
-            std::vector<F> &spinratexy {*(self.spinratexy())}, &spinratexz {*(self.spinratexz())},
-                &spinrateyz {*(self.spinrateyz())};
-
+            const F E = self.get_stress_update_param("E"), v = self.get_stress_update_param("v");
             const F D0 {E/((1.+v)*(1.-2.*v))};
 
-            F phi, psi, coh, alpha_phi, alpha_psi, k_c;
-            self.DP_params(phi, psi, coh, alpha_phi, alpha_psi, k_c);
+            const F phi = self.get_stress_update_param("phi"), psi = self.get_stress_update_param("psi"), 
+                coh = self.get_stress_update_param("cohesion");
+            const F alpha_phi = 2.*std::sin(phi)/(std::sqrt(3.)*(3.-std::sin(phi))), 
+                alpha_psi = 2.*std::sin(psi)/(std::sqrt(3.)*(3.-std::sin(phi))), 
+                k_c = 6.*coh*std::cos(phi)/(std::sqrt(3.)*(3.-std::sin(phi)));
 
             // begin plastic correction
             #pragma omp for
-            for (int i = 0; i < size; ++i) {
+            for (size_t i = 0; i < self.p_size(); ++i) {
                 // calculating invariants and deviatoric stress tensor
-                F I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
+                F I1 = self.p_sigmaxx(i) + self.p_sigmayy(i) + self.p_sigmazz(i);
                 const F s[6] {
-                    sigmaxx[i] - I1/3.,
-                    sigmayy[i] - I1/3.,
-                    sigmazz[i] - I1/3.,
-                    sigmaxy[i],
-                    sigmaxz[i],
-                    sigmayz[i],
+                    self.p_sigmaxx(i) - I1/3.,
+                    self.p_sigmayy(i) - I1/3.,
+                    self.p_sigmazz(i) - I1/3.,
+                    self.p_sigmaxy(i),
+                    self.p_sigmaxz(i),
+                    self.p_sigmayz(i),
                 };
                 const F J2 = 0.5*(s[0]*s[0] + s[1]*s[1] + s[2]*s[2] + 2.*(s[3]*s[3] + s[4]*s[4] + s[5]*s[5]));
                 // tensile correction 1
                 if (J2 == 0. && I1 > k_c/alpha_phi) {
-                    sigmaxx[i] = k_c/alpha_phi/3.;
-                    sigmayy[i] = k_c/alpha_phi/3.;
-                    sigmazz[i] = k_c/alpha_phi/3.;
+                    self.p_sigmaxx(i) = k_c/alpha_phi/3.;
+                    self.p_sigmayy(i) = k_c/alpha_phi/3.;
+                    self.p_sigmazz(i) = k_c/alpha_phi/3.;
                     I1 = k_c/alpha_phi;
                 }
 
@@ -145,31 +123,22 @@ namespace GraMPM {
                         2.*dfdsig[5]*D0*dgdsig[5]*(1.-2.*v)
                     )};
                     
-                    sigmaxx[i] -= dlambda*D0*((1.-v)*dgdsig[0] + v*dgdsig[1] + v*dgdsig[2]);
-                    sigmayy[i] -= dlambda*D0*(v*dgdsig[0] + (1.-v)*dgdsig[1] + v*dgdsig[2]);
-                    sigmazz[i] -= dlambda*D0*(v*dgdsig[0] + v*dgdsig[1] + (1.-v)*dgdsig[2]);
-                    sigmaxy[i] -= dlambda*D0*dgdsig[3]*(1.-2.*v);
-                    sigmaxz[i] -= dlambda*D0*dgdsig[4]*(1.-2.*v);
-                    sigmayz[i] -= dlambda*D0*dgdsig[5]*(1.-2.*v);
+                    self.p_sigmaxx(i) -= dlambda*D0*((1.-v)*dgdsig[0] + v*dgdsig[1] + v*dgdsig[2]);
+                    self.p_sigmayy(i) -= dlambda*D0*(v*dgdsig[0] + (1.-v)*dgdsig[1] + v*dgdsig[2]);
+                    self.p_sigmazz(i) -= dlambda*D0*(v*dgdsig[0] + v*dgdsig[1] + (1.-v)*dgdsig[2]);
+                    self.p_sigmaxy(i) -= dlambda*D0*dgdsig[3]*(1.-2.*v);
+                    self.p_sigmaxz(i) -= dlambda*D0*dgdsig[4]*(1.-2.*v);
+                    self.p_sigmayz(i) -= dlambda*D0*dgdsig[5]*(1.-2.*v);
 
-                    I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
+                    I1 = self.p_sigmaxx(i) + self.p_sigmayy(i) + self.p_sigmazz(i);
                     if (I1 > k_c/alpha_phi) {
-                        sigmaxx[i] = k_c/alpha_phi/3.;
-                        sigmayy[i] = k_c/alpha_phi/3.;
-                        sigmazz[i] = k_c/alpha_phi/3.;
-                        sigmaxy[i] = 0.;
-                        sigmaxz[i] = 0.;
-                        sigmayz[i] = 0.;
+                        self.p_sigmaxx(i) = k_c/alpha_phi/3.;
+                        self.p_sigmayy(i) = k_c/alpha_phi/3.;
+                        self.p_sigmazz(i) = k_c/alpha_phi/3.;
+                        self.p_sigmaxy(i) = 0.;
+                        self.p_sigmaxz(i) = 0.;
+                        self.p_sigmayz(i) = 0.;
                     }
-                    I1 = sigmaxx[i] + sigmayy[i] + sigmazz[i];
-                    const F stest[6] {
-                        sigmaxx[i] - I1/3.,
-                        sigmayy[i] - I1/3.,
-                        sigmazz[i] - I1/3.,
-                        sigmaxy[i],
-                        sigmaxz[i],
-                        sigmayz[i],
-                    };
                 }
 
             }

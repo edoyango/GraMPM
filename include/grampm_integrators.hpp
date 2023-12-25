@@ -7,20 +7,12 @@
 namespace GraMPM {
     namespace integrators {
         template<typename F>
-        void MUSL(GraMPM::particle_system<F> &p, const F &dt, const int &max_timestep, 
-            const int &print_timestep_interval, const int &save_timestep_interval) {
-
-            p.m_tmpgmass.resize(p.background_grid.ncells());
-            p.m_tmpgmomentumx.resize(p.background_grid.ncells());
-            p.m_tmpgmomentumy.resize(p.background_grid.ncells());
-            p.m_tmpgmomentumz.resize(p.background_grid.ncells());
-            p.m_tmpgforcex.resize(p.background_grid.ncells());
-            p.m_tmpgforcey.resize(p.background_grid.ncells());
-            p.m_tmpgforcez.resize(p.background_grid.ncells());
+        void MUSL(GraMPM::MPM_system<F> &p, const F &dt, const size_t &max_timestep, 
+            const size_t &print_timestep_interval, const size_t &save_timestep_interval) {
 
             #pragma omp parallel default(shared)
             {
-            for (int itimestep = 1; itimestep < max_timestep+1; ++itimestep) {
+            for (size_t itimestep = 1; itimestep < max_timestep+1; ++itimestep) {
 
                 // print to terminal
                 if (itimestep % print_timestep_interval == 0) {
@@ -36,46 +28,46 @@ namespace GraMPM {
                 p.map_particles_to_grid();
 
                 // map particles' mass to nodes
-                p.map_mass_to_grid();
+                p.map_p2g_mass();
 
                 // map particles' momentum to nodes
-                p.map_momentum_to_grid();
+                p.map_p2g_momentum();
 
                 // apply user-defined momentum boundary conditions to grid
-                p.background_grid.apply_momentum_boundary_conditions(itimestep, dt);
+                p.g_apply_momentum_boundary_conditions(itimestep, dt);
 
                 // map particles' force to nodes
-                p.map_force_to_grid();
+                p.map_p2g_force();
 
                 // apply user-defined force boundary conditions to grid
-                p.background_grid.apply_force_boundary_conditions(itimestep, dt);
+                p.g_apply_force_boundary_conditions(itimestep, dt);
 
                 // update nodal momentums
-                p.background_grid.update_momentum(dt);
+                p.g_update_momentum(dt);
 
                 // map nodal forces to particle accelerations
-                p.map_acceleration_to_particles();
+                p.map_g2p_acceleration();
 
                 // update particles' velocities with calculated accelerations
-                p.update_velocity(dt);
+                p.p_update_velocity(dt);
 
                 // update particles' position
-                p.update_position(dt);
+                p.p_update_position(dt);
 
                 // map particles' momentum to nodes, in preparation for updating stress
-                p.map_momentum_to_grid();
+                p.map_p2g_momentum();
 
                 // apply user-defined momentum boundary conditions to grid
-                p.background_grid.apply_momentum_boundary_conditions(itimestep, dt);
+                p.g_apply_momentum_boundary_conditions(itimestep, dt);
 
                 // map nodal velocities to particle strain/spin rates
-                p.map_strainrate_to_particles();
+                p.map_g2p_strainrate();
 
                 // update particles' density
-                p.update_density(dt);
+                p.p_update_density(dt);
 
                 // update particles' stress
-                p.update_stress(dt);
+                p.p_update_stress(dt);
 
                 if (itimestep % save_timestep_interval == 0) {
                     #pragma omp single
