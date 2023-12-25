@@ -233,25 +233,25 @@ namespace GraMPM {
         // map strainrates to particles
         #pragma omp for
         for (size_t i = 0; i < m_p_size; ++i) {
-            m_p_strainratexx[i] = 0.;
-            m_p_strainrateyy[i] = 0.;
-            m_p_strainratezz[i] = 0.;
-            m_p_strainratexy[i] = 0.;
-            m_p_strainratexz[i] = 0.;
-            m_p_strainrateyz[i] = 0.;
+            m_p_strainrateij[0][i] = 0.;
+            m_p_strainrateij[1][i] = 0.;
+            m_p_strainrateij[2][i] = 0.;
+            m_p_strainrateij[3][i] = 0.;
+            m_p_strainrateij[4][i] = 0.;
+            m_p_strainrateij[5][i] = 0.;
             m_p_spinratexy[i] = 0.;
             m_p_spinratexz[i] = 0.;
             m_p_spinrateyz[i] = 0.;
             for (size_t j = 0; j < pg_nns_pp; ++j) {
                 const size_t node_idx = pg_nn(i, j);
-                m_p_strainratexx[i] += pg_nn_dwdx(i, j)*m_g_momentumx[node_idx]/m_g_mass[node_idx];
-                m_p_strainrateyy[i] += pg_nn_dwdy(i, j)*m_g_momentumy[node_idx]/m_g_mass[node_idx];
-                m_p_strainratezz[i] += pg_nn_dwdz(i, j)*m_g_momentumz[node_idx]/m_g_mass[node_idx];
-                m_p_strainratexy[i] += 0.5*(pg_nn_dwdx(i, j)*m_g_momentumy[node_idx]/m_g_mass[node_idx] + 
+                m_p_strainrateij[0][i] += pg_nn_dwdx(i, j)*m_g_momentumx[node_idx]/m_g_mass[node_idx];
+                m_p_strainrateij[1][i] += pg_nn_dwdy(i, j)*m_g_momentumy[node_idx]/m_g_mass[node_idx];
+                m_p_strainrateij[2][i] += pg_nn_dwdz(i, j)*m_g_momentumz[node_idx]/m_g_mass[node_idx];
+                m_p_strainrateij[3][i] += 0.5*(pg_nn_dwdx(i, j)*m_g_momentumy[node_idx]/m_g_mass[node_idx] + 
                     pg_nn_dwdy(i, j)*m_g_momentumx[node_idx]/m_g_mass[node_idx]);
-                m_p_strainratexz[i] += 0.5*(pg_nn_dwdx(i, j)*m_g_momentumz[node_idx]/m_g_mass[node_idx] + 
+                m_p_strainrateij[4][i] += 0.5*(pg_nn_dwdx(i, j)*m_g_momentumz[node_idx]/m_g_mass[node_idx] + 
                     pg_nn_dwdz(i, j)*m_g_momentumx[node_idx]/m_g_mass[node_idx]);
-                m_p_strainrateyz[i] += 0.5*(pg_nn_dwdy(i, j)*m_g_momentumz[node_idx]/m_g_mass[node_idx] + 
+                m_p_strainrateij[5][i] += 0.5*(pg_nn_dwdy(i, j)*m_g_momentumz[node_idx]/m_g_mass[node_idx] + 
                     pg_nn_dwdz(i, j)*m_g_momentumy[node_idx]/m_g_mass[node_idx]);
                 m_p_spinratexy[i] += 0.5*(pg_nn_dwdy(i, j)*m_g_momentumx[node_idx]/m_g_mass[node_idx] -
                     pg_nn_dwdx(i, j)*m_g_momentumy[node_idx]/m_g_mass[node_idx]);

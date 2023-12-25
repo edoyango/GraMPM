@@ -103,12 +103,12 @@ namespace GraMPM {
     template<typename F> F& MPM_system<F>::p_sigmaxy(const int &i) { return m_p_sigmaij[3][i]; }
     template<typename F> F& MPM_system<F>::p_sigmaxz(const int &i) { return m_p_sigmaij[4][i]; }
     template<typename F> F& MPM_system<F>::p_sigmayz(const int &i) { return m_p_sigmaij[5][i]; }
-    template<typename F> F& MPM_system<F>::p_strainratexx(const int &i) { return m_p_strainratexx[i]; }
-    template<typename F> F& MPM_system<F>::p_strainrateyy(const int &i) { return m_p_strainrateyy[i]; }
-    template<typename F> F& MPM_system<F>::p_strainratezz(const int &i) { return m_p_strainratezz[i]; }
-    template<typename F> F& MPM_system<F>::p_strainratexy(const int &i) { return m_p_strainratexy[i]; }
-    template<typename F> F& MPM_system<F>::p_strainratexz(const int &i) { return m_p_strainratexz[i]; }
-    template<typename F> F& MPM_system<F>::p_strainrateyz(const int &i) { return m_p_strainrateyz[i]; }
+    template<typename F> F& MPM_system<F>::p_strainratexx(const int &i) { return m_p_strainrateij[0][i]; }
+    template<typename F> F& MPM_system<F>::p_strainrateyy(const int &i) { return m_p_strainrateij[1][i]; }
+    template<typename F> F& MPM_system<F>::p_strainratezz(const int &i) { return m_p_strainrateij[2][i]; }
+    template<typename F> F& MPM_system<F>::p_strainratexy(const int &i) { return m_p_strainrateij[3][i]; }
+    template<typename F> F& MPM_system<F>::p_strainratexz(const int &i) { return m_p_strainrateij[4][i]; }
+    template<typename F> F& MPM_system<F>::p_strainrateyz(const int &i) { return m_p_strainrateij[5][i]; }
     template<typename F> F& MPM_system<F>::p_spinratexy(const int &i) { return m_p_spinratexy[i]; }
     template<typename F> F& MPM_system<F>::p_spinratexz(const int &i) { return m_p_spinratexz[i]; }
     template<typename F> F& MPM_system<F>::p_spinrateyz(const int &i) { return m_p_spinrateyz[i]; }

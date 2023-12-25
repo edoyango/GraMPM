@@ -48,14 +48,10 @@ namespace GraMPM {
         , m_p_dxyzdt {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_sigmaij {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.),
             std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
+        , m_p_strainrateij {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.),
+            std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_mass(p_size_in, 0.)
         , m_p_rho(p_size_in, 0.)
-        , m_p_strainratexx(p_size_in, 0.)
-        , m_p_strainrateyy(p_size_in, 0.)
-        , m_p_strainratezz(p_size_in, 0.)
-        , m_p_strainratexy(p_size_in, 0.)
-        , m_p_strainratexz(p_size_in, 0.)
-        , m_p_strainrateyz(p_size_in, 0.)
         , m_p_spinratexy(p_size_in, 0.)
         , m_p_spinratexz(p_size_in, 0.)
         , m_p_spinrateyz(p_size_in, 0.)
