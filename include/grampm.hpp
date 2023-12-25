@@ -80,7 +80,7 @@ namespace GraMPM {
         // particle-node pair data and functions -----------------------------------------------------------------------
         protected:
             const size_t pg_nns_pp;
-            std::array<std::vector<F>, 3> pg_nns_dxyz, pg_nns_dwdxyz;
+            std::array<std::vector<F>, 3> pg_nns_dx, pg_nns_dxwdx;
             std::vector<F> pg_nns_w;
             std::vector<size_t> pg_nns;
         public:

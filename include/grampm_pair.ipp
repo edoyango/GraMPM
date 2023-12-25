@@ -11,19 +11,19 @@ namespace GraMPM {
     template<typename F>
     const F& MPM_system<F>::pg_nn_dx(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dxyz[0][i*pg_nns_pp+j];
+        return pg_nns_dx[0][i*pg_nns_pp+j];
     }
 
     template<typename F>
     const F& MPM_system<F>::pg_nn_dy(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dxyz[1][i*pg_nns_pp+j];
+        return pg_nns_dx[1][i*pg_nns_pp+j];
     }
 
     template<typename F>
     const F& MPM_system<F>::pg_nn_dz(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dxyz[2][i*pg_nns_pp+j];
+        return pg_nns_dx[2][i*pg_nns_pp+j];
     }
     
     template<typename F>
@@ -35,19 +35,19 @@ namespace GraMPM {
     template<typename F>
     const F& MPM_system<F>::pg_nn_dwdx(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dwdxyz[0][i*pg_nns_pp+j];
+        return pg_nns_dxwdx[0][i*pg_nns_pp+j];
     }
     
     template<typename F>
     const F& MPM_system<F>::pg_nn_dwdy(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dwdxyz[1][i*pg_nns_pp+j];
+        return pg_nns_dxwdx[1][i*pg_nns_pp+j];
     }
 
     template<typename F>
     const F& MPM_system<F>::pg_nn_dwdz(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dwdxyz[2][i*pg_nns_pp+j];
+        return pg_nns_dxwdx[2][i*pg_nns_pp+j];
     }
 
     template<typename F>
@@ -82,13 +82,13 @@ namespace GraMPM {
         #pragma omp single
         {
             pg_nns.resize(pg_nns_pp*m_p_size);
-            pg_nns_dxyz[0].resize(pg_nns_pp*m_p_size);
-            pg_nns_dxyz[1].resize(pg_nns_pp*m_p_size);
-            pg_nns_dxyz[2].resize(pg_nns_pp*m_p_size);
+            pg_nns_dx[0].resize(pg_nns_pp*m_p_size);
+            pg_nns_dx[1].resize(pg_nns_pp*m_p_size);
+            pg_nns_dx[2].resize(pg_nns_pp*m_p_size);
             pg_nns_w.resize(pg_nns_pp*m_p_size);
-            pg_nns_dwdxyz[0].resize(pg_nns_pp*m_p_size);
-            pg_nns_dwdxyz[1].resize(pg_nns_pp*m_p_size);
-            pg_nns_dwdxyz[2].resize(pg_nns_pp*m_p_size);
+            pg_nns_dxwdx[0].resize(pg_nns_pp*m_p_size);
+            pg_nns_dxwdx[1].resize(pg_nns_pp*m_p_size);
+            pg_nns_dxwdx[2].resize(pg_nns_pp*m_p_size);
         }
 
         // update neighbour indices
@@ -112,17 +112,17 @@ namespace GraMPM {
             size_t jstart = i*pg_nns_pp;
             for (size_t j = jstart; j < jstart+pg_nns_pp; ++j) {
                 const std::array<size_t, 3> idx = unravel_grid_idx(pg_nns[j]);
-                pg_nns_dxyz[0][j] = m_p_x[0][i] - (idx[0]*g_dcell + m_g_mingrid[0]);
-                pg_nns_dxyz[1][j] = m_p_x[1][i] - (idx[1]*g_dcell + m_g_mingrid[1]);
-                pg_nns_dxyz[2][j] = m_p_x[2][i] - (idx[2]*g_dcell + m_g_mingrid[2]);
+                pg_nns_dx[0][j] = m_p_x[0][i] - (idx[0]*g_dcell + m_g_mingrid[0]);
+                pg_nns_dx[1][j] = m_p_x[1][i] - (idx[1]*g_dcell + m_g_mingrid[1]);
+                pg_nns_dx[2][j] = m_p_x[2][i] - (idx[2]*g_dcell + m_g_mingrid[2]);
                 knl.w_dwdx(
-                    pg_nns_dxyz[0][j],
-                    pg_nns_dxyz[1][j],
-                    pg_nns_dxyz[2][j],
+                    pg_nns_dx[0][j],
+                    pg_nns_dx[1][j],
+                    pg_nns_dx[2][j],
                     pg_nns_w[j],
-                    pg_nns_dwdxyz[0][j],
-                    pg_nns_dwdxyz[1][j],
-                    pg_nns_dwdxyz[2][j]
+                    pg_nns_dxwdx[0][j],
+                    pg_nns_dxwdx[1][j],
+                    pg_nns_dxwdx[2][j]
                 );
             }
         }
