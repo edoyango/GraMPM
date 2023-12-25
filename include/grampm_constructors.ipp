@@ -16,12 +16,8 @@ namespace GraMPM {
         , m_body_force {bf}
         , knl {knl_in}
         , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
-        , m_g_mingridx {g_mingrid_in[0]}
-        , m_g_mingridy {g_mingrid_in[1]}
-        , m_g_mingridz {g_mingrid_in[2]}
-        , m_g_maxgridx {g_maxgrid_in[0]}
-        , m_g_maxgridy {g_maxgrid_in[1]}
-        , m_g_maxgridz {g_maxgrid_in[2]}
+        , m_g_mingrid {g_mingrid_in}
+        , m_g_maxgrid {g_maxgrid_in}
         , g_dcell {cell_size_in}
         , m_g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
         , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
@@ -56,12 +52,8 @@ namespace GraMPM {
         , m_body_force {bf}
         , knl {knl_in}
         , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
-        , m_g_mingridx {g_mingrid_in[0]}
-        , m_g_mingridy {g_mingrid_in[1]}
-        , m_g_mingridz {g_mingrid_in[2]}
-        , m_g_maxgridx {g_maxgrid_in[0]}
-        , m_g_maxgridy {g_maxgrid_in[1]}
-        , m_g_maxgridz {g_maxgrid_in[2]}
+        , m_g_mingrid {g_mingrid_in}
+        , m_g_maxgrid {g_maxgrid_in}
         , g_dcell {cell_size_in}
         , m_g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
         , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
@@ -84,12 +76,8 @@ namespace GraMPM {
         : m_body_force {bf}
         , knl {knl_in}
         , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
-        , m_g_mingridx {g_mingrid_in[0]}
-        , m_g_mingridy {g_mingrid_in[1]}
-        , m_g_mingridz {g_mingrid_in[2]}
-        , m_g_maxgridx {g_maxgrid_in[0]}
-        , m_g_maxgridy {g_maxgrid_in[1]}
-        , m_g_maxgridz {g_maxgrid_in[2]}
+        , m_g_mingrid {g_mingrid_in}
+        , m_g_maxgrid {g_maxgrid_in}
         , g_dcell {cell_size_in}
         , m_g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
         , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
@@ -116,12 +104,8 @@ namespace GraMPM {
         , m_body_force {bf}
         , knl {knl_in}
         , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}
-        , m_g_mingridx {g_mingrid_in[0]}
-        , m_g_mingridy {g_mingrid_in[1]}
-        , m_g_mingridz {g_mingrid_in[2]}
-        , m_g_maxgridx {g_maxgrid_in[0]}
-        , m_g_maxgridy {g_maxgrid_in[1]}
-        , m_g_maxgridz {g_maxgrid_in[2]}
+        , m_g_mingrid {g_mingrid_in}
+        , m_g_maxgrid {g_maxgrid_in}
         , g_dcell {cell_size_in}
         , m_g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
         , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}

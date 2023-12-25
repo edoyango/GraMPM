@@ -54,7 +54,6 @@ namespace GraMPM {
             std::array<std::vector<F>, 3> m_p_spinrateij;
             std::vector<F> m_p_mass, m_p_rho;
             std::vector<size_t> m_p_grid_idx;
-            F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
             std::function<void(MPM_system<F>&, const F&)> p_stress_update_function;
             std::array<F, 3> m_body_force;
             std::unordered_map<std::string, F> m_stress_update_params;
@@ -100,7 +99,8 @@ namespace GraMPM {
 
         // grid data and functions -------------------------------------------------------------------------------------
         protected:
-            const F m_g_mingridx, m_g_mingridy, m_g_mingridz, m_g_maxgridx, m_g_maxgridy, m_g_maxgridz, g_dcell;
+            const std::array<F, 3> m_g_mingrid, m_g_maxgrid;
+            const F g_dcell;
             const size_t m_g_ngridx, m_g_ngridy, m_g_ngridz, m_g_size;
             std::vector<F> m_g_mass, m_g_momentumx, m_g_momentumy, m_g_momentumz, m_g_forcex, m_g_forcey, m_g_forcez;
             std::function<void(MPM_system<F>&, const int&, const F&)> g_momentum_boundary_function, 
