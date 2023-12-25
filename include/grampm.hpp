@@ -17,9 +17,10 @@ namespace GraMPM {
 
     template<typename F>
     struct particle {
-        F x, y, z, vx, vy, vz, ax, ay, az, dxdt, dydt, dzdt, mass, rho, sigmaxx, sigmayy, sigmazz, sigmaxy, sigmaxz, 
-            sigmayz, strainratexx, strainrateyy, strainratezz, strainratexy, strainratexz, strainrateyz, spinratexy,
-            spinratexz, spinrateyz;
+        std::array<F, 3> x, v, a, dxdt;
+        std::array<F, 6> sigma, strainrate;
+        std::array<F, 3> spinrate;
+        F mass, rho;
         particle(const F &inx, const F &iny, const F &inz, const F &invx, const F &invy, const F &invz, 
             const F &inmass, const F &inrho, const F &insigmaxx, const F &insigmayy, const F &insigmazz, 
             const F &insigmaxy, const F &insigmaxz, const F &insigmayz);

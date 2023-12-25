@@ -166,35 +166,35 @@ TEST_CASE("Particle initialized correctly", "[grid]") {
     // check aggregate getters
     for (int i = 0; i < 5; ++i) {
         GraMPM::particle<double> p = myMPM2.p_at(i);
-        REQUIRE(p.x==i);
-        REQUIRE(p.y==2.*i);
-        REQUIRE(p.z==3.*i);
-        REQUIRE(p.vx==4.*i);
-        REQUIRE(p.vy==5.*i);
-        REQUIRE(p.vz==6.*i);
-        REQUIRE(p.ax==7.*i);
-        REQUIRE(p.ay==8.*i);
-        REQUIRE(p.az==9.*i);
-        REQUIRE(p.dxdt==10.*i);
-        REQUIRE(p.dydt==11.*i);
-        REQUIRE(p.dzdt==12.*i);
+        REQUIRE(p.x[0]==i);
+        REQUIRE(p.x[1]==2.*i);
+        REQUIRE(p.x[2]==3.*i);
+        REQUIRE(p.v[0]==4.*i);
+        REQUIRE(p.v[1]==5.*i);
+        REQUIRE(p.v[2]==6.*i);
+        REQUIRE(p.a[0]==7.*i);
+        REQUIRE(p.a[1]==8.*i);
+        REQUIRE(p.a[2]==9.*i);
+        REQUIRE(p.dxdt[0]==10.*i);
+        REQUIRE(p.dxdt[1]==11.*i);
+        REQUIRE(p.dxdt[2]==12.*i);
         REQUIRE(p.mass==10.*i);
         REQUIRE(p.rho==100.*i);
-        REQUIRE(p.sigmaxx==-0.1*i);
-        REQUIRE(p.sigmayy==-0.2*i);
-        REQUIRE(p.sigmazz==-0.3*i);
-        REQUIRE(p.sigmaxy==-0.4*i);
-        REQUIRE(p.sigmaxz==-0.5*i);
-        REQUIRE(p.sigmayz==-0.6*i);
-        REQUIRE(p.strainratexx==-0.7*i);
-        REQUIRE(p.strainrateyy==-0.8*i);
-        REQUIRE(p.strainratezz==-0.9*i);
-        REQUIRE(p.strainratexy==-1.0*i);
-        REQUIRE(p.strainratexz==-1.1*i);
-        REQUIRE(p.strainrateyz==-1.2*i);
-        REQUIRE(p.spinratexy==-1.3*i);
-        REQUIRE(p.spinratexz==-1.4*i);
-        REQUIRE(p.spinrateyz==-1.5*i);
+        REQUIRE(p.sigma[0]==-0.1*i);
+        REQUIRE(p.sigma[1]==-0.2*i);
+        REQUIRE(p.sigma[2]==-0.3*i);
+        REQUIRE(p.sigma[3]==-0.4*i);
+        REQUIRE(p.sigma[4]==-0.5*i);
+        REQUIRE(p.sigma[5]==-0.6*i);
+        REQUIRE(p.strainrate[0]==-0.7*i);
+        REQUIRE(p.strainrate[1]==-0.8*i);
+        REQUIRE(p.strainrate[2]==-0.9*i);
+        REQUIRE(p.strainrate[3]==-1.0*i);
+        REQUIRE(p.strainrate[4]==-1.1*i);
+        REQUIRE(p.strainrate[5]==-1.2*i);
+        REQUIRE(p.spinrate[0]==-1.3*i);
+        REQUIRE(p.spinrate[1]==-1.4*i);
+        REQUIRE(p.spinrate[2]==-1.5*i);
     }
 }
 

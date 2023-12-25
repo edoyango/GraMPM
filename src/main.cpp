@@ -103,9 +103,9 @@ int main() {
         for (int j = 0; j < 12; ++j) {
             for (int k = 0; k < 50; ++k) {
                 GraMPM::particle<double> p;
-                p.x = (i+0.5)*dcell/2.;
-                p.y = (j+0.5)*dcell/2.;
-                p.z = (k+0.5)*dcell/2.;
+                p.x[0] = (i+0.5)*dcell/2.;
+                p.x[1] = (j+0.5)*dcell/2.;
+                p.x[2] = (k+0.5)*dcell/2.;
                 p.rho = rho_ini;
                 p.mass = rho_ini*dcell*dcell*dcell/8.;
                 myMPM.p_push_back(p);
@@ -127,7 +127,7 @@ int main() {
 
     myMPM.save_to_file("outputdata/p_", 0);
 
-    GraMPM::integrators::MUSL<double>(myMPM, dt, 500, 500, 600);
+    GraMPM::integrators::MUSL<double>(myMPM, dt, 500, 500, 500);
 
     return 0;
 }

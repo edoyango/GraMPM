@@ -127,10 +127,10 @@ namespace GraMPM {
         while (std::getline(file, line)) {
             std::istringstream iss(line);
             GraMPM::particle<F> p;
-            iss >> p.x >> p.y >> p.z >> p.vx >> p.vy >> p.vz >> p.mass >> p.rho >> p.sigmaxx >> p.sigmayy >> 
-                p.sigmazz >> p.sigmaxy >> p.sigmaxz >> p.sigmayz >> p.ax >> p.ay >> p.az >> p.dxdt >> p.dydt >>
-                p.dzdt >> p.strainratexx >> p.strainrateyy >> p.strainratezz >> p.strainratexy >> p.strainratexz >>
-                p.strainrateyz >> p.spinratexy >> p.spinratexz >> p.spinrateyz;
+            iss >> p.x[0] >> p.x[1] >> p.x[2] >> p.v[0] >> p.v[1] >> p.v[2] >> p.mass >> p.rho >> p.sigma[0] >> p.sigma[1] >> 
+                p.sigma[2] >> p.sigma[3] >> p.sigma[4] >> p.sigma[5] >> p.a[0] >> p.a[1] >> p.a[2] >> p.dxdt[0] >> p.dxdt[1] >>
+                p.dxdt[2] >> p.strainrate[0] >> p.strainrate[1] >> p.strainrate[2] >> p.strainrate[3] >> p.strainrate[4] >>
+                p.strainrate[5] >> p.spinrate[0] >> p.spinrate[1] >> p.spinrate[2];
             p_push_back(p);
             
         }
