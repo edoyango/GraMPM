@@ -11,19 +11,19 @@ namespace GraMPM {
     template<typename F>
     const F& MPM_system<F>::pg_nn_dx(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dx[i*pg_nns_pp+j];
+        return pg_nns_dxyz[0][i*pg_nns_pp+j];
     }
 
     template<typename F>
     const F& MPM_system<F>::pg_nn_dy(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dy[i*pg_nns_pp+j];
+        return pg_nns_dxyz[1][i*pg_nns_pp+j];
     }
 
     template<typename F>
     const F& MPM_system<F>::pg_nn_dz(const size_t i, const size_t j) const {
         assert(j < pg_nns_pp);
-        return pg_nns_dz[i*pg_nns_pp+j];
+        return pg_nns_dxyz[2][i*pg_nns_pp+j];
     }
     
     template<typename F>
@@ -82,9 +82,9 @@ namespace GraMPM {
         #pragma omp single
         {
             pg_nns.resize(pg_nns_pp*m_p_size);
-            pg_nns_dx.resize(pg_nns_pp*m_p_size);
-            pg_nns_dy.resize(pg_nns_pp*m_p_size);
-            pg_nns_dz.resize(pg_nns_pp*m_p_size);
+            pg_nns_dxyz[0].resize(pg_nns_pp*m_p_size);
+            pg_nns_dxyz[1].resize(pg_nns_pp*m_p_size);
+            pg_nns_dxyz[2].resize(pg_nns_pp*m_p_size);
             pg_nns_w.resize(pg_nns_pp*m_p_size);
             pg_nns_dwdx.resize(pg_nns_pp*m_p_size);
             pg_nns_dwdy.resize(pg_nns_pp*m_p_size);
@@ -112,13 +112,13 @@ namespace GraMPM {
             size_t jstart = i*pg_nns_pp;
             for (size_t j = jstart; j < jstart+pg_nns_pp; ++j) {
                 const std::array<size_t, 3> idx = unravel_grid_idx(pg_nns[j]);
-                pg_nns_dx[j] = m_p_xyz[0][i] - (idx[0]*g_dcell + m_g_mingrid[0]);
-                pg_nns_dy[j] = m_p_xyz[1][i] - (idx[1]*g_dcell + m_g_mingrid[1]);
-                pg_nns_dz[j] = m_p_xyz[2][i] - (idx[2]*g_dcell + m_g_mingrid[2]);
+                pg_nns_dxyz[0][j] = m_p_xyz[0][i] - (idx[0]*g_dcell + m_g_mingrid[0]);
+                pg_nns_dxyz[1][j] = m_p_xyz[1][i] - (idx[1]*g_dcell + m_g_mingrid[1]);
+                pg_nns_dxyz[2][j] = m_p_xyz[2][i] - (idx[2]*g_dcell + m_g_mingrid[2]);
                 knl.w_dwdx(
-                    pg_nns_dx[j],
-                    pg_nns_dy[j],
-                    pg_nns_dz[j],
+                    pg_nns_dxyz[0][j],
+                    pg_nns_dxyz[1][j],
+                    pg_nns_dxyz[2][j],
                     pg_nns_w[j],
                     pg_nns_dwdx[j],
                     pg_nns_dwdy[j],
