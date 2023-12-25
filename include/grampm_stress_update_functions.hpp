@@ -143,6 +143,21 @@ namespace GraMPM {
 
             }
         }
+
+        template<typename F>
+        void eos(GraMPM::MPM_system<F> &self, const F &dt) {
+            const F c = self.get_stress_update_param("c"), refrho = self.get_stress_update_param("reference-density");
+            #pragma omp for
+            for (size_t i = 0; i < self.p_size(); ++i) {
+                const F p = c*c*(self.p_rho(i) - refrho);
+                self.p_sigmaxx(i) = -p;
+                self.p_sigmayy(i) = -p;
+                self.p_sigmazz(i) = -p;
+                self.p_sigmaxy(i) = 0.;
+                self.p_sigmaxz(i) = 0.;
+                self.p_sigmayz(i) = 0.;
+            }
+        }
     }
 }
 #endif

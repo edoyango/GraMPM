@@ -7,16 +7,23 @@
 
 static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &timestep, const double &dt) {
 
-    // floor
+    // floor/ceiling
+    const size_t zup = self.g_ngridz()-2;
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {
         for (size_t j = 0; j < self.g_ngridy(); ++j) {
             self.g_momentumx(i, j, 0) = 0.;
             self.g_momentumx(i, j, 1) = 0.;
+            self.g_momentumx(i, j, 2) = 0.;
             self.g_momentumy(i, j, 0) = 0.;
             self.g_momentumy(i, j, 1) = 0.;
+            self.g_momentumy(i, j, 2) = 0.;
             self.g_momentumz(i, j, 0) = 0.;
             self.g_momentumz(i, j, 1) = 0.;
+            self.g_momentumz(i, j, 2) = 0.;
+            self.g_momentumz(i, j, zup-2) = 0.;
+            self.g_momentumz(i, j, zup-1) = 0.;
+            self.g_momentumz(i, j, zup) = 0.;
         }
     }
 
@@ -27,6 +34,8 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &ti
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
             self.g_momentumx(0, j, k) = 0.;
             self.g_momentumx(1, j, k) = 0.;
+            self.g_momentumx(2, j, k) = 0.;
+            self.g_momentumx(xup-2, j, k) = 0.;
             self.g_momentumx(xup-1, j, k) = 0.;
             self.g_momentumx(xup, j, k) = 0.;
         }
@@ -39,6 +48,8 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &ti
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
             self.g_momentumy(i, 0, k) = 0.;
             self.g_momentumy(i, 1, k) = 0.;
+            self.g_momentumy(i, 2, k) = 0.;
+            self.g_momentumy(i, yup-2, k) = 0.;
             self.g_momentumy(i, yup-1, k) = 0.;
             self.g_momentumy(i, yup, k) = 0.;
         }
@@ -46,16 +57,23 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &ti
 }
 
 static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &timestep, const double &dt) {
-    // floor
+    // floor/ceiling
+    const size_t zup = self.g_ngridz()-1;
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {
         for (size_t j = 0; j < self.g_ngridy(); ++j) {
             self.g_forcex(i, j, 0) = 0.;
             self.g_forcex(i, j, 1) = 0.;
+            self.g_forcex(i, j, 2) = 0.;
             self.g_forcey(i, j, 0) = 0.;
             self.g_forcey(i, j, 1) = 0.;
+            self.g_forcey(i, j, 2) = 0.;
             self.g_forcez(i, j, 0) = 0.;
             self.g_forcez(i, j, 1) = 0.;
+            self.g_forcez(i, j, 2) = 0.;
+            self.g_forcez(i, j, zup-2) = 0.;
+            self.g_forcez(i, j, zup-1) = 0.;
+            self.g_forcez(i, j, zup) = 0.;
         }
     }
 
@@ -66,6 +84,8 @@ static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &times
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
             self.g_forcex(0, j, k) = 0.;
             self.g_forcex(1, j, k) = 0.;
+            self.g_forcex(2, j, k) = 0.;
+            self.g_forcex(xup-2, j, k) = 0.;
             self.g_forcex(xup-1, j, k) = 0.;
             self.g_forcex(xup, j, k) = 0.;
         }
@@ -78,6 +98,8 @@ static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &times
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
             self.g_forcey(i, 0, k) = 0.;
             self.g_forcey(i, 1, k) = 0.;
+            self.g_forcey(i, 2, k) = 0.;
+            self.g_forcey(i, yup-2, k) = 0.;
             self.g_forcey(i, yup-1, k) = 0.;
             self.g_forcey(i, yup, k) = 0.;
         }
@@ -86,22 +108,23 @@ static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &times
 
 int main() {
 
-    const double dcell=0.002;
-    const std::array<double, 3> mingrid {-dcell, -dcell, -dcell}, 
-        maxgrid {0.299+dcell, 0.011+dcell, 0.049+dcell}, gf {0., 0., -9.81};
+    const double dcell=0.5;
+    const std::array<double, 3> mingrid {-2.*dcell, -2.*dcell, -2.*dcell}, 
+        maxgrid {74.99+2.*dcell, 5.99+2.*dcell, 39.99+2.*dcell}, gf {0., 0., -9.81};
     // GraMPM::kernel_linear_bspline<double> knl(dcell);
     GraMPM::kernel_cubic_bspline<double> knl(dcell);
     GraMPM::MPM_system<double> myMPM(gf, knl, mingrid, maxgrid, dcell);
-    myMPM.set_stress_update_function(GraMPM::stress_update::drucker_prager_elastoplastic<double>);
+    // myMPM.set_stress_update_function(GraMPM::stress_update::drucker_prager_elastoplastic<double>);
+    myMPM.set_stress_update_function(GraMPM::stress_update::eos<double>);
     myMPM.g_set_momentum_boundary_function(momentum_boundary);
     myMPM.g_set_force_boundary_function(force_boundary);
 
-    const double rho_ini = 1650.;
+    const double rho_ini = 1000.;
 
     // generate particles
     for (int i = 0; i < 100; ++i) {
-        for (int j = 0; j < 12; ++j) {
-            for (int k = 0; k < 50; ++k) {
+        for (int j = 0; j < 24; ++j) {
+            for (int k = 0; k < 100; ++k) {
                 GraMPM::particle<double> p;
                 p.x[0] = (i+0.5)*dcell/2.;
                 p.x[1] = (j+0.5)*dcell/2.;
@@ -115,7 +138,8 @@ int main() {
 
     const double E = 0.86e6, v = 0.3;
     const double K = E/(3.*(1.-2.*v)), G = E/(2.*(1.+v));
-    const double c = std::sqrt((K+4./3.*G)/rho_ini);
+    // const double c = std::sqrt((K+4./3.*G)/rho_ini);
+    const double c = 1500.;
     const double dt = dcell/c;
 
     const double pi = std::acos(-1.);
@@ -124,10 +148,12 @@ int main() {
     myMPM.set_stress_update_param("phi", pi/9.);
     myMPM.set_stress_update_param("psi", 0.);
     myMPM.set_stress_update_param("cohesion", 0.);
+    myMPM.set_stress_update_param("c", c);
+    myMPM.set_stress_update_param("reference-density", rho_ini);
 
     myMPM.save_to_file("outputdata/p_", 0);
 
-    GraMPM::integrators::MUSL<double>(myMPM, dt, 500, 500, 500);
+    GraMPM::integrators::MUSL<double>(myMPM, dt, 10000, 50, 50);
 
     return 0;
 }
