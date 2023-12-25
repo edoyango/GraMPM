@@ -49,9 +49,9 @@ namespace GraMPM {
         // particle data and functions ---------------------------------------------------------------------------------
         protected:
             size_t m_p_size, p_neighbour_nodes_size;
-            std::array<std::vector<F>, 3> m_p_xyz, m_p_vxyz, m_p_axyz, m_p_dxyzdt;
-            std::array<std::vector<F>, 6> m_p_sigmaij, m_p_strainrateij;
-            std::array<std::vector<F>, 3> m_p_spinrateij;
+            std::array<std::vector<F>, 3> m_p_x, m_p_v, m_p_a, m_p_dxdt;
+            std::array<std::vector<F>, 6> m_p_sigma, m_p_strainrate;
+            std::array<std::vector<F>, 3> m_p_spinrate;
             std::vector<F> m_p_mass, m_p_rho;
             std::vector<size_t> m_p_grid_idx;
             std::function<void(MPM_system<F>&, const F&)> p_stress_update_function;
