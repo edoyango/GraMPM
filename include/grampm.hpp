@@ -101,7 +101,8 @@ namespace GraMPM {
         protected:
             const std::array<F, 3> m_g_mingrid, m_g_maxgrid;
             const F g_dcell;
-            const size_t m_g_ngridx, m_g_ngridy, m_g_ngridz, m_g_size;
+            const std::array<size_t, 3> m_g_ngrid;
+            const size_t m_g_size;
             std::vector<F> m_g_mass, m_g_momentumx, m_g_momentumy, m_g_momentumz, m_g_forcex, m_g_forcey, m_g_forcez;
             std::function<void(MPM_system<F>&, const int&, const F&)> g_momentum_boundary_function, 
                 g_force_boundary_function;

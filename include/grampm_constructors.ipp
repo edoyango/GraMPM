@@ -19,10 +19,10 @@ namespace GraMPM {
         , m_g_mingrid {g_mingrid_in}
         , m_g_maxgrid {g_maxgrid_in}
         , g_dcell {cell_size_in}
-        , m_g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
-        , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
-        , m_g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
-        , m_g_size {m_g_ngridx*m_g_ngridy*m_g_ngridz}
+        , m_g_ngrid {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in), 
+            calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in), 
+            calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
+        , m_g_size {m_g_ngrid[0]*m_g_ngrid[1]*m_g_ngrid[2]}
         , m_g_mass(m_g_size, 0.)
         , m_g_momentumx(m_g_size, 0.)
         , m_g_momentumy(m_g_size, 0.)
@@ -55,10 +55,10 @@ namespace GraMPM {
         , m_g_mingrid {g_mingrid_in}
         , m_g_maxgrid {g_maxgrid_in}
         , g_dcell {cell_size_in}
-        , m_g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
-        , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
-        , m_g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
-        , m_g_size {m_g_ngridx*m_g_ngridy*m_g_ngridz}
+        , m_g_ngrid {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in), 
+            calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in), 
+            calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
+        , m_g_size {m_g_ngrid[0]*m_g_ngrid[1]*m_g_ngrid[2]}
         , m_g_mass(m_g_size, 0.)
         , m_g_momentumx(m_g_size, 0.)
         , m_g_momentumy(m_g_size, 0.)
@@ -79,10 +79,10 @@ namespace GraMPM {
         , m_g_mingrid {g_mingrid_in}
         , m_g_maxgrid {g_maxgrid_in}
         , g_dcell {cell_size_in}
-        , m_g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
-        , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
-        , m_g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
-        , m_g_size {m_g_ngridx*m_g_ngridy*m_g_ngridz}
+        , m_g_ngrid {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in), 
+            calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in), 
+            calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
+        , m_g_size {m_g_ngrid[0]*m_g_ngrid[1]*m_g_ngrid[2]}
         , m_g_mass(m_g_size, 0.)
         , m_g_momentumx(m_g_size, 0.)
         , m_g_momentumy(m_g_size, 0.)
@@ -107,10 +107,10 @@ namespace GraMPM {
         , m_g_mingrid {g_mingrid_in}
         , m_g_maxgrid {g_maxgrid_in}
         , g_dcell {cell_size_in}
-        , m_g_ngridx {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in)}
-        , m_g_ngridy {calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in)}
-        , m_g_ngridz {calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
-        , m_g_size {m_g_ngridx*m_g_ngridy*m_g_ngridz}
+        , m_g_ngrid {calc_ngrid(g_maxgrid_in[0], g_mingrid_in[0], cell_size_in), 
+            calc_ngrid(g_maxgrid_in[1], g_mingrid_in[1], cell_size_in), 
+            calc_ngrid(g_maxgrid_in[2], g_mingrid_in[2], cell_size_in)}
+        , m_g_size {m_g_ngrid[0]*m_g_ngrid[1]*m_g_ngrid[2]}
         , m_g_mass(m_g_size, 0.)
         , m_g_momentumx(m_g_size, 0.)
         , m_g_momentumy(m_g_size, 0.)

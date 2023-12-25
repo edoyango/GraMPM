@@ -10,7 +10,7 @@ namespace GraMPM {
     // helper function to ravel idx
     template<typename F>
     size_t MPM_system<F>::ravel_grid_idx(const size_t &idxx, const size_t &idxy, const size_t &idxz) const {
-        return idxx*m_g_ngridy*m_g_ngridz + idxy*m_g_ngridz + idxz;
+        return idxx*m_g_ngrid[1]*m_g_ngrid[2] + idxy*m_g_ngrid[2] + idxz;
     }
     
     // helper function to unravel index (return std::array)
@@ -23,10 +23,10 @@ namespace GraMPM {
         // unravelled_idx[1] = tmp.quot;
         // unravelled_idx[2] = tmp.rem;
         // return unravelled_idx;
-        unravelled_idx[0] = idx / (m_g_ngridy*m_g_ngridz);
-        size_t rem = idx % (m_g_ngridy*m_g_ngridz);
-        unravelled_idx[1] = rem / m_g_ngridz;
-        unravelled_idx[2] = rem % m_g_ngridz;
+        unravelled_idx[0] = idx / (m_g_ngrid[1]*m_g_ngrid[2]);
+        size_t rem = idx % (m_g_ngrid[1]*m_g_ngrid[2]);
+        unravelled_idx[1] = rem / m_g_ngrid[2];
+        unravelled_idx[2] = rem % m_g_ngrid[2];
         return unravelled_idx;
     }
 
@@ -38,10 +38,10 @@ namespace GraMPM {
         // tmp = std::div(tmp.rem, m_g_ngridz);
         // idxy = tmp.quot;
         // idxz = tmp.rem;
-        idxx = idx / (m_g_ngridy*m_g_ngridz);
-        size_t rem = idx % (m_g_ngridy*m_g_ngridz);
-        idxy = rem / m_g_ngridz;
-        idxz = rem % m_g_ngridz;
+        idxx = idx / (m_g_ngrid[1]*m_g_ngrid[2]);
+        size_t rem = idx % (m_g_ngrid[1]*m_g_ngrid[2]);
+        idxy = rem / m_g_ngrid[2];
+        idxz = rem % m_g_ngrid[2];
     }
 
     template<typename F> 
