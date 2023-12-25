@@ -50,11 +50,9 @@ namespace GraMPM {
             std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_strainrateij {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.),
             std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
+        , m_p_spinrateij {std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.), std::vector<F>(p_size_in, 0.)}
         , m_p_mass(p_size_in, 0.)
         , m_p_rho(p_size_in, 0.)
-        , m_p_spinratexy(p_size_in, 0.)
-        , m_p_spinratexz(p_size_in, 0.)
-        , m_p_spinrateyz(p_size_in, 0.)
         , m_body_force {bf}
         , knl {knl_in}
         , pg_nns_pp {static_cast<size_t>(8*std::ceil(knl_in.radius)*std::ceil(knl_in.radius)*std::ceil(knl_in.radius))}

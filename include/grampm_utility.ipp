@@ -123,9 +123,9 @@ namespace GraMPM {
                     << std::setw(f_width) << std::fixed << m_p_strainrateij[3][i] << ' '
                     << std::setw(f_width) << std::fixed << m_p_strainrateij[4][i] << ' '
                     << std::setw(f_width) << std::fixed << m_p_strainrateij[5][i] << ' '
-                    << std::setw(f_width) << std::fixed << m_p_spinratexy[i] << ' '
-                    << std::setw(f_width) << std::fixed << m_p_spinratexz[i] << ' '
-                    << std::setw(f_width) << std::fixed << m_p_spinrateyz[i] << ' '
+                    << std::setw(f_width) << std::fixed << m_p_spinrateij[0][i] << ' '
+                    << std::setw(f_width) << std::fixed << m_p_spinrateij[1][i] << ' '
+                    << std::setw(f_width) << std::fixed << m_p_spinrateij[2][i] << ' '
                     << '\n';
         }
     }

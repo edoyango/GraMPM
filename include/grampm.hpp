@@ -51,7 +51,8 @@ namespace GraMPM {
             size_t m_p_size, p_neighbour_nodes_size;
             std::array<std::vector<F>, 3> m_p_xyz, m_p_vxyz, m_p_axyz, m_p_dxyzdt;
             std::array<std::vector<F>, 6> m_p_sigmaij, m_p_strainrateij;
-            std::vector<F> m_p_mass, m_p_rho, m_p_spinratexy, m_p_spinratexz, m_p_spinrateyz;
+            std::array<std::vector<F>, 3> m_p_spinrateij;
+            std::vector<F> m_p_mass, m_p_rho;
             std::vector<size_t> m_p_grid_idx;
             F m_E, m_v, m_phi, m_psi, m_alphaphi, m_alphapsi, m_coh, m_kc;
             std::function<void(MPM_system<F>&, const F&)> p_stress_update_function;

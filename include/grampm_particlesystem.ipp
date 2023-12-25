@@ -16,8 +16,8 @@ namespace GraMPM {
         particle<F> p(m_p_xyz[0][i], m_p_xyz[1][i], m_p_xyz[2][i], m_p_vxyz[0][i], m_p_vxyz[1][i], m_p_vxyz[2][i], m_p_mass[i], m_p_rho[i], 
             m_p_sigmaij[0][i], m_p_sigmaij[1][i], m_p_sigmaij[2][i], m_p_sigmaij[3][i], m_p_sigmaij[4][i], m_p_sigmaij[5][i], m_p_axyz[0][i], 
             m_p_axyz[1][i], m_p_axyz[2][i], m_p_dxyzdt[0][i], m_p_dxyzdt[1][i], m_p_dxyzdt[2][i], m_p_strainrateij[0][i], m_p_strainrateij[1][i], 
-            m_p_strainrateij[2][i], m_p_strainrateij[3][i], m_p_strainrateij[4][i], m_p_strainrateij[5][i], m_p_spinratexy[i], 
-            m_p_spinratexz[i], m_p_spinrateyz[i]);
+            m_p_strainrateij[2][i], m_p_strainrateij[3][i], m_p_strainrateij[4][i], m_p_strainrateij[5][i], m_p_spinrateij[0][i], 
+            m_p_spinrateij[1][i], m_p_spinrateij[2][i]);
         return p; 
     }
 
@@ -50,9 +50,9 @@ namespace GraMPM {
         m_p_strainrateij[3].push_back(p.strainratexy);
         m_p_strainrateij[4].push_back(p.strainratexz);
         m_p_strainrateij[5].push_back(p.strainrateyz);
-        m_p_spinratexy.push_back(p.spinratexy);
-        m_p_spinratexz.push_back(p.spinratexz);
-        m_p_spinrateyz.push_back(p.spinrateyz);
+        m_p_spinrateij[0].push_back(p.spinratexy);
+        m_p_spinrateij[1].push_back(p.spinratexz);
+        m_p_spinrateij[2].push_back(p.spinrateyz);
         m_p_grid_idx.push_back(
             ravel_grid_idx(
                 calc_idxx(p.x),
@@ -92,9 +92,9 @@ namespace GraMPM {
         m_p_strainrateij[3].clear();
         m_p_strainrateij[4].clear();
         m_p_strainrateij[5].clear();
-        m_p_spinratexy.clear();
-        m_p_spinratexz.clear();
-        m_p_spinrateyz.clear();
+        m_p_spinrateij[0].clear();
+        m_p_spinrateij[1].clear();
+        m_p_spinrateij[2].clear();
         m_p_grid_idx.clear();
         m_p_size = 0;
     }
@@ -108,7 +108,7 @@ namespace GraMPM {
             m_p_sigmaij[2].empty() && m_p_sigmaij[3].empty() && m_p_sigmaij[4].empty() && m_p_sigmaij[5].empty() && 
             m_p_strainrateij[0].empty() && m_p_strainrateij[1].empty() && m_p_strainrateij[2].empty() && 
             m_p_strainrateij[3].empty() && m_p_strainrateij[4].empty() && m_p_strainrateij[5].empty() && 
-            m_p_spinratexy.empty() && m_p_spinratexz.empty() && m_p_spinrateyz.empty() &&m_p_grid_idx.empty() && 
+            m_p_spinrateij[0].empty() && m_p_spinrateij[1].empty() && m_p_spinrateij[2].empty() &&m_p_grid_idx.empty() && 
             m_p_size==0;
     }
 
@@ -141,9 +141,9 @@ namespace GraMPM {
         m_p_strainrateij[3].resize(n, 0.);
         m_p_strainrateij[4].resize(n, 0.);
         m_p_strainrateij[5].resize(n, 0.);
-        m_p_spinratexy.resize(n, 0.);
-        m_p_spinratexz.resize(n, 0.);
-        m_p_spinrateyz.resize(n, 0.);
+        m_p_spinrateij[0].resize(n, 0.);
+        m_p_spinrateij[1].resize(n, 0.);
+        m_p_spinrateij[2].resize(n, 0.);
         m_p_grid_idx.resize(n, 0);
         m_p_size = n;
     }
