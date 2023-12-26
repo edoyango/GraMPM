@@ -5,163 +5,103 @@
 #include <cmath>
 #include <grampm_stress_update_functions.hpp>
 
+static constexpr double nbuff = 2.;
+
 static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &timestep, const double &dt) {
 
     // floor/ceiling
-    const size_t zup = self.g_ngridz()-2;
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {
         for (size_t j = 0; j < self.g_ngridy(); ++j) {
-            self.g_momentumx(i, j, 0) = 0.;
-            self.g_momentumx(i, j, 1) = 0.;
-            self.g_momentumx(i, j, 2) = 0.;
-            self.g_momentumy(i, j, 0) = 0.;
-            self.g_momentumy(i, j, 1) = 0.;
-            self.g_momentumy(i, j, 2) = 0.;
-            self.g_momentumz(i, j, 0) = 0.;
-            self.g_momentumz(i, j, 1) = 0.;
-            self.g_momentumz(i, j, 2) = 0.;
-            self.g_momentumx(i, j, zup-2) = 0.;
-            self.g_momentumx(i, j, zup-1) = 0.;
-            self.g_momentumx(i, j, zup) = 0.;
-            self.g_momentumy(i, j, zup-2) = 0.;
-            self.g_momentumy(i, j, zup-1) = 0.;
-            self.g_momentumy(i, j, zup) = 0.;
-            self.g_momentumz(i, j, zup-2) = 0.;
-            self.g_momentumz(i, j, zup-1) = 0.;
-            self.g_momentumz(i, j, zup) = 0.;
+            for (size_t k = 0; k < nbuff+1; ++k) {
+                self.g_momentumx(i, j, k) = 0.;
+                self.g_momentumy(i, j, k) = 0.;
+                self.g_momentumz(i, j, k) = 0.;
+            }
+            for (size_t k = self.g_ngridz()-nbuff-1; k < self.g_ngridz(); ++k) {
+                self.g_momentumx(i, j, k) = 0.;
+                self.g_momentumy(i, j, k) = 0.;
+                self.g_momentumz(i, j, k) = 0.;
+            }
         }
     }
 
     // east/west wall
-    const size_t xup = self.g_ngridx()-1;
     #pragma omp for collapse(2)
     for (size_t j = 0; j < self.g_ngridy(); ++j) {
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
-            self.g_momentumx(0, j, k) = 0.;
-            self.g_momentumx(1, j, k) = 0.;
-            self.g_momentumx(2, j, k) = 0.;
-            self.g_momentumy(0, j, k) = 0.;
-            self.g_momentumy(1, j, k) = 0.;
-            self.g_momentumy(2, j, k) = 0.;
-            self.g_momentumz(0, j, k) = 0.;
-            self.g_momentumz(1, j, k) = 0.;
-            self.g_momentumz(2, j, k) = 0.;
-            self.g_momentumx(xup-2, j, k) = 0.;
-            self.g_momentumx(xup-1, j, k) = 0.;
-            self.g_momentumx(xup, j, k) = 0.;
-            self.g_momentumy(xup-2, j, k) = 0.;
-            self.g_momentumy(xup-1, j, k) = 0.;
-            self.g_momentumy(xup, j, k) = 0.;
-            self.g_momentumz(xup-2, j, k) = 0.;
-            self.g_momentumz(xup-1, j, k) = 0.;
-            self.g_momentumz(xup, j, k) = 0.;
+            for (size_t i = 0; i < nbuff+1; ++i) {
+                self.g_momentumx(i, j, k) = 0.;
+                self.g_momentumy(i, j, k) = 0.;
+                self.g_momentumz(i, j, k) = 0.;
+            }
+            for (size_t i = self.g_ngridx()-nbuff-1; i < self.g_ngridx(); ++i) {
+                self.g_momentumx(i, j, k) = 0.;
+                self.g_momentumy(i, j, k) = 0.;
+                self.g_momentumz(i, j, k) = 0.;
+            }
         }
     }
 
     // north/south wall
-    const size_t yup = self.g_ngridy()-1;
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
-            // self.g_momentumx(i, 0, k) = 0.;
-            // self.g_momentumx(i, 1, k) = 0.;
-            // self.g_momentumx(i, 2, k) = 0.;
-            self.g_momentumy(i, 0, k) = 0.;
-            self.g_momentumy(i, 1, k) = 0.;
-            self.g_momentumy(i, 2, k) = 0.;
-            // self.g_momentumz(i, 0, k) = 0.;
-            // self.g_momentumz(i, 1, k) = 0.;
-            // self.g_momentumz(i, 2, k) = 0.;
-            // self.g_momentumx(i, yup-2, k) = 0.;
-            // self.g_momentumx(i, yup-1, k) = 0.;
-            // self.g_momentumx(i, yup, k) = 0.;
-            self.g_momentumy(i, yup-2, k) = 0.;
-            self.g_momentumy(i, yup-1, k) = 0.;
-            self.g_momentumy(i, yup, k) = 0.;
-            // self.g_momentumz(i, yup-2, k) = 0.;
-            // self.g_momentumz(i, yup-1, k) = 0.;
-            // self.g_momentumz(i, yup, k) = 0.;
+            for (size_t j = 0; j < nbuff+1; ++j) {
+                self.g_momentumy(i, j, k) = 0.;
+            }
+            for (size_t j = self.g_ngridy()-nbuff-1; j < self.g_ngridy(); ++j) {
+                self.g_momentumy(i, j, k) = 0.;
+            }
         }
     }
 }
 
 static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &timestep, const double &dt) {
     // floor/ceiling
-    const size_t zup = self.g_ngridz()-1;
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {
         for (size_t j = 0; j < self.g_ngridy(); ++j) {
-            self.g_forcex(i, j, 0) = 0.;
-            self.g_forcex(i, j, 1) = 0.;
-            self.g_forcex(i, j, 2) = 0.;
-            self.g_forcey(i, j, 0) = 0.;
-            self.g_forcey(i, j, 1) = 0.;
-            self.g_forcey(i, j, 2) = 0.;
-            self.g_forcez(i, j, 0) = 0.;
-            self.g_forcez(i, j, 1) = 0.;
-            self.g_forcez(i, j, 2) = 0.;
-            self.g_forcex(i, j, zup-2) = 0.;
-            self.g_forcex(i, j, zup-1) = 0.;
-            self.g_forcex(i, j, zup) = 0.;
-            self.g_forcey(i, j, zup-2) = 0.;
-            self.g_forcey(i, j, zup-1) = 0.;
-            self.g_forcey(i, j, zup) = 0.;
-            self.g_forcez(i, j, zup-2) = 0.;
-            self.g_forcez(i, j, zup-1) = 0.;
-            self.g_forcez(i, j, zup) = 0.;
+            for (size_t k = 0; k < nbuff+1; ++k) {
+                self.g_forcex(i, j, k) = 0.;
+                self.g_forcey(i, j, k) = 0.;
+                self.g_forcez(i, j, k) = 0.;
+            }
+            for (size_t k = self.g_ngridz()-nbuff-1; k < self.g_ngridz(); ++k) {
+                self.g_forcex(i, j, k) = 0.;
+                self.g_forcey(i, j, k) = 0.;
+                self.g_forcez(i, j, k) = 0.;
+            }
         }
     }
 
     // east/west wall
-    const size_t xup = self.g_ngridx()-1;
     #pragma omp for collapse(2)
     for (size_t j = 0; j < self.g_ngridy(); ++j) {
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
-            self.g_forcex(0, j, k) = 0.;
-            self.g_forcex(1, j, k) = 0.;
-            self.g_forcex(2, j, k) = 0.;
-            self.g_forcey(0, j, k) = 0.;
-            self.g_forcey(1, j, k) = 0.;
-            self.g_forcey(2, j, k) = 0.;
-            self.g_forcez(0, j, k) = 0.;
-            self.g_forcez(1, j, k) = 0.;
-            self.g_forcez(2, j, k) = 0.;
-            self.g_forcex(xup-2, j, k) = 0.;
-            self.g_forcex(xup-1, j, k) = 0.;
-            self.g_forcex(xup, j, k) = 0.;
-            self.g_forcey(xup-2, j, k) = 0.;
-            self.g_forcey(xup-1, j, k) = 0.;
-            self.g_forcey(xup, j, k) = 0.;
-            self.g_forcez(xup-2, j, k) = 0.;
-            self.g_forcez(xup-1, j, k) = 0.;
-            self.g_forcez(xup, j, k) = 0.;
+            for (size_t i = 0; i < nbuff+1; ++i) {
+                self.g_forcex(i, j, k) = 0.;
+                self.g_forcey(i, j, k) = 0.;
+                self.g_forcez(i, j, k) = 0.;
+            }
+            for (size_t i = self.g_ngridx()-nbuff-1; i < self.g_ngridx(); ++i) {
+                self.g_forcex(i, j, k) = 0.;
+                self.g_forcey(i, j, k) = 0.;
+                self.g_forcez(i, j, k) = 0.;
+            }
         }
     }
 
     // north/south wall
-    const size_t yup = self.g_ngridy()-1;
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
-            // self.g_forcex(i, 0, k) = 0.;
-            // self.g_forcex(i, 1, k) = 0.;
-            // self.g_forcex(i, 2, k) = 0.;
-            self.g_forcey(i, 0, k) = 0.;
-            self.g_forcey(i, 1, k) = 0.;
-            self.g_forcey(i, 2, k) = 0.;
-            // self.g_forcez(i, 0, k) = 0.;
-            // self.g_forcez(i, 1, k) = 0.;
-            // self.g_forcez(i, 2, k) = 0.;
-            // self.g_forcex(i, yup-2, k) = 0.;
-            // self.g_forcex(i, yup-1, k) = 0.;
-            // self.g_forcex(i, yup, k) = 0.;
-            self.g_forcey(i, yup-2, k) = 0.;
-            self.g_forcey(i, yup-1, k) = 0.;
-            self.g_forcey(i, yup, k) = 0.;
-            // self.g_forcez(i, yup-2, k) = 0.;
-            // self.g_forcez(i, yup-1, k) = 0.;
-            // self.g_forcez(i, yup, k) = 0.;
+            for (size_t j = 0; j < nbuff+1; ++j) {
+                self.g_forcey(i, j, k) = 0.;
+            }
+            for (size_t j = self.g_ngridy()-nbuff-1; j < self.g_ngridy(); ++j) {
+                self.g_forcey(i, j, k) = 0.;
+            }
         }
     }
 }
@@ -169,8 +109,8 @@ static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &times
 int main() {
 
     const double dcell=1.;
-    const std::array<double, 3> mingrid {-2.*dcell, -2.*dcell, -2.*dcell}, 
-        maxgrid {74.99+2.*dcell, 5.99+2.*dcell, 39.99+2.*dcell}, gf {0., 0., -9.81};
+    const std::array<double, 3> mingrid {-nbuff*dcell, -nbuff*dcell, -nbuff*dcell}, 
+        maxgrid {74.99+nbuff*dcell, 5.99+nbuff*dcell, 39.99+nbuff*dcell}, gf {0., 0., -9.81};
     // GraMPM::kernel_linear_bspline<double> knl(dcell);
     GraMPM::kernel_cubic_bspline<double> knl(dcell);
     GraMPM::MPM_system<double> myMPM(gf, knl, mingrid, maxgrid, dcell);
