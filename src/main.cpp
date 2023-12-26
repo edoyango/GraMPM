@@ -210,6 +210,7 @@ int main() {
     myMPM.set_stress_update_param("cohesion", 0.);
     myMPM.set_stress_update_param("c", c);
     myMPM.set_stress_update_param("reference-density", rho_ini);
+    myMPM.set_stress_update_param("kinematic viscosity", 0.01);
 
     myMPM.save_to_file("outputdata/p_", 0);
 
