@@ -21,6 +21,12 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &ti
             self.g_momentumz(i, j, 0) = 0.;
             self.g_momentumz(i, j, 1) = 0.;
             self.g_momentumz(i, j, 2) = 0.;
+            self.g_momentumx(i, j, zup-2) = 0.;
+            self.g_momentumx(i, j, zup-1) = 0.;
+            self.g_momentumx(i, j, zup) = 0.;
+            self.g_momentumy(i, j, zup-2) = 0.;
+            self.g_momentumy(i, j, zup-1) = 0.;
+            self.g_momentumy(i, j, zup) = 0.;
             self.g_momentumz(i, j, zup-2) = 0.;
             self.g_momentumz(i, j, zup-1) = 0.;
             self.g_momentumz(i, j, zup) = 0.;
@@ -35,9 +41,21 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &ti
             self.g_momentumx(0, j, k) = 0.;
             self.g_momentumx(1, j, k) = 0.;
             self.g_momentumx(2, j, k) = 0.;
+            self.g_momentumy(0, j, k) = 0.;
+            self.g_momentumy(1, j, k) = 0.;
+            self.g_momentumy(2, j, k) = 0.;
+            self.g_momentumz(0, j, k) = 0.;
+            self.g_momentumz(1, j, k) = 0.;
+            self.g_momentumz(2, j, k) = 0.;
             self.g_momentumx(xup-2, j, k) = 0.;
             self.g_momentumx(xup-1, j, k) = 0.;
             self.g_momentumx(xup, j, k) = 0.;
+            self.g_momentumy(xup-2, j, k) = 0.;
+            self.g_momentumy(xup-1, j, k) = 0.;
+            self.g_momentumy(xup, j, k) = 0.;
+            self.g_momentumz(xup-2, j, k) = 0.;
+            self.g_momentumz(xup-1, j, k) = 0.;
+            self.g_momentumz(xup, j, k) = 0.;
         }
     }
 
@@ -46,12 +64,24 @@ static void momentum_boundary(GraMPM::MPM_system<double> &self, const size_t &ti
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
+            // self.g_momentumx(i, 0, k) = 0.;
+            // self.g_momentumx(i, 1, k) = 0.;
+            // self.g_momentumx(i, 2, k) = 0.;
             self.g_momentumy(i, 0, k) = 0.;
             self.g_momentumy(i, 1, k) = 0.;
             self.g_momentumy(i, 2, k) = 0.;
+            // self.g_momentumz(i, 0, k) = 0.;
+            // self.g_momentumz(i, 1, k) = 0.;
+            // self.g_momentumz(i, 2, k) = 0.;
+            // self.g_momentumx(i, yup-2, k) = 0.;
+            // self.g_momentumx(i, yup-1, k) = 0.;
+            // self.g_momentumx(i, yup, k) = 0.;
             self.g_momentumy(i, yup-2, k) = 0.;
             self.g_momentumy(i, yup-1, k) = 0.;
             self.g_momentumy(i, yup, k) = 0.;
+            // self.g_momentumz(i, yup-2, k) = 0.;
+            // self.g_momentumz(i, yup-1, k) = 0.;
+            // self.g_momentumz(i, yup, k) = 0.;
         }
     }
 }
@@ -71,6 +101,12 @@ static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &times
             self.g_forcez(i, j, 0) = 0.;
             self.g_forcez(i, j, 1) = 0.;
             self.g_forcez(i, j, 2) = 0.;
+            self.g_forcex(i, j, zup-2) = 0.;
+            self.g_forcex(i, j, zup-1) = 0.;
+            self.g_forcex(i, j, zup) = 0.;
+            self.g_forcey(i, j, zup-2) = 0.;
+            self.g_forcey(i, j, zup-1) = 0.;
+            self.g_forcey(i, j, zup) = 0.;
             self.g_forcez(i, j, zup-2) = 0.;
             self.g_forcez(i, j, zup-1) = 0.;
             self.g_forcez(i, j, zup) = 0.;
@@ -85,9 +121,21 @@ static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &times
             self.g_forcex(0, j, k) = 0.;
             self.g_forcex(1, j, k) = 0.;
             self.g_forcex(2, j, k) = 0.;
+            self.g_forcey(0, j, k) = 0.;
+            self.g_forcey(1, j, k) = 0.;
+            self.g_forcey(2, j, k) = 0.;
+            self.g_forcez(0, j, k) = 0.;
+            self.g_forcez(1, j, k) = 0.;
+            self.g_forcez(2, j, k) = 0.;
             self.g_forcex(xup-2, j, k) = 0.;
             self.g_forcex(xup-1, j, k) = 0.;
             self.g_forcex(xup, j, k) = 0.;
+            self.g_forcey(xup-2, j, k) = 0.;
+            self.g_forcey(xup-1, j, k) = 0.;
+            self.g_forcey(xup, j, k) = 0.;
+            self.g_forcez(xup-2, j, k) = 0.;
+            self.g_forcez(xup-1, j, k) = 0.;
+            self.g_forcez(xup, j, k) = 0.;
         }
     }
 
@@ -96,19 +144,31 @@ static void force_boundary(GraMPM::MPM_system<double> &self, const size_t &times
     #pragma omp for collapse(2)
     for (size_t i = 0; i < self.g_ngridx(); ++i) {
         for (size_t k = 0; k < self.g_ngridz(); ++k) {
+            // self.g_forcex(i, 0, k) = 0.;
+            // self.g_forcex(i, 1, k) = 0.;
+            // self.g_forcex(i, 2, k) = 0.;
             self.g_forcey(i, 0, k) = 0.;
             self.g_forcey(i, 1, k) = 0.;
             self.g_forcey(i, 2, k) = 0.;
+            // self.g_forcez(i, 0, k) = 0.;
+            // self.g_forcez(i, 1, k) = 0.;
+            // self.g_forcez(i, 2, k) = 0.;
+            // self.g_forcex(i, yup-2, k) = 0.;
+            // self.g_forcex(i, yup-1, k) = 0.;
+            // self.g_forcex(i, yup, k) = 0.;
             self.g_forcey(i, yup-2, k) = 0.;
             self.g_forcey(i, yup-1, k) = 0.;
             self.g_forcey(i, yup, k) = 0.;
+            // self.g_forcez(i, yup-2, k) = 0.;
+            // self.g_forcez(i, yup-1, k) = 0.;
+            // self.g_forcez(i, yup, k) = 0.;
         }
     }
 }
 
 int main() {
 
-    const double dcell=0.5;
+    const double dcell=1.;
     const std::array<double, 3> mingrid {-2.*dcell, -2.*dcell, -2.*dcell}, 
         maxgrid {74.99+2.*dcell, 5.99+2.*dcell, 39.99+2.*dcell}, gf {0., 0., -9.81};
     // GraMPM::kernel_linear_bspline<double> knl(dcell);
@@ -122,9 +182,9 @@ int main() {
     const double rho_ini = 1000.;
 
     // generate particles
-    for (int i = 0; i < 100; ++i) {
-        for (int j = 0; j < 24; ++j) {
-            for (int k = 0; k < 100; ++k) {
+    for (int i = 0; i < 50; ++i) {
+        for (int j = 0; j < 12; ++j) {
+            for (int k = 0; k < 50; ++k) {
                 GraMPM::particle<double> p;
                 p.x[0] = (i+0.5)*dcell/2.;
                 p.x[1] = (j+0.5)*dcell/2.;
@@ -153,7 +213,7 @@ int main() {
 
     myMPM.save_to_file("outputdata/p_", 0);
 
-    GraMPM::integrators::MUSL<double>(myMPM, dt, 10000, 50, 50);
+    GraMPM::integrators::MUSL<double>(myMPM, dt, 20000, 100, 100);
 
     return 0;
 }
