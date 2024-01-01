@@ -18,7 +18,7 @@ After cloning this repo, build the executable with
 make
 ```
 
-which builds the `mpm.x` binary.
+which builds the `mpm.x` binary. Add compiler optimisations using the `CXXFLAGS` environment variable. Recommended optimisations are `-O3 -flto -ffast-math` (for `g++`).
 
 Run the example case with
 
@@ -27,6 +27,10 @@ Run the example case with
 ```
 
 using the `OMP_NUM_THREADS` environment variable to control the number of parallel threads to use.
+
+This should run the 3D simulation for 10,000 steps using a similar setup to [bui et al. (2008) figure 6](https://www.academia.edu/download/50489203/Lagrangian_mesh-free_particle_method_SP20161122-8301-1ymr4u4.pdf). You should get results (obtained with `plot.ipynb`):
+
+![output.gif](output.gif)
 
 ## API
 

@@ -127,7 +127,7 @@ int main() {
 
     myMPM.save_to_file("outputdata/p_", 0);
 
-    GraMPM::integrators::MUSL<double>(myMPM, dt, 500, 500, 500);
+    GraMPM::integrators::MUSL<double>(myMPM, dt, 10000, 500, 500);
 
     return 0;
 }
