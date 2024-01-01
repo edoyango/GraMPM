@@ -1,6 +1,11 @@
 # GraMPM
 A C++ MPM simulation library for granular materials parallelised for CPUs with OpenMP. The library is a thin header-only library which gives you accesses to classes and methods which you can customize for your own simulations.
 
+I wrote this mostly because I was curious about MPM and comparing it to SPH, as well as getting some practice implementing OOP practices.
+
+The algorithms coded here are based on the description provided in the book: The Material Point Method by Zhang et al. (2017).
+If you're looking to get started learning MPM, this is an ok start. But there are probably better books out there.
+
 ## Requirements
 
 You will need a working C++ compiler (compilers known to work are g++, and nvc++).
