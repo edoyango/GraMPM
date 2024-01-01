@@ -28,7 +28,7 @@ Run the example case with
 
 using the `OMP_NUM_THREADS` environment variable to control the number of parallel threads to use.
 
-This should run the 3D simulation for 10,000 steps using a similar setup to [bui et al. (2008) figure 6](https://www.academia.edu/download/50489203/Lagrangian_mesh-free_particle_method_SP20161122-8301-1ymr4u4.pdf). You should get results (obtained with `plot.ipynb`):
+This should run the 3D simulation for 10,000 steps using a similar setup to [bui et al. (2008) figure 6](https://www.academia.edu/download/50489203/Lagrangian_mesh-free_particle_method_SP20161122-8301-1ymr4u4.pdf). You should get results (obtained with `plot.ipynb` - colour is speed in m/s):
 
 ![output.gif](output.gif)
 
