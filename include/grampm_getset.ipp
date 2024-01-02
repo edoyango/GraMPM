@@ -26,9 +26,9 @@ namespace GraMPM {
         maxgridy = m_g_maxgrid[1];
         maxgridz = m_g_maxgrid[2];
     }
-    template<typename F> const size_t MPM_system<F>::g_ngridx() const { return m_g_ngrid[0]; }
-    template<typename F> const size_t MPM_system<F>::g_ngridy() const { return m_g_ngrid[1]; }
-    template<typename F> const size_t MPM_system<F>::g_ngridz() const { return m_g_ngrid[2]; }
+    template<typename F> size_t MPM_system<F>::g_ngridx() const { return m_g_ngrid[0]; }
+    template<typename F> size_t MPM_system<F>::g_ngridy() const { return m_g_ngrid[1]; }
+    template<typename F> size_t MPM_system<F>::g_ngridz() const { return m_g_ngrid[2]; }
     template<typename F> std::array<size_t, 3> MPM_system<F>::g_ngrid() const { return m_g_ngrid; }
     template<typename F>
     void MPM_system<F>::g_ngrid(size_t &ngridx, size_t &ngridy, size_t &ngridz) const {
@@ -37,7 +37,7 @@ namespace GraMPM {
         ngridz = m_g_ngrid[2];
     }
     template<typename F> const F& MPM_system<F>::g_cell_size() const { return g_dcell; }
-    template<typename F> const size_t MPM_system<F>::g_size() const { return m_g_size; }
+    template<typename F> size_t MPM_system<F>::g_size() const { return m_g_size; }
     
     template<typename F> F& MPM_system<F>::g_mass(const int &i) { return m_g_mass[i]; }
     template<typename F> F& MPM_system<F>::g_momentumx(const int &i) { return m_g_momentumx[i]; }

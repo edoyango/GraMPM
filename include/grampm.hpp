@@ -142,13 +142,13 @@ namespace GraMPM {
             const F& g_maxgridz() const;
             std::array<F, 3> g_maxgrid() const;
             void g_maxgrid(F &maxgridx, F &maxgridy, F &maxgridz) const;
-            const size_t g_ngridx() const;
-            const size_t g_ngridy() const;
-            const size_t g_ngridz() const;
+            size_t g_ngridx() const;
+            size_t g_ngridy() const;
+            size_t g_ngridz() const;
             std::array<size_t, 3> g_ngrid() const;
             void g_ngrid(size_t &ngridx, size_t &ngridy, size_t &ngridz) const;
             const F& g_cell_size() const;
-            const size_t g_size() const;
+            size_t g_size() const;
             F& g_mass(const int &i);
             F& g_momentumx(const int &i);
             F& g_momentumx(const int &i, const int &j, const int &k);

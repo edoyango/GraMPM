@@ -29,9 +29,9 @@ namespace GraMPM {
                 dwdz = w1x*w1y*dw1dq(qz)*dqdr(dz);
             }
         protected:
-            virtual F w1(const double &q) const {return 0.;}
-            virtual F dw1dq(const double &q) const {return 0.;}
-            F dqdr(const double &dr) const {return sgn(dr)/dcell;}
+            virtual F w1(const F &q) const {return 0.;}
+            virtual F dw1dq(const F &q) const {return 0.;}
+            F dqdr(const F &dr) const {return sgn(dr)/dcell;}
     };
 
     template<typename F>
