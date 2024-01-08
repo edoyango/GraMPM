@@ -18,12 +18,12 @@ After cloning this repo, build the executable with
 make
 ```
 
-which builds the `mpm.x` binary. Add compiler optimisations using the `CXXFLAGS` environment variable. Recommended optimisations are `-O3 -flto -ffast-math` (for `g++`).
+which builds the `mpm-dp.x` binary. Add compiler optimisations using the `CXXFLAGS` environment variable. Recommended optimisations are `-O3 -flto -ffast-math` (for `g++`).
 
 Run the example case with
 
 ```bash
-./mpm.x
+./mpm-dp.x
 ```
 
 using the `OMP_NUM_THREADS` environment variable to control the number of parallel threads to use.
@@ -31,6 +31,17 @@ using the `OMP_NUM_THREADS` environment variable to control the number of parall
 This should run the 3D simulation for 10,000 steps using a similar setup to [bui et al. (2008) figure 6](https://www.academia.edu/download/50489203/Lagrangian_mesh-free_particle_method_SP20161122-8301-1ymr4u4.pdf). You should get results (obtained with `plot.ipynb` - colour is speed in m/s):
 
 ![output.gif](output.gif)
+
+You can also run the simulation setup using an equation of state, viscosity, and artificial viscosity to update the stress. Build and then run the executable with:
+
+```bash
+CXXFLAGS="-O3 -ftlo -ffast-math" make mpm-eos.x
+OMP_NUM_THREADS=4 ./mpm-eos.x
+```
+
+Which should run for 20,000 time-steps and provide results like (colour is speed in m/s):
+
+![output-eos.gif](output-eos.gif)
 
 ## API
 
