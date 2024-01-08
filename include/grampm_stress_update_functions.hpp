@@ -143,6 +143,25 @@ namespace GraMPM {
 
             }
         }
+
+        template<typename F>
+        void eos(GraMPM::MPM_system<F> &self, const F &dt) {
+            const F c = self.get_stress_update_param("c"), refrho = self.get_stress_update_param("reference-density"),
+                mu = self.get_stress_update_param("kinematic viscosity");
+            #pragma omp for
+            for (size_t i = 0; i < self.p_size(); ++i) {
+                F p = c*c*(self.p_rho(i) - refrho);
+                const F divv = self.p_strainratexx(i) + self.p_strainrateyy(i) + self.p_strainratezz(i);
+                if (divv < 0.) p += 4.*self.p_rho(i)*self.g_cell_size()*self.g_cell_size()*divv*divv + 
+                    1.*self.p_rho(i)*self.g_cell_size()*c*std::abs(divv);
+                self.p_sigmaxx(i) = -p+2.*mu;
+                self.p_sigmayy(i) = -p+2.*mu;
+                self.p_sigmazz(i) = -p+2.*mu;
+                self.p_sigmaxy(i) = 2.*mu;
+                self.p_sigmaxz(i) = 2.*mu;
+                self.p_sigmayz(i) = 2.*mu;
+            }
+        }
     }
 }
 #endif
