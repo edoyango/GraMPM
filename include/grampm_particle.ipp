@@ -54,7 +54,18 @@ namespace GraMPM {
     {
     }
 
-    template<typename F> particle<F>::particle() {};
+    template<typename F> particle<F>::particle()
+        : x {0., 0., 0.}
+        , v {0., 0., 0.}
+        , a {0., 0., 0.}
+        , dxdt {0., 0., 0.}
+        , sigma {0., 0., 0., 0., 0., 0.}
+        , strainrate {0., 0., 0., 0., 0., 0.}
+        , spinrate {0., 0., 0.}
+        , mass {0.}
+        , rho {0.}
+    {
+    }
 }
 
 #endif
